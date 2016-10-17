@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+# SharpDevelop 5.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SGK509Client", "SGK509\SGK509Client.csproj", "{56B50924-527C-4669-B1E9-3ADED32A11C9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SGKService", "SGKService\SGKService.csproj", "{4AF941DF-A517-4477-8A6B-BC70AE7113C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modbus", "Nmodbus-master\Modbus\Modbus.csproj", "{FF96B252-2B24-44A1-A09C-6401B5D7ED23}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{56B50924-527C-4669-B1E9-3ADED32A11C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56B50924-527C-4669-B1E9-3ADED32A11C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56B50924-527C-4669-B1E9-3ADED32A11C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56B50924-527C-4669-B1E9-3ADED32A11C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AF941DF-A517-4477-8A6B-BC70AE7113C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AF941DF-A517-4477-8A6B-BC70AE7113C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AF941DF-A517-4477-8A6B-BC70AE7113C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AF941DF-A517-4477-8A6B-BC70AE7113C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF96B252-2B24-44A1-A09C-6401B5D7ED23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF96B252-2B24-44A1-A09C-6401B5D7ED23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF96B252-2B24-44A1-A09C-6401B5D7ED23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF96B252-2B24-44A1-A09C-6401B5D7ED23}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
