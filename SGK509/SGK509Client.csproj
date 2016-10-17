@@ -68,7 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SGKApp.resx">
-      <DependentUpon>SGKApp.cs</DependentUpon>
+      <DependentUpon>SGKApp.Designer.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
