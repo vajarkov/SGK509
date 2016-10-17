@@ -32,3 +32,11 @@
    logtoconsole = 
    assemblypath = C:\Users\Technical department\Documents\SharpDevelop Projects\SGK509\SGK509\bin\Debug\SGKService.exe
    logfile = C:\Users\Technical department\Documents\SharpDevelop Projects\SGK509\SGK509\bin\Debug\SGKService.InstallLog
+Выполняется удаление сборки 'C:\Users\Technical department\Documents\SharpDevelop Projects\SGK509\SGK509\bin\Debug\SGKService.exe'.
+Затронуты следующие параметры:
+   logtoconsole = 
+   assemblypath = C:\Users\Technical department\Documents\SharpDevelop Projects\SGK509\SGK509\bin\Debug\SGKService.exe
+   logfile = C:\Users\Technical department\Documents\SharpDevelop Projects\SGK509\SGK509\bin\Debug\SGKService.InstallLog
+Выполняется удаление источника EventLog SGKService.
+Выполняется удаление службы SGKService из системы...
+Служба SGKService успешно удалена из системы.
