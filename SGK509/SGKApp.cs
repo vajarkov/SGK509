@@ -22,6 +22,7 @@ using System.Collections.Specialized;
 using System.IO.Ports;
 
 
+
 namespace SGK509
 {
 	/// <summary>
