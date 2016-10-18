@@ -59,6 +59,10 @@ namespace SGK509
 		private System.Windows.Forms.Button btnDBType;
 		private System.Windows.Forms.Button btnTest;
 		private System.Windows.Forms.Button btnDBList;
+		private System.Windows.Forms.DataGridView dataGridView1;
+		private System.Windows.Forms.DataGridViewTextBoxColumn id;
+		private System.Windows.Forms.DataGridViewComboBoxColumn ComponentColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn AddressColumn;
 		
 	
 		
@@ -113,6 +117,7 @@ namespace SGK509
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.tabDB = new System.Windows.Forms.TabPage();
+			this.btnTest = new System.Windows.Forms.Button();
 			this.btnDBList = new System.Windows.Forms.Button();
 			this.btnDBType = new System.Windows.Forms.Button();
 			this.btnDBSave = new System.Windows.Forms.Button();
@@ -127,12 +132,17 @@ namespace SGK509
 			this.label11 = new System.Windows.Forms.Label();
 			this.label10 = new System.Windows.Forms.Label();
 			this.tabChannels = new System.Windows.Forms.TabPage();
-			this.btnTest = new System.Windows.Forms.Button();
+			this.dataGridView1 = new System.Windows.Forms.DataGridView();
+			this.id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.ComponentColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
+			this.AddressColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.tabSGK.SuspendLayout();
 			this.tabSerialPort.SuspendLayout();
 			this.groupTCP.SuspendLayout();
 			this.groupRTU.SuspendLayout();
 			this.tabDB.SuspendLayout();
+			this.tabChannels.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// btnInstall
@@ -451,6 +461,17 @@ namespace SGK509
 			this.tabDB.Text = "База Данных";
 			this.tabDB.UseVisualStyleBackColor = true;
 			// 
+			// btnTest
+			// 
+			this.btnTest.Enabled = false;
+			this.btnTest.Location = new System.Drawing.Point(12, 216);
+			this.btnTest.Name = "btnTest";
+			this.btnTest.Size = new System.Drawing.Size(112, 32);
+			this.btnTest.TabIndex = 6;
+			this.btnTest.Text = "Проверить связь";
+			this.btnTest.UseVisualStyleBackColor = true;
+			this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
+			// 
 			// btnDBList
 			// 
 			this.btnDBList.Enabled = false;
@@ -507,6 +528,7 @@ namespace SGK509
 			// 
 			this.tbPassword.Location = new System.Drawing.Point(134, 125);
 			this.tbPassword.Name = "tbPassword";
+			this.tbPassword.PasswordChar = '*';
 			this.tbPassword.Size = new System.Drawing.Size(243, 20);
 			this.tbPassword.TabIndex = 2;
 			// 
@@ -573,6 +595,7 @@ namespace SGK509
 			// 
 			// tabChannels
 			// 
+			this.tabChannels.Controls.Add(this.dataGridView1);
 			this.tabChannels.Location = new System.Drawing.Point(4, 22);
 			this.tabChannels.Name = "tabChannels";
 			this.tabChannels.Padding = new System.Windows.Forms.Padding(3);
@@ -581,15 +604,41 @@ namespace SGK509
 			this.tabChannels.Text = "Каналы";
 			this.tabChannels.UseVisualStyleBackColor = true;
 			// 
-			// btnTest
+			// dataGridView1
 			// 
-			this.btnTest.Enabled = false;
-			this.btnTest.Location = new System.Drawing.Point(12, 216);
-			this.btnTest.Name = "btnTest";
-			this.btnTest.Size = new System.Drawing.Size(112, 32);
-			this.btnTest.TabIndex = 6;
-			this.btnTest.Text = "Проверить связь";
-			this.btnTest.UseVisualStyleBackColor = true;
+			this.dataGridView1.AllowUserToOrderColumns = true;
+			this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+			this.id,
+			this.ComponentColumn,
+			this.AddressColumn});
+			this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.dataGridView1.Location = new System.Drawing.Point(3, 3);
+			this.dataGridView1.Name = "dataGridView1";
+			this.dataGridView1.Size = new System.Drawing.Size(794, 513);
+			this.dataGridView1.TabIndex = 1;
+			// 
+			// id
+			// 
+			this.id.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.id.HeaderText = "№ Канала";
+			this.id.Name = "id";
+			this.id.ReadOnly = true;
+			this.id.Width = 83;
+			// 
+			// ComponentColumn
+			// 
+			this.ComponentColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.ComponentColumn.HeaderText = "Компонент";
+			this.ComponentColumn.Name = "ComponentColumn";
+			this.ComponentColumn.Width = 69;
+			// 
+			// AddressColumn
+			// 
+			this.AddressColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.AddressColumn.HeaderText = "Адрес Modbus";
+			this.AddressColumn.Name = "AddressColumn";
+			this.AddressColumn.Width = 96;
 			// 
 			// MainForm
 			// 
@@ -610,6 +659,8 @@ namespace SGK509
 			this.groupRTU.ResumeLayout(false);
 			this.tabDB.ResumeLayout(false);
 			this.tabDB.PerformLayout();
+			this.tabChannels.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
 			this.ResumeLayout(false);
 
 		}

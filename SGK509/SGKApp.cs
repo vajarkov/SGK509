@@ -26,6 +26,7 @@ using System.Data.Sql;
 using Microsoft.SqlServer.Management;
 using Microsoft.SqlServer.Server;
 using Microsoft.SqlServer.Management.Smo;
+using System.Data.SqlClient;
 
 
 namespace SGK509
@@ -317,10 +318,86 @@ namespace SGK509
 		void cbDBName_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (!String.IsNullOrEmpty(cbDataSource.SelectedItem.ToString()))
+			{
 				btnDBSave.Enabled = true;
+				btnTest.Enabled = true;
+			}
 		}
 		#endregion
 		
+		#region Проверка связи с БД
+		void btnTest_Click(object sender, EventArgs e)
+		{
+			switch (cbDBType.SelectedItem.ToString())
+			{
+				case "MS SQL Server":
+					if(MsSQLTest())
+					{
+						MessageBox.Show("Связь есть");
+						//ComboBoxInit();
+					}
+					else
+					{
+						MessageBox.Show("Связи нет. Проверьте настройки");
+					}
+					break;
+				case "Oracle":
+					//OracleTest();
+					break;
+				case "PosgreSQL":
+					//PostgreSQLTest();
+					break;
+				case "MySQL":
+					//MySQLTest();
+					break;
+				default:
+					break;
+			}
+		}
+		#endregion
 		
+		string[] GetParameters()
+		{
+			/*
+			SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
+			builder.DataSource = cbDataSource.SelectedItem.ToString();
+			builder.InitialCatalog = cbDBName.SelectedItem.ToString();
+			builder.UserID = tbUserName.Text;
+			builder.Password = tbPassword.Text;
+			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+			{
+				try
+				{
+					SqlDataAdapter dataAdapter = new SqlDataAdapter("select * from dictParameters",connection);
+					//command.Exe
+				}
+			}ca*/
+			return new string[] {};
+		}
+		
+		#region Проверка связи с MSSQL
+		bool MsSQLTest()
+		{
+			SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
+			builder.DataSource = cbDataSource.SelectedItem.ToString();
+			builder.InitialCatalog = cbDBName.SelectedItem.ToString();
+			builder.UserID = tbUserName.Text;
+			builder.Password = tbPassword.Text;
+			
+			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+			{
+				try
+				{
+					connection.Open();
+					return true;
+				}
+				catch (SqlException)
+				{
+					return false;
+				}
+			}
+			
+		}
+		#endregion
 	}
 }
