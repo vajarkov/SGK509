@@ -45,7 +45,7 @@ namespace SGK509
 			CheckService(serviceName);					// Проверка существования службы
 			ConfigurationInit();						// Инициализация конфигурации
 			// Заполнение протоколов передачи
-			ComboBoxInit(cbProtocol, new string[] {"Modbus RTU", "Modbus TCP"}, "Protocol");
+			//ComboBoxInit(cbProtocol, new string[] {"Modbus RTU", "Modbus TCP"}, "Protocol");
 			// Заполнение доступных портов
 			//ComboBoxInit(cbPort, SerialPort.GetPortNames(), "PortName");
             // Заполнение скорости передачи

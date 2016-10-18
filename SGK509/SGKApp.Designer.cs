@@ -21,9 +21,12 @@ namespace SGK509
 		private System.Windows.Forms.TabControl tabSGK;
 		private System.Windows.Forms.TabPage tabData;
 		private System.Windows.Forms.TabPage tabDB;
-		private System.Windows.Forms.ComboBox cbProtocol;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TabPage tabSerialPort;
+		private System.Windows.Forms.GroupBox groupBox2;
+		private System.Windows.Forms.GroupBox groupRTU;
+		private System.Windows.Forms.RadioButton radioButton2;
+		private System.Windows.Forms.RadioButton radioButton1;
 	
 		
 		/// <summary>
@@ -54,9 +57,12 @@ namespace SGK509
 			this.tabSGK = new System.Windows.Forms.TabControl();
 			this.tabData = new System.Windows.Forms.TabPage();
 			this.tabSerialPort = new System.Windows.Forms.TabPage();
-			this.tabDB = new System.Windows.Forms.TabPage();
-			this.cbProtocol = new System.Windows.Forms.ComboBox();
+			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.groupRTU = new System.Windows.Forms.GroupBox();
 			this.label1 = new System.Windows.Forms.Label();
+			this.tabDB = new System.Windows.Forms.TabPage();
+			this.radioButton1 = new System.Windows.Forms.RadioButton();
+			this.radioButton2 = new System.Windows.Forms.RadioButton();
 			this.tabSGK.SuspendLayout();
 			this.tabSerialPort.SuspendLayout();
 			this.SuspendLayout();
@@ -114,6 +120,7 @@ namespace SGK509
 			this.tabSGK.Name = "tabSGK";
 			this.tabSGK.SelectedIndex = 0;
 			this.tabSGK.Size = new System.Drawing.Size(808, 545);
+			this.tabSGK.SizeMode = System.Windows.Forms.TabSizeMode.FillToRight;
 			this.tabSGK.TabIndex = 1;
 			// 
 			// tabData
@@ -128,7 +135,10 @@ namespace SGK509
 			// 
 			// tabSerialPort
 			// 
-			this.tabSerialPort.Controls.Add(this.cbProtocol);
+			this.tabSerialPort.Controls.Add(this.radioButton2);
+			this.tabSerialPort.Controls.Add(this.radioButton1);
+			this.tabSerialPort.Controls.Add(this.groupBox2);
+			this.tabSerialPort.Controls.Add(this.groupRTU);
 			this.tabSerialPort.Controls.Add(this.label1);
 			this.tabSerialPort.Location = new System.Drawing.Point(4, 22);
 			this.tabSerialPort.Name = "tabSerialPort";
@@ -138,23 +148,23 @@ namespace SGK509
 			this.tabSerialPort.Text = "COM-порт";
 			this.tabSerialPort.UseVisualStyleBackColor = true;
 			// 
-			// tabDB
+			// groupBox2
 			// 
-			this.tabDB.Location = new System.Drawing.Point(4, 22);
-			this.tabDB.Name = "tabDB";
-			this.tabDB.Padding = new System.Windows.Forms.Padding(3);
-			this.tabDB.Size = new System.Drawing.Size(800, 519);
-			this.tabDB.TabIndex = 2;
-			this.tabDB.Text = "База Данных";
-			this.tabDB.UseVisualStyleBackColor = true;
+			this.groupBox2.Location = new System.Drawing.Point(281, 32);
+			this.groupBox2.Name = "groupBox2";
+			this.groupBox2.Size = new System.Drawing.Size(266, 477);
+			this.groupBox2.TabIndex = 3;
+			this.groupBox2.TabStop = false;
+			this.groupBox2.Text = "Параметры Modbus TCP";
 			// 
-			// cbProtocol
+			// groupRTU
 			// 
-			this.cbProtocol.FormattingEnabled = true;
-			this.cbProtocol.Location = new System.Drawing.Point(103, 6);
-			this.cbProtocol.Name = "cbProtocol";
-			this.cbProtocol.Size = new System.Drawing.Size(121, 21);
-			this.cbProtocol.TabIndex = 0;
+			this.groupRTU.Location = new System.Drawing.Point(8, 32);
+			this.groupRTU.Name = "groupRTU";
+			this.groupRTU.Size = new System.Drawing.Size(267, 481);
+			this.groupRTU.TabIndex = 2;
+			this.groupRTU.TabStop = false;
+			this.groupRTU.Text = "Параметры Modbus RTU";
 			// 
 			// label1
 			// 
@@ -166,6 +176,36 @@ namespace SGK509
 			this.label1.TabIndex = 1;
 			this.label1.Text = "Протокол";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// tabDB
+			// 
+			this.tabDB.Location = new System.Drawing.Point(4, 22);
+			this.tabDB.Name = "tabDB";
+			this.tabDB.Padding = new System.Windows.Forms.Padding(3);
+			this.tabDB.Size = new System.Drawing.Size(800, 519);
+			this.tabDB.TabIndex = 2;
+			this.tabDB.Text = "База Данных";
+			this.tabDB.UseVisualStyleBackColor = true;
+			// 
+			// radioButton1
+			// 
+			this.radioButton1.Location = new System.Drawing.Point(91, 6);
+			this.radioButton1.Name = "radioButton1";
+			this.radioButton1.Size = new System.Drawing.Size(104, 24);
+			this.radioButton1.TabIndex = 0;
+			this.radioButton1.TabStop = true;
+			this.radioButton1.Text = "Modbus RTU";
+			this.radioButton1.UseVisualStyleBackColor = true;
+			// 
+			// radioButton2
+			// 
+			this.radioButton2.Location = new System.Drawing.Point(281, 5);
+			this.radioButton2.Name = "radioButton2";
+			this.radioButton2.Size = new System.Drawing.Size(104, 24);
+			this.radioButton2.TabIndex = 4;
+			this.radioButton2.TabStop = true;
+			this.radioButton2.Text = "Modbus TCP";
+			this.radioButton2.UseVisualStyleBackColor = true;
 			// 
 			// MainForm
 			// 
@@ -181,19 +221,6 @@ namespace SGK509
 			this.Text = "SGK509";
 			this.tabSGK.ResumeLayout(false);
 			this.tabSerialPort.ResumeLayout(false);
-			this.ResumeLayout(false);
-
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(804, 544);
-			this.Controls.Add(this.btnStart);
-			this.Controls.Add(this.btnStop);
-			this.Controls.Add(this.btnDelete);
-			this.Controls.Add(this.btnInstall);
-			this.Controls.Add(this.tabSGK);
-			this.Name = "MainForm";
-			this.Text = "SGK509";
-			this.tabSGK.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
