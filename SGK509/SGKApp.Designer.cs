@@ -56,9 +56,10 @@ namespace SGK509
 		private System.Windows.Forms.TextBox tbPassword;
 		private System.Windows.Forms.TextBox tbUserName;
 		private System.Windows.Forms.Button btnDBSave;
-		private System.Windows.Forms.Button btnDBTest;
-		private System.Windows.Forms.Button button2;
 		private System.Windows.Forms.Button btnDBType;
+		private System.Windows.Forms.Button btnTest;
+		private System.Windows.Forms.Button btnDBList;
+		
 	
 		
 		/// <summary>
@@ -112,10 +113,9 @@ namespace SGK509
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.tabDB = new System.Windows.Forms.TabPage();
-			this.button2 = new System.Windows.Forms.Button();
+			this.btnDBList = new System.Windows.Forms.Button();
 			this.btnDBType = new System.Windows.Forms.Button();
 			this.btnDBSave = new System.Windows.Forms.Button();
-			this.btnDBTest = new System.Windows.Forms.Button();
 			this.cbDBName = new System.Windows.Forms.ComboBox();
 			this.cbDataSource = new System.Windows.Forms.ComboBox();
 			this.tbPassword = new System.Windows.Forms.TextBox();
@@ -127,6 +127,7 @@ namespace SGK509
 			this.label11 = new System.Windows.Forms.Label();
 			this.label10 = new System.Windows.Forms.Label();
 			this.tabChannels = new System.Windows.Forms.TabPage();
+			this.btnTest = new System.Windows.Forms.Button();
 			this.tabSGK.SuspendLayout();
 			this.tabSerialPort.SuspendLayout();
 			this.groupTCP.SuspendLayout();
@@ -428,10 +429,10 @@ namespace SGK509
 			// 
 			// tabDB
 			// 
-			this.tabDB.Controls.Add(this.button2);
+			this.tabDB.Controls.Add(this.btnTest);
+			this.tabDB.Controls.Add(this.btnDBList);
 			this.tabDB.Controls.Add(this.btnDBType);
 			this.tabDB.Controls.Add(this.btnDBSave);
-			this.tabDB.Controls.Add(this.btnDBTest);
 			this.tabDB.Controls.Add(this.cbDBName);
 			this.tabDB.Controls.Add(this.cbDataSource);
 			this.tabDB.Controls.Add(this.tbPassword);
@@ -450,18 +451,21 @@ namespace SGK509
 			this.tabDB.Text = "База Данных";
 			this.tabDB.UseVisualStyleBackColor = true;
 			// 
-			// button2
+			// btnDBList
 			// 
-			this.button2.Location = new System.Drawing.Point(383, 125);
-			this.button2.Name = "button2";
-			this.button2.Size = new System.Drawing.Size(172, 23);
-			this.button2.TabIndex = 5;
-			this.button2.Text = "Список доступных БД";
-			this.button2.UseVisualStyleBackColor = true;
+			this.btnDBList.Enabled = false;
+			this.btnDBList.Location = new System.Drawing.Point(383, 53);
+			this.btnDBList.Name = "btnDBList";
+			this.btnDBList.Size = new System.Drawing.Size(172, 23);
+			this.btnDBList.TabIndex = 5;
+			this.btnDBList.Text = "Список доступных БД";
+			this.btnDBList.UseVisualStyleBackColor = true;
+			this.btnDBList.Click += new System.EventHandler(this.GetDBList);
 			// 
 			// btnDBType
 			// 
-			this.btnDBType.Location = new System.Drawing.Point(383, 16);
+			this.btnDBType.Enabled = false;
+			this.btnDBType.Location = new System.Drawing.Point(383, 18);
 			this.btnDBType.Name = "btnDBType";
 			this.btnDBType.Size = new System.Drawing.Size(172, 23);
 			this.btnDBType.TabIndex = 5;
@@ -472,22 +476,12 @@ namespace SGK509
 			// btnDBSave
 			// 
 			this.btnDBSave.Enabled = false;
-			this.btnDBSave.Location = new System.Drawing.Point(12, 226);
+			this.btnDBSave.Location = new System.Drawing.Point(12, 254);
 			this.btnDBSave.Name = "btnDBSave";
 			this.btnDBSave.Size = new System.Drawing.Size(112, 32);
 			this.btnDBSave.TabIndex = 4;
 			this.btnDBSave.Text = "Сохранить";
 			this.btnDBSave.UseVisualStyleBackColor = true;
-			// 
-			// btnDBTest
-			// 
-			this.btnDBTest.Enabled = false;
-			this.btnDBTest.Location = new System.Drawing.Point(12, 188);
-			this.btnDBTest.Name = "btnDBTest";
-			this.btnDBTest.Size = new System.Drawing.Size(112, 32);
-			this.btnDBTest.TabIndex = 4;
-			this.btnDBTest.Text = "Проверить связь";
-			this.btnDBTest.UseVisualStyleBackColor = true;
 			// 
 			// cbDBName
 			// 
@@ -497,6 +491,7 @@ namespace SGK509
 			this.cbDBName.Name = "cbDBName";
 			this.cbDBName.Size = new System.Drawing.Size(243, 21);
 			this.cbDBName.TabIndex = 3;
+			this.cbDBName.SelectedIndexChanged += new System.EventHandler(this.cbDBName_SelectedIndexChanged);
 			// 
 			// cbDataSource
 			// 
@@ -506,10 +501,10 @@ namespace SGK509
 			this.cbDataSource.Name = "cbDataSource";
 			this.cbDataSource.Size = new System.Drawing.Size(243, 21);
 			this.cbDataSource.TabIndex = 3;
+			this.cbDataSource.SelectedIndexChanged += new System.EventHandler(this.cbDataSource_SelectedIndexChanged);
 			// 
 			// tbPassword
 			// 
-			this.tbPassword.Enabled = false;
 			this.tbPassword.Location = new System.Drawing.Point(134, 125);
 			this.tbPassword.Name = "tbPassword";
 			this.tbPassword.Size = new System.Drawing.Size(243, 20);
@@ -517,7 +512,6 @@ namespace SGK509
 			// 
 			// tbUserName
 			// 
-			this.tbUserName.Enabled = false;
 			this.tbUserName.Location = new System.Drawing.Point(134, 91);
 			this.tbUserName.Name = "tbUserName";
 			this.tbUserName.Size = new System.Drawing.Size(243, 20);
@@ -530,6 +524,7 @@ namespace SGK509
 			this.cbDBType.Name = "cbDBType";
 			this.cbDBType.Size = new System.Drawing.Size(243, 21);
 			this.cbDBType.TabIndex = 1;
+			this.cbDBType.SelectedIndexChanged += new System.EventHandler(this.cbDBType_SelectedIndexChanged);
 			// 
 			// label14
 			// 
@@ -569,7 +564,7 @@ namespace SGK509
 			// 
 			// label10
 			// 
-			this.label10.Location = new System.Drawing.Point(12, 28);
+			this.label10.Location = new System.Drawing.Point(12, 18);
 			this.label10.Name = "label10";
 			this.label10.Size = new System.Drawing.Size(100, 23);
 			this.label10.TabIndex = 0;
@@ -585,6 +580,16 @@ namespace SGK509
 			this.tabChannels.TabIndex = 3;
 			this.tabChannels.Text = "Каналы";
 			this.tabChannels.UseVisualStyleBackColor = true;
+			// 
+			// btnTest
+			// 
+			this.btnTest.Enabled = false;
+			this.btnTest.Location = new System.Drawing.Point(12, 216);
+			this.btnTest.Name = "btnTest";
+			this.btnTest.Size = new System.Drawing.Size(112, 32);
+			this.btnTest.TabIndex = 6;
+			this.btnTest.Text = "Проверить связь";
+			this.btnTest.UseVisualStyleBackColor = true;
 			// 
 			// MainForm
 			// 
