@@ -57,12 +57,12 @@ namespace SGK509
 			this.tabSGK = new System.Windows.Forms.TabControl();
 			this.tabData = new System.Windows.Forms.TabPage();
 			this.tabSerialPort = new System.Windows.Forms.TabPage();
+			this.radioButton2 = new System.Windows.Forms.RadioButton();
+			this.radioButton1 = new System.Windows.Forms.RadioButton();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
 			this.groupRTU = new System.Windows.Forms.GroupBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.tabDB = new System.Windows.Forms.TabPage();
-			this.radioButton1 = new System.Windows.Forms.RadioButton();
-			this.radioButton2 = new System.Windows.Forms.RadioButton();
 			this.tabSGK.SuspendLayout();
 			this.tabSerialPort.SuspendLayout();
 			this.SuspendLayout();
@@ -116,6 +116,7 @@ namespace SGK509
 			this.tabSGK.Controls.Add(this.tabData);
 			this.tabSGK.Controls.Add(this.tabSerialPort);
 			this.tabSGK.Controls.Add(this.tabDB);
+			this.tabSGK.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.tabSGK.Location = new System.Drawing.Point(0, 1);
 			this.tabSGK.Name = "tabSGK";
 			this.tabSGK.SelectedIndex = 0;
@@ -145,11 +146,33 @@ namespace SGK509
 			this.tabSerialPort.Padding = new System.Windows.Forms.Padding(3);
 			this.tabSerialPort.Size = new System.Drawing.Size(800, 519);
 			this.tabSerialPort.TabIndex = 0;
-			this.tabSerialPort.Text = "COM-порт";
+			this.tabSerialPort.Text = "Протокол данных";
 			this.tabSerialPort.UseVisualStyleBackColor = true;
+			// 
+			// radioButton2
+			// 
+			this.radioButton2.Location = new System.Drawing.Point(281, 5);
+			this.radioButton2.Name = "radioButton2";
+			this.radioButton2.Size = new System.Drawing.Size(104, 24);
+			this.radioButton2.TabIndex = 4;
+			this.radioButton2.TabStop = true;
+			this.radioButton2.Text = "Modbus TCP";
+			this.radioButton2.UseVisualStyleBackColor = true;
+			// 
+			// radioButton1
+			// 
+			this.radioButton1.Location = new System.Drawing.Point(91, 6);
+			this.radioButton1.Name = "radioButton1";
+			this.radioButton1.Size = new System.Drawing.Size(104, 24);
+			this.radioButton1.TabIndex = 0;
+			this.radioButton1.TabStop = true;
+			this.radioButton1.Text = "Modbus RTU";
+			this.radioButton1.UseVisualStyleBackColor = true;
+			this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
 			// 
 			// groupBox2
 			// 
+			this.groupBox2.Enabled = false;
 			this.groupBox2.Location = new System.Drawing.Point(281, 32);
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(266, 477);
@@ -159,6 +182,7 @@ namespace SGK509
 			// 
 			// groupRTU
 			// 
+			this.groupRTU.Enabled = false;
 			this.groupRTU.Location = new System.Drawing.Point(8, 32);
 			this.groupRTU.Name = "groupRTU";
 			this.groupRTU.Size = new System.Drawing.Size(267, 481);
@@ -186,26 +210,6 @@ namespace SGK509
 			this.tabDB.TabIndex = 2;
 			this.tabDB.Text = "База Данных";
 			this.tabDB.UseVisualStyleBackColor = true;
-			// 
-			// radioButton1
-			// 
-			this.radioButton1.Location = new System.Drawing.Point(91, 6);
-			this.radioButton1.Name = "radioButton1";
-			this.radioButton1.Size = new System.Drawing.Size(104, 24);
-			this.radioButton1.TabIndex = 0;
-			this.radioButton1.TabStop = true;
-			this.radioButton1.Text = "Modbus RTU";
-			this.radioButton1.UseVisualStyleBackColor = true;
-			// 
-			// radioButton2
-			// 
-			this.radioButton2.Location = new System.Drawing.Point(281, 5);
-			this.radioButton2.Name = "radioButton2";
-			this.radioButton2.Size = new System.Drawing.Size(104, 24);
-			this.radioButton2.TabIndex = 4;
-			this.radioButton2.TabStop = true;
-			this.radioButton2.Text = "Modbus TCP";
-			this.radioButton2.UseVisualStyleBackColor = true;
 			// 
 			// MainForm
 			// 

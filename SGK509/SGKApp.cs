@@ -202,6 +202,10 @@ namespace SGK509
                 btnStart.Enabled = true;
             }
 		}
+		void radioButton1_CheckedChanged(object sender, EventArgs e)
+		{
+			// TODO: Implement radioButton1_CheckedChanged
+		}
         #endregion
         
         
