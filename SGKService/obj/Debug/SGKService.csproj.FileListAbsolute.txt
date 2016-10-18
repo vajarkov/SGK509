@@ -1,6 +1,0 @@
-C:\Users\Technical department\Documents\SharpDevelop Projects\SGK509\SGKService\bin\Debug\SGKService.exe.config
-C:\Users\Technical department\Documents\SharpDevelop Projects\SGK509\SGKService\bin\Debug\SGKService.exe
-C:\Users\Technical department\Documents\SharpDevelop Projects\SGK509\SGKService\bin\Debug\SGKService.pdb
-C:\Users\Technical department\Documents\SharpDevelop Projects\SGK509\SGKService\obj\Debug\SGKService.csprojResolveAssemblyReference.cache
-C:\Users\Technical department\Documents\SharpDevelop Projects\SGK509\SGKService\obj\Debug\SGKService.exe
-C:\Users\Technical department\Documents\SharpDevelop Projects\SGK509\SGKService\obj\Debug\SGKService.pdb

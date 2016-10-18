@@ -7,20 +7,22 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
-using System.ComponentModel;
-using System.Text;
-using System.Collections.Generic;
-using System.Drawing;
+//using System.ComponentModel;
+//using System.Text;
+//using System.Collections.Generic;
+//using System.Drawing;
 using System.Windows.Forms;
-using SGK509;
+//using SGK509;
 using SGKService;
 using System.Configuration;
 using System.ServiceProcess;
 using System.Configuration.Install;
 using System.Diagnostics;
-using System.Collections.Specialized;
+//using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.IO.Ports;
-
+using System.Data;
+using System.Data.Sql;
 
 
 namespace SGK509
@@ -44,18 +46,10 @@ namespace SGK509
 			InitializeComponent();
 			CheckService(serviceName);					// Проверка существования службы
 			ConfigurationInit();						// Инициализация конфигурации
+			fillRTU();
 			// Заполнение протоколов передачи
 			//ComboBoxInit(cbProtocol, new string[] {"Modbus RTU", "Modbus TCP"}, "Protocol");
-			// Заполнение доступных портов
-			//ComboBoxInit(cbPort, SerialPort.GetPortNames(), "PortName");
-            // Заполнение скорости передачи
-			//ComboBoxInit(cbBaudRate, new string[] { "1200", "2400", "4800", "9600", "19200", "38400", "57600", "115200", "230400" }, "BaudRate");
-            // Заполнение четности портов
-			//ComboBoxInit(cbParity, Enum.GetNames(typeof (Parity)), "Parity");
-            // Заполнение Стоп-Битов
-			//ComboBoxInit(cbStopBit, Enum.GetNames(typeof (StopBits)), "StopBits");
-			// Заполнение Битов Данных
-			//ComboBoxInit(cbDataBits, new string[] { "4", "5", "6", "7", "8", }, "DataBits");
+			
 		}
 		#endregion
 		
@@ -202,14 +196,91 @@ namespace SGK509
                 btnStart.Enabled = true;
             }
 		}
-		void radioButton1_CheckedChanged(object sender, EventArgs e)
+		#endregion
+		
+		#region Заполнение данных для Modbus RTU
+        void fillRTU()
+        {
+        	// Заполнение доступных портов
+			ComboBoxInit(cbPort, SerialPort.GetPortNames(), "PortName");
+            // Заполнение скорости передачи
+			ComboBoxInit(cbBaudRate, new string[] { "1200", "2400", "4800", "9600", "19200", "38400", "57600", "115200", "230400" }, "BaudRate");
+            // Заполнение четности портов
+			ComboBoxInit(cbParity, Enum.GetNames(typeof (Parity)), "Parity");
+            // Заполнение Стоп-Битов
+			ComboBoxInit(cbStopBit, Enum.GetNames(typeof (StopBits)), "StopBits");
+			// Заполнение Битов Данных
+			ComboBoxInit(cbDataBits, new string[] { "4", "5", "6", "7", "8", }, "DataBits");
+			// Заполнение типов Базы данных
+			ComboBoxInit(cbDBType, new string[] {"MS SQL Server", "Oracle", "PostgreSQL", "MySQL"}, "DB");
+        }
+        #endregion
+        
+        #region Выбор протокола Modbus TCP
+		void radioTCP_CheckedChanged(object sender, EventArgs e)
 		{
-			// TODO: Implement radioButton1_CheckedChanged
+			groupRTU.Enabled = false;
+			groupTCP.Enabled = true;
 		}
         #endregion
         
+        #region Выбор протокола Modbus RTU
+		void radioRTU_CheckedChanged(object sender, EventArgs e)
+		{
+			groupRTU.Enabled = true;
+			groupTCP.Enabled = false;
+		}
+		#endregion
+		
+		#region Выбор типа базы дынных
+		void GetDataSources(object sender, MouseEventArgs e)
+		{
+			MessageBox.Show(cbDBType.SelectedItem.ToString());
+			switch (cbDBType.SelectedItem.ToString())
+			{
+				case "MS SQL Server":
+					MsSQLConnect();
+					break;
+				case "Oracle":
+					//OracleConnect();
+					break;
+				case "PosgreSQL":
+					//PostgreSQLConnect();
+					break;
+				case "MySQL":
+					//MySQLConnect();
+					break;
+				default:
+					break;
+			}
+		}
+        #endregion
         
+        #region Считывание доступных баз данных для MS SQL Server
+        void MsSQLConnect()
+        {
+        	SqlDataSourceEnumerator instance = SqlDataSourceEnumerator.Instance;
+			System.Data.DataTable tableDataSources = new System.Data.DataTable();
+			if (tableDataSources.Rows.Count == 0)
+			{
+				tableDataSources = instance.GetDataSources();
+				
+				List<string> listServers =  new List<string>();
+				
+				foreach(DataRow rowServer in tableDataSources.Rows)
+				{
+					if(String.IsNullOrEmpty(rowServer["InstanceName"].ToString()))
+						listServers.Add(rowServer["ServerName"].ToString());
+					else 
+						listServers.Add(rowServer["ServerName"] + "\\" + rowServer["InstanceName"]);
+				}
+				
+				cbDataSource.DataSource = listServers;
+				cbDataSource.Enabled = true;
+				tbUserName.Text = string;
+			}
         
-        
+        }
+		#endregion
 	}
 }
