@@ -97,6 +97,7 @@ namespace SGK509
 		private System.Windows.Forms.BindingSource bindParameter;
 		private System.Windows.Forms.BindingSource bindDiscrete;
 		private System.Windows.Forms.BindingSource bindUnit;
+		private System.Windows.Forms.Button btnDictSave;
 		
 	
 		/// <summary>
@@ -186,6 +187,7 @@ namespace SGK509
 			this.dataGridViewComboBoxColumn3 = new System.Windows.Forms.DataGridViewComboBoxColumn();
 			this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.tabDict = new System.Windows.Forms.TabPage();
+			this.btnDictSave = new System.Windows.Forms.Button();
 			this.label20 = new System.Windows.Forms.Label();
 			this.label19 = new System.Windows.Forms.Label();
 			this.label18 = new System.Windows.Forms.Label();
@@ -868,6 +870,7 @@ namespace SGK509
 			// 
 			// tabDict
 			// 
+			this.tabDict.Controls.Add(this.btnDictSave);
 			this.tabDict.Controls.Add(this.label20);
 			this.tabDict.Controls.Add(this.label19);
 			this.tabDict.Controls.Add(this.label18);
@@ -887,6 +890,16 @@ namespace SGK509
 			this.tabDict.TabIndex = 5;
 			this.tabDict.Text = "Справочники";
 			this.tabDict.UseVisualStyleBackColor = true;
+			// 
+			// btnDictSave
+			// 
+			this.btnDictSave.Location = new System.Drawing.Point(701, 6);
+			this.btnDictSave.Name = "btnDictSave";
+			this.btnDictSave.Size = new System.Drawing.Size(75, 39);
+			this.btnDictSave.TabIndex = 12;
+			this.btnDictSave.Text = "Сохранить";
+			this.btnDictSave.UseVisualStyleBackColor = true;
+			this.btnDictSave.Click += new System.EventHandler(this.btnDictSave_Click);
 			// 
 			// label20
 			// 
@@ -937,7 +950,6 @@ namespace SGK509
 			this.UnitGrid.Name = "UnitGrid";
 			this.UnitGrid.Size = new System.Drawing.Size(170, 150);
 			this.UnitGrid.TabIndex = 6;
-			this.UnitGrid.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.UpdateDict);
 			// 
 			// DiscGrid
 			// 
@@ -948,7 +960,6 @@ namespace SGK509
 			this.DiscGrid.Name = "DiscGrid";
 			this.DiscGrid.Size = new System.Drawing.Size(176, 150);
 			this.DiscGrid.TabIndex = 5;
-			this.DiscGrid.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.UpdateDict);
 			// 
 			// GasGrid
 			// 
@@ -959,7 +970,6 @@ namespace SGK509
 			this.GasGrid.Name = "GasGrid";
 			this.GasGrid.Size = new System.Drawing.Size(170, 150);
 			this.GasGrid.TabIndex = 4;
-			this.GasGrid.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.UpdateDict);
 			// 
 			// ParamGrid
 			// 
@@ -970,7 +980,6 @@ namespace SGK509
 			this.ParamGrid.Name = "ParamGrid";
 			this.ParamGrid.Size = new System.Drawing.Size(182, 150);
 			this.ParamGrid.TabIndex = 3;
-			this.ParamGrid.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.UpdateDict);
 			// 
 			// UltramatGrid
 			// 
@@ -981,7 +990,6 @@ namespace SGK509
 			this.UltramatGrid.Name = "UltramatGrid";
 			this.UltramatGrid.Size = new System.Drawing.Size(176, 150);
 			this.UltramatGrid.TabIndex = 2;
-			this.UltramatGrid.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.UpdateDict);
 			// 
 			// ChannelGrid
 			// 
@@ -992,7 +1000,6 @@ namespace SGK509
 			this.ChannelGrid.Name = "ChannelGrid";
 			this.ChannelGrid.Size = new System.Drawing.Size(182, 150);
 			this.ChannelGrid.TabIndex = 1;
-			this.ChannelGrid.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.UpdateDict);
 			// 
 			// label15
 			// 

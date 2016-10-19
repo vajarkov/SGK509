@@ -43,6 +43,13 @@ namespace SGK509
 		private AppSettingsSection SerialPortSection;  									// Переменная для конфигурации порта
 		private EventLog events = new EventLog();										// Переменная для записи событий
 		private const string serviceName = "SGKService";								// Переменная для имени службы
+		private DataSet dsChannels = new DataSet();												// Переменная для обновления справочника Точек отбора
+		private DataSet dsUltramat = new DataSet();												// Переменная для обновления справочника Ultramat
+		private DataSet dsUnits = new DataSet();												// Переменная для обновления справочника Единиц измерения
+		private DataSet dsGases = new DataSet();												// Переменная для обновления справочника Точек отбора
+		private DataSet dsDiscretes = new DataSet();											// Переменная для обновления справочника Точек отбора
+		private DataSet dsParameters = new DataSet();											// Переменная для обновления справочника Точек отбора
+		
 		
 		#region Конструктор для приложения
 		public MainForm()
@@ -349,12 +356,12 @@ namespace SGK509
 						GetParameters((DataGridViewComboBoxColumn)DiscreteGrid.Columns[1], "dictChannels");
 						GetParameters((DataGridViewComboBoxColumn)DiscreteGrid.Columns[2], "dictUltramat");
 						GetParameters((DataGridViewComboBoxColumn)DiscreteGrid.Columns[3], "dictDiscretes");
-						GetData(ChannelGrid, bindChannel, "dictChannels");
-						GetData(UltramatGrid, bindUltramat, "dictUltramat");
-						GetData(GasGrid, bindGas, "dictGases");
-						GetData(ParamGrid, bindParameter, "dictParameters");
-						GetData(DiscGrid,bindDiscrete,"dictDiscretes");
-						GetData(UnitGrid,bindUnit,"dictUnits");
+						GetData(ChannelGrid, dsChannels, "dictChannels");
+						GetData(UltramatGrid, dsUltramat, "dictUltramat");
+						GetData(GasGrid, dsGases, "dictGases");
+						GetData(ParamGrid, dsParameters, "dictParameters");
+						GetData(DiscGrid, dsDiscretes,"dictDiscretes");
+						GetData(UnitGrid, dsUnits,"dictUnits");
 						
 						
 					}
@@ -458,7 +465,7 @@ namespace SGK509
 		
 		
 		#region Заполнение справочников из БД
-		void GetData(DataGridView dvgItem, BindingSource bindItem, string tblItem)
+		void GetData(DataGridView dvgItem, DataSet ds, string tblItem)
 		{
 			builder.DataSource = cbDataSource.SelectedItem.ToString();
 			builder.InitialCatalog = cbDBName.SelectedItem.ToString();
@@ -468,23 +475,39 @@ namespace SGK509
 			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
 			{
 				SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM " + tblItem, connection);
-				DataTable table = new DataTable();
-				adapter.Fill(table);
-				bindItem.DataSource = table;
-				dvgItem.DataSource = bindItem;
+				//DataTable table = new DataTable();
+				adapter.Fill(ds);
+				dvgItem.DataSource = ds.Tables[0];
 			}
 		}
 		#endregion
 		
-		private void UpdateDict(object sender, DataGridViewCellEventArgs e)
+		#region Обновление справочников в БД
+		private void UpdateDict(DataGridView dvgItem, DataSet ds, string tblItem)
 		{
-			DataGridView dgv = (DataGridView)sender;
-			BindingSource bs = (BindingSource) dgv.DataSource;
-			bs.EndEdit();
-			DataTable dt = (DataTable)bs.DataSource;
-			DataTable changedTable = dt.GetChanges();
-			MessageBox.Show(changedTable.Rows.Count.ToString());
-			//DataTable
+			builder.DataSource = cbDataSource.SelectedItem.ToString();
+			builder.InitialCatalog = cbDBName.SelectedItem.ToString();
+			builder.UserID = tbUserName.Text;
+			builder.Password = tbPassword.Text;
+			
+			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+			{
+				SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM " + tblItem, connection);
+				SqlCommandBuilder build = new SqlCommandBuilder(adapter);
+				//DataTable table = new DataTable();
+				adapter.Update(ds.Tables[0]);
+				//dvgItem.DataSource = table;
+			}
 		}
+		void btnDictSave_Click(object sender, EventArgs e)
+		{
+			UpdateDict(ChannelGrid, dsChannels, "dictChannels");
+			UpdateDict(UltramatGrid, dsUltramat, "dictUltramat");
+			UpdateDict(GasGrid, dsGases, "dictGases");
+			UpdateDict(ParamGrid, dsParameters, "dictParameters");
+			UpdateDict(DiscGrid,dsDiscretes,"dictDiscretes");
+			UpdateDict(UnitGrid,dsUnits,"dictUnits");
+		}
+		#endregion
 	}
 }
