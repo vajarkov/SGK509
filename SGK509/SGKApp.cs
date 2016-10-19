@@ -36,13 +36,13 @@ namespace SGK509
 	/// </summary>
 	public partial class MainForm : Form
 	{
-		private SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
-		private System.Configuration.Configuration appConfig;// Переменная для чтения конфигурации
-		private ServiceController controller;   		// Переменная для работы со службой
-		private SlaveSettings slaveSettings;    		// Переменная для конфигурации файлов с данными
-		private AppSettingsSection SerialPortSection;  	// Переменная для конфигурации порта
-		private EventLog events = new EventLog();		// Переменная для записи событий
-		private const string serviceName = "SGKService";// Переменная для имени службы
+		private SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(); 	// Переменная для строки соединения
+		private System.Configuration.Configuration appConfig;							// Переменная для чтения конфигурации
+		private ServiceController controller;   										// Переменная для работы со службой
+		private SlaveSettings slaveSettings;    										// Переменная для конфигурации файлов с данными
+		private AppSettingsSection SerialPortSection;  									// Переменная для конфигурации порта
+		private EventLog events = new EventLog();										// Переменная для записи событий
+		private const string serviceName = "SGKService";								// Переменная для имени службы
 		
 		#region Конструктор для приложения
 		public MainForm()
@@ -349,6 +349,13 @@ namespace SGK509
 						GetParameters((DataGridViewComboBoxColumn)DiscreteGrid.Columns[1], "dictChannels");
 						GetParameters((DataGridViewComboBoxColumn)DiscreteGrid.Columns[2], "dictUltramat");
 						GetParameters((DataGridViewComboBoxColumn)DiscreteGrid.Columns[3], "dictDiscretes");
+						GetData(ChannelGrid, bindChannel, "dictChannels");
+						GetData(UltramatGrid, bindUltramat, "dictUltramat");
+						GetData(GasGrid, bindGas, "dictGases");
+						GetData(ParamGrid, bindParameter, "dictParameters");
+						GetData(DiscGrid,bindDiscrete,"dictDiscretes");
+						GetData(UnitGrid,bindUnit,"dictUnits");
+						
 						
 					}
 					else
@@ -373,6 +380,7 @@ namespace SGK509
 		
 	#endregion
 	
+		#region Заполнение ячеек таблиц конфигурации данными
 		void GetParameters(DataGridViewComboBoxColumn cbItem, string tableName)
 		{
 				
@@ -404,6 +412,7 @@ namespace SGK509
 				}
 			}
 		}
+		#endregion
 			
 		
 		
@@ -446,5 +455,36 @@ namespace SGK509
 			}
 		}
 		#endregion
+		
+		
+		#region Заполнение справочников из БД
+		void GetData(DataGridView dvgItem, BindingSource bindItem, string tblItem)
+		{
+			builder.DataSource = cbDataSource.SelectedItem.ToString();
+			builder.InitialCatalog = cbDBName.SelectedItem.ToString();
+			builder.UserID = tbUserName.Text;
+			builder.Password = tbPassword.Text;
+			
+			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+			{
+				SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM " + tblItem, connection);
+				DataTable table = new DataTable();
+				adapter.Fill(table);
+				bindItem.DataSource = table;
+				dvgItem.DataSource = bindItem;
+			}
+		}
+		#endregion
+		
+		private void UpdateDict(object sender, DataGridViewCellEventArgs e)
+		{
+			DataGridView dgv = (DataGridView)sender;
+			BindingSource bs = (BindingSource) dgv.DataSource;
+			bs.EndEdit();
+			DataTable dt = (DataTable)bs.DataSource;
+			DataTable changedTable = dt.GetChanges();
+			MessageBox.Show(changedTable.Rows.Count.ToString());
+			//DataTable
+		}
 	}
 }

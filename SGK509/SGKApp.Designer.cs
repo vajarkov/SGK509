@@ -78,6 +78,26 @@ namespace SGK509
 		private System.Windows.Forms.Button btnDescreteSave;
 		private System.Windows.Forms.Button btnDiscreteSave;
 		private System.Windows.Forms.Button btnAnalogSave;
+		private System.Windows.Forms.TabPage tabDict;
+		private System.Windows.Forms.Label label20;
+		private System.Windows.Forms.Label label19;
+		private System.Windows.Forms.Label label18;
+		private System.Windows.Forms.Label label17;
+		private System.Windows.Forms.Label label16;
+		private System.Windows.Forms.DataGridView UnitGrid;
+		private System.Windows.Forms.DataGridView DiscGrid;
+		private System.Windows.Forms.DataGridView GasGrid;
+		private System.Windows.Forms.DataGridView ParamGrid;
+		private System.Windows.Forms.DataGridView UltramatGrid;
+		private System.Windows.Forms.DataGridView ChannelGrid;
+		private System.Windows.Forms.Label label15;
+		private System.Windows.Forms.BindingSource bindChannel;
+		private System.Windows.Forms.BindingSource bindUltramat;
+		private System.Windows.Forms.BindingSource bindGas;
+		private System.Windows.Forms.BindingSource bindParameter;
+		private System.Windows.Forms.BindingSource bindDiscrete;
+		private System.Windows.Forms.BindingSource bindUnit;
+		
 	
 		/// <summary>
 		/// Disposes resources used by the form.
@@ -92,7 +112,7 @@ namespace SGK509
 			}
 			base.Dispose(disposing);
 		}
-
+		
 		/// <summary>
 		/// This method is required for Windows Forms designer support.
 		/// Do not change the method contents inside the source code editor. The Forms designer might
@@ -100,6 +120,7 @@ namespace SGK509
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			this.btnInstall = new System.Windows.Forms.Button();
 			this.btnDelete = new System.Windows.Forms.Button();
 			this.btnStart = new System.Windows.Forms.Button();
@@ -164,6 +185,25 @@ namespace SGK509
 			this.dataGridViewComboBoxColumn2 = new System.Windows.Forms.DataGridViewComboBoxColumn();
 			this.dataGridViewComboBoxColumn3 = new System.Windows.Forms.DataGridViewComboBoxColumn();
 			this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.tabDict = new System.Windows.Forms.TabPage();
+			this.label20 = new System.Windows.Forms.Label();
+			this.label19 = new System.Windows.Forms.Label();
+			this.label18 = new System.Windows.Forms.Label();
+			this.label17 = new System.Windows.Forms.Label();
+			this.label16 = new System.Windows.Forms.Label();
+			this.UnitGrid = new System.Windows.Forms.DataGridView();
+			this.DiscGrid = new System.Windows.Forms.DataGridView();
+			this.GasGrid = new System.Windows.Forms.DataGridView();
+			this.ParamGrid = new System.Windows.Forms.DataGridView();
+			this.UltramatGrid = new System.Windows.Forms.DataGridView();
+			this.ChannelGrid = new System.Windows.Forms.DataGridView();
+			this.label15 = new System.Windows.Forms.Label();
+			this.bindChannel = new System.Windows.Forms.BindingSource(this.components);
+			this.bindUltramat = new System.Windows.Forms.BindingSource(this.components);
+			this.bindGas = new System.Windows.Forms.BindingSource(this.components);
+			this.bindParameter = new System.Windows.Forms.BindingSource(this.components);
+			this.bindDiscrete = new System.Windows.Forms.BindingSource(this.components);
+			this.bindUnit = new System.Windows.Forms.BindingSource(this.components);
 			this.tabSGK.SuspendLayout();
 			this.tabSerialPort.SuspendLayout();
 			this.groupTCP.SuspendLayout();
@@ -173,6 +213,19 @@ namespace SGK509
 			((System.ComponentModel.ISupportInitialize)(this.AnalogGrid)).BeginInit();
 			this.tabDiscrete.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.DiscreteGrid)).BeginInit();
+			this.tabDict.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.UnitGrid)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.DiscGrid)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.GasGrid)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.ParamGrid)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.UltramatGrid)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.ChannelGrid)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.bindChannel)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.bindUltramat)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.bindGas)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.bindParameter)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.bindDiscrete)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.bindUnit)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// btnInstall
@@ -229,8 +282,9 @@ namespace SGK509
 			this.tabSGK.Controls.Add(this.tabDB);
 			this.tabSGK.Controls.Add(this.tabAnalog);
 			this.tabSGK.Controls.Add(this.tabDiscrete);
+			this.tabSGK.Controls.Add(this.tabDict);
 			this.tabSGK.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.tabSGK.Location = new System.Drawing.Point(0, 1);
+			this.tabSGK.Location = new System.Drawing.Point(12, 12);
 			this.tabSGK.Name = "tabSGK";
 			this.tabSGK.SelectedIndex = 0;
 			this.tabSGK.Size = new System.Drawing.Size(808, 545);
@@ -812,6 +866,142 @@ namespace SGK509
 			this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
 			this.dataGridViewTextBoxColumn2.Width = 96;
 			// 
+			// tabDict
+			// 
+			this.tabDict.Controls.Add(this.label20);
+			this.tabDict.Controls.Add(this.label19);
+			this.tabDict.Controls.Add(this.label18);
+			this.tabDict.Controls.Add(this.label17);
+			this.tabDict.Controls.Add(this.label16);
+			this.tabDict.Controls.Add(this.UnitGrid);
+			this.tabDict.Controls.Add(this.DiscGrid);
+			this.tabDict.Controls.Add(this.GasGrid);
+			this.tabDict.Controls.Add(this.ParamGrid);
+			this.tabDict.Controls.Add(this.UltramatGrid);
+			this.tabDict.Controls.Add(this.ChannelGrid);
+			this.tabDict.Controls.Add(this.label15);
+			this.tabDict.Location = new System.Drawing.Point(4, 22);
+			this.tabDict.Name = "tabDict";
+			this.tabDict.Padding = new System.Windows.Forms.Padding(3);
+			this.tabDict.Size = new System.Drawing.Size(800, 519);
+			this.tabDict.TabIndex = 5;
+			this.tabDict.Text = "Справочники";
+			this.tabDict.UseVisualStyleBackColor = true;
+			// 
+			// label20
+			// 
+			this.label20.Location = new System.Drawing.Point(397, 205);
+			this.label20.Name = "label20";
+			this.label20.Size = new System.Drawing.Size(121, 23);
+			this.label20.TabIndex = 11;
+			this.label20.Text = "Единицы измерения";
+			// 
+			// label19
+			// 
+			this.label19.Location = new System.Drawing.Point(215, 205);
+			this.label19.Name = "label19";
+			this.label19.Size = new System.Drawing.Size(129, 23);
+			this.label19.TabIndex = 10;
+			this.label19.Text = "Дискретные сигналы";
+			// 
+			// label18
+			// 
+			this.label18.Location = new System.Drawing.Point(27, 205);
+			this.label18.Name = "label18";
+			this.label18.Size = new System.Drawing.Size(100, 23);
+			this.label18.TabIndex = 9;
+			this.label18.Text = "Параметры";
+			// 
+			// label17
+			// 
+			this.label17.Location = new System.Drawing.Point(397, 13);
+			this.label17.Name = "label17";
+			this.label17.Size = new System.Drawing.Size(100, 23);
+			this.label17.TabIndex = 8;
+			this.label17.Text = "Газы";
+			// 
+			// label16
+			// 
+			this.label16.Location = new System.Drawing.Point(215, 13);
+			this.label16.Name = "label16";
+			this.label16.Size = new System.Drawing.Size(100, 23);
+			this.label16.TabIndex = 7;
+			this.label16.Text = "Ultramat";
+			// 
+			// UnitGrid
+			// 
+			this.UnitGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+			this.UnitGrid.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+			this.UnitGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.UnitGrid.Location = new System.Drawing.Point(397, 231);
+			this.UnitGrid.Name = "UnitGrid";
+			this.UnitGrid.Size = new System.Drawing.Size(170, 150);
+			this.UnitGrid.TabIndex = 6;
+			this.UnitGrid.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.UpdateDict);
+			// 
+			// DiscGrid
+			// 
+			this.DiscGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+			this.DiscGrid.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+			this.DiscGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.DiscGrid.Location = new System.Drawing.Point(215, 231);
+			this.DiscGrid.Name = "DiscGrid";
+			this.DiscGrid.Size = new System.Drawing.Size(176, 150);
+			this.DiscGrid.TabIndex = 5;
+			this.DiscGrid.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.UpdateDict);
+			// 
+			// GasGrid
+			// 
+			this.GasGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+			this.GasGrid.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+			this.GasGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.GasGrid.Location = new System.Drawing.Point(397, 39);
+			this.GasGrid.Name = "GasGrid";
+			this.GasGrid.Size = new System.Drawing.Size(170, 150);
+			this.GasGrid.TabIndex = 4;
+			this.GasGrid.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.UpdateDict);
+			// 
+			// ParamGrid
+			// 
+			this.ParamGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+			this.ParamGrid.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+			this.ParamGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.ParamGrid.Location = new System.Drawing.Point(27, 231);
+			this.ParamGrid.Name = "ParamGrid";
+			this.ParamGrid.Size = new System.Drawing.Size(182, 150);
+			this.ParamGrid.TabIndex = 3;
+			this.ParamGrid.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.UpdateDict);
+			// 
+			// UltramatGrid
+			// 
+			this.UltramatGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+			this.UltramatGrid.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+			this.UltramatGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.UltramatGrid.Location = new System.Drawing.Point(215, 39);
+			this.UltramatGrid.Name = "UltramatGrid";
+			this.UltramatGrid.Size = new System.Drawing.Size(176, 150);
+			this.UltramatGrid.TabIndex = 2;
+			this.UltramatGrid.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.UpdateDict);
+			// 
+			// ChannelGrid
+			// 
+			this.ChannelGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+			this.ChannelGrid.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+			this.ChannelGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.ChannelGrid.Location = new System.Drawing.Point(27, 39);
+			this.ChannelGrid.Name = "ChannelGrid";
+			this.ChannelGrid.Size = new System.Drawing.Size(182, 150);
+			this.ChannelGrid.TabIndex = 1;
+			this.ChannelGrid.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.UpdateDict);
+			// 
+			// label15
+			// 
+			this.label15.Location = new System.Drawing.Point(27, 13);
+			this.label15.Name = "label15";
+			this.label15.Size = new System.Drawing.Size(100, 23);
+			this.label15.TabIndex = 0;
+			this.label15.Text = "Точки отбора";
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -835,9 +1025,24 @@ namespace SGK509
 			((System.ComponentModel.ISupportInitialize)(this.AnalogGrid)).EndInit();
 			this.tabDiscrete.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.DiscreteGrid)).EndInit();
+			this.tabDict.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.UnitGrid)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.DiscGrid)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.GasGrid)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.ParamGrid)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.UltramatGrid)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.ChannelGrid)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.bindChannel)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.bindUltramat)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.bindGas)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.bindParameter)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.bindDiscrete)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.bindUnit)).EndInit();
 			this.ResumeLayout(false);
 
 		}
+
+		
 
 		}
 	}
