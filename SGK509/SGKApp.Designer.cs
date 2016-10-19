@@ -66,7 +66,6 @@ namespace SGK509
 		private System.Windows.Forms.DataGridViewComboBoxColumn UltramatColumn1;
 		private System.Windows.Forms.DataGridViewComboBoxColumn GasColumn;
 		private System.Windows.Forms.DataGridViewComboBoxColumn UnitColumn;
-		private System.Windows.Forms.Button btnDiscreteSave;
 		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
 		private System.Windows.Forms.DataGridViewComboBoxColumn dataGridViewComboBoxColumn1;
 		private System.Windows.Forms.DataGridViewComboBoxColumn dataGridViewComboBoxColumn2;
@@ -76,8 +75,29 @@ namespace SGK509
 		private System.Windows.Forms.Button btnChannelSave;
 		private System.Windows.Forms.TabPage tabDiscrete;
 		private System.Windows.Forms.DataGridView DiscreteGrid;
-		
+		private System.Windows.Forms.Button btnDescreteSave;
+		private System.Windows.Forms.Button btnDiscreteSave;
+		private System.Windows.Forms.Button btnAnalogSave;
 	
+		/// <summary>
+		/// Disposes resources used by the form.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing) {
+				if (components != null) {
+					components.Dispose();
+				}
+			}
+			base.Dispose(disposing);
+		}
+
+		/// <summary>
+		/// This method is required for Windows Forms designer support.
+		/// Do not change the method contents inside the source code editor. The Forms designer might
+		/// not be able to load this method if it was changed manually.
+		/// </summary>
 		private void InitializeComponent()
 		{
 			this.btnInstall = new System.Windows.Forms.Button();
@@ -125,6 +145,8 @@ namespace SGK509
 			this.label11 = new System.Windows.Forms.Label();
 			this.label10 = new System.Windows.Forms.Label();
 			this.tabAnalog = new System.Windows.Forms.TabPage();
+			this.btnAnalogSave = new System.Windows.Forms.Button();
+			this.btnChannelSave = new System.Windows.Forms.Button();
 			this.AnalogGrid = new System.Windows.Forms.DataGridView();
 			this.id = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.ChannelColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
@@ -133,10 +155,10 @@ namespace SGK509
 			this.GasColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
 			this.UnitColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
 			this.AddressColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.btnChannelSave = new System.Windows.Forms.Button();
 			this.tabDiscrete = new System.Windows.Forms.TabPage();
-			this.DiscreteGrid = new System.Windows.Forms.DataGridView();
+			this.btnDescreteSave = new System.Windows.Forms.Button();
 			this.btnDiscreteSave = new System.Windows.Forms.Button();
+			this.DiscreteGrid = new System.Windows.Forms.DataGridView();
 			this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewComboBoxColumn1 = new System.Windows.Forms.DataGridViewComboBoxColumn();
 			this.dataGridViewComboBoxColumn2 = new System.Windows.Forms.DataGridViewComboBoxColumn();
@@ -213,7 +235,7 @@ namespace SGK509
 			this.tabSGK.SelectedIndex = 0;
 			this.tabSGK.Size = new System.Drawing.Size(808, 545);
 			this.tabSGK.SizeMode = System.Windows.Forms.TabSizeMode.FillToRight;
-			this.tabSGK.TabIndex = 1;
+			this.tabSGK.TabIndex = 0;
 			// 
 			// tabData
 			// 
@@ -604,6 +626,7 @@ namespace SGK509
 			// 
 			// tabAnalog
 			// 
+			this.tabAnalog.Controls.Add(this.btnAnalogSave);
 			this.tabAnalog.Controls.Add(this.btnChannelSave);
 			this.tabAnalog.Controls.Add(this.AnalogGrid);
 			this.tabAnalog.Location = new System.Drawing.Point(4, 22);
@@ -613,6 +636,24 @@ namespace SGK509
 			this.tabAnalog.TabIndex = 3;
 			this.tabAnalog.Text = "Аналоговые сигналы";
 			this.tabAnalog.UseVisualStyleBackColor = true;
+			// 
+			// btnAnalogSave
+			// 
+			this.btnAnalogSave.Location = new System.Drawing.Point(613, 6);
+			this.btnAnalogSave.Name = "btnAnalogSave";
+			this.btnAnalogSave.Size = new System.Drawing.Size(75, 38);
+			this.btnAnalogSave.TabIndex = 0;
+			this.btnAnalogSave.Text = "Сохранить";
+			this.btnAnalogSave.UseVisualStyleBackColor = true;
+			// 
+			// btnChannelSave
+			// 
+			this.btnChannelSave.Location = new System.Drawing.Point(713, 6);
+			this.btnChannelSave.Name = "btnChannelSave";
+			this.btnChannelSave.Size = new System.Drawing.Size(75, 38);
+			this.btnChannelSave.TabIndex = 1;
+			this.btnChannelSave.Text = "Сохранить";
+			this.btnChannelSave.UseVisualStyleBackColor = true;
 			// 
 			// AnalogGrid
 			// 
@@ -632,7 +673,7 @@ namespace SGK509
 			this.AnalogGrid.Location = new System.Drawing.Point(3, 3);
 			this.AnalogGrid.Name = "AnalogGrid";
 			this.AnalogGrid.Size = new System.Drawing.Size(794, 513);
-			this.AnalogGrid.TabIndex = 0;
+			this.AnalogGrid.TabIndex = 2;
 			this.AnalogGrid.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.AutoIncriment);
 			// 
 			// id
@@ -685,17 +726,9 @@ namespace SGK509
 			this.AddressColumn.Name = "AddressColumn";
 			this.AddressColumn.Width = 96;
 			// 
-			// btnChannelSave
-			// 
-			this.btnChannelSave.Location = new System.Drawing.Point(713, 6);
-			this.btnChannelSave.Name = "btnChannelSave";
-			this.btnChannelSave.Size = new System.Drawing.Size(75, 38);
-			this.btnChannelSave.TabIndex = 1;
-			this.btnChannelSave.Text = "Сохранить";
-			this.btnChannelSave.UseVisualStyleBackColor = true;
-			// 
 			// tabDiscrete
 			// 
+			this.tabDiscrete.Controls.Add(this.btnDescreteSave);
 			this.tabDiscrete.Controls.Add(this.btnDiscreteSave);
 			this.tabDiscrete.Controls.Add(this.DiscreteGrid);
 			this.tabDiscrete.Location = new System.Drawing.Point(4, 22);
@@ -705,6 +738,24 @@ namespace SGK509
 			this.tabDiscrete.TabIndex = 4;
 			this.tabDiscrete.Text = "Дискретные сигналы";
 			this.tabDiscrete.UseVisualStyleBackColor = true;
+			// 
+			// btnDescreteSave
+			// 
+			this.btnDescreteSave.Location = new System.Drawing.Point(613, 6);
+			this.btnDescreteSave.Name = "btnDescreteSave";
+			this.btnDescreteSave.Size = new System.Drawing.Size(75, 38);
+			this.btnDescreteSave.TabIndex = 3;
+			this.btnDescreteSave.Text = "Сохранить";
+			this.btnDescreteSave.UseVisualStyleBackColor = true;
+			// 
+			// btnDiscreteSave
+			// 
+			this.btnDiscreteSave.Location = new System.Drawing.Point(713, 6);
+			this.btnDiscreteSave.Name = "btnDiscreteSave";
+			this.btnDiscreteSave.Size = new System.Drawing.Size(75, 38);
+			this.btnDiscreteSave.TabIndex = 2;
+			this.btnDiscreteSave.Text = "Сохранить";
+			this.btnDiscreteSave.UseVisualStyleBackColor = true;
 			// 
 			// DiscreteGrid
 			// 
@@ -725,29 +776,20 @@ namespace SGK509
 			this.DiscreteGrid.TabIndex = 1;
 			this.DiscreteGrid.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.AutoIncriment);
 			// 
-			// btnDiscreteSave
-			// 
-			this.btnDiscreteSave.Location = new System.Drawing.Point(713, 6);
-			this.btnDiscreteSave.Name = "btnDiscreteSave";
-			this.btnDiscreteSave.Size = new System.Drawing.Size(75, 38);
-			this.btnDiscreteSave.TabIndex = 2;
-			this.btnDiscreteSave.Text = "Сохранить";
-			this.btnDiscreteSave.UseVisualStyleBackColor = true;
-			// 
 			// dataGridViewTextBoxColumn1
 			// 
 			this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.dataGridViewTextBoxColumn1.HeaderText = "№ Канала";
 			this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
 			this.dataGridViewTextBoxColumn1.ReadOnly = true;
-			this.dataGridViewTextBoxColumn1.Width = 83;
+			this.dataGridViewTextBoxColumn1.Width = 77;
 			// 
 			// dataGridViewComboBoxColumn1
 			// 
 			this.dataGridViewComboBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.dataGridViewComboBoxColumn1.HeaderText = "Точки отбора";
 			this.dataGridViewComboBoxColumn1.Name = "dataGridViewComboBoxColumn1";
-			this.dataGridViewComboBoxColumn1.Width = 81;
+			this.dataGridViewComboBoxColumn1.Width = 73;
 			// 
 			// dataGridViewComboBoxColumn2
 			// 
@@ -796,5 +838,7 @@ namespace SGK509
 			this.ResumeLayout(false);
 
 		}
+
+		}
 	}
-}
+

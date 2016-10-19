@@ -346,7 +346,9 @@ namespace SGK509
 						GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[3], "dictParameters");
 						GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[4], "dictGases");
 						GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[5], "dictUnits");
-						//GetParameters((DataGridViewComboBoxColumn)DiscreteGrid.Columns[5], "dictUnits");
+						GetParameters((DataGridViewComboBoxColumn)DiscreteGrid.Columns[1], "dictChannels");
+						GetParameters((DataGridViewComboBoxColumn)DiscreteGrid.Columns[2], "dictUltramat");
+						GetParameters((DataGridViewComboBoxColumn)DiscreteGrid.Columns[3], "dictDiscretes");
 						
 					}
 					else
