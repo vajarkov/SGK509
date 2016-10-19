@@ -36,7 +36,7 @@ namespace SGK509
 	/// </summary>
 	public partial class MainForm : Form
 	{
-		
+		private SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
 		private System.Configuration.Configuration appConfig;// Переменная для чтения конфигурации
 		private ServiceController controller;   		// Переменная для работы со службой
 		private SlaveSettings slaveSettings;    		// Переменная для конфигурации файлов с данными
@@ -78,6 +78,7 @@ namespace SGK509
 		}
 		#endregion
 		
+	#region Работа со службой
 		#region Расстановка действий при установленной службе
 		private void CheckService(string svcName)
 		{
@@ -201,7 +202,9 @@ namespace SGK509
 			}
 		}
 		#endregion
-		
+	#endregion
+	
+	#region Работа с протоколом Modbus
 		#region Заполнение данных для Modbus RTU
 		void fillRTU()
 		{
@@ -235,7 +238,10 @@ namespace SGK509
 			groupTCP.Enabled = false;
 		}
 		#endregion
-		
+	#endregion
+	
+	#region Работа с БД
+	
 		#region Выбор типа базы дынных
 		void GetDataSources(object sender, MouseEventArgs e)
 		{
@@ -333,8 +339,15 @@ namespace SGK509
 				case "MS SQL Server":
 					if(MsSQLTest())
 					{
+						//AnalogGrid.Columns[0]
+						GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[1], "dictChannels");
+						GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[2], "dictUltramat");
 						MessageBox.Show("Связь есть");
-						//ComboBoxInit();
+						GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[3], "dictParameters");
+						GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[4], "dictGases");
+						GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[5], "dictUnits");
+						//GetParameters((DataGridViewComboBoxColumn)DiscreteGrid.Columns[5], "dictUnits");
+						
 					}
 					else
 					{
@@ -356,29 +369,45 @@ namespace SGK509
 		}
 		#endregion
 		
-		string[] GetParameters()
+	#endregion
+	
+		void GetParameters(DataGridViewComboBoxColumn cbItem, string tableName)
 		{
-			/*
-			SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
+				
 			builder.DataSource = cbDataSource.SelectedItem.ToString();
 			builder.InitialCatalog = cbDBName.SelectedItem.ToString();
 			builder.UserID = tbUserName.Text;
 			builder.Password = tbPassword.Text;
+						
 			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
 			{
 				try
 				{
-					SqlDataAdapter dataAdapter = new SqlDataAdapter("select * from dictParameters",connection);
-					//command.Exe
+					connection.Open();
+					
+					using (SqlCommand command = new SqlCommand("SELECT id, name from " + tableName, connection))
+					{
+						SqlDataAdapter adapter = new SqlDataAdapter();
+						adapter.SelectCommand = command;
+						DataTable table = new DataTable();
+						table.Locale = System.Globalization.CultureInfo.InvariantCulture;
+						adapter.Fill(table);
+						cbItem.DataSource = table;
+						cbItem.DisplayMember = "name";
+						cbItem.ValueMember = "id";
+					}                                         
 				}
-			}ca*/
-			return new string[] {};
+				catch (Exception e){
+					MessageBox.Show(e.Message);
+				}
+			}
 		}
+			
+		
 		
 		#region Проверка связи с MSSQL
 		bool MsSQLTest()
 		{
-			SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
 			builder.DataSource = cbDataSource.SelectedItem.ToString();
 			builder.InitialCatalog = cbDBName.SelectedItem.ToString();
 			builder.UserID = tbUserName.Text;
@@ -397,6 +426,22 @@ namespace SGK509
 				}
 			}
 			
+		}
+		#endregion
+		
+		#region Автоматическая нумерация строк для сигналов 
+		void AutoIncriment(object sender, DataGridViewRowsAddedEventArgs e)
+		{
+			DataGridView dgv = (DataGridView)sender;
+			if(e.RowCount==1)
+			{
+				dgv.Rows[e.RowIndex-1].Cells[0].Value = e.RowIndex;
+			}
+			else
+			{
+				for(int i = e.RowIndex-1; i < (e.RowIndex + e.RowCount); i++)
+					dgv.Rows[i].Cells[0].Value = i;
+			}
 		}
 		#endregion
 	}

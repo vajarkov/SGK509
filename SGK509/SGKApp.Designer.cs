@@ -37,7 +37,6 @@ namespace SGK509
 		private System.Windows.Forms.ComboBox cbParity;
 		private System.Windows.Forms.ComboBox cbBaudRate;
 		private System.Windows.Forms.ComboBox cbPort;
-		private System.Windows.Forms.TabPage tabChannels;
 		private System.Windows.Forms.TextBox tbModbusTCPSlave;
 		private System.Windows.Forms.TextBox tbModbusTCPPort;
 		private System.Windows.Forms.TextBox tbModbusTCPAddress;
@@ -59,32 +58,26 @@ namespace SGK509
 		private System.Windows.Forms.Button btnDBType;
 		private System.Windows.Forms.Button btnTest;
 		private System.Windows.Forms.Button btnDBList;
-		private System.Windows.Forms.DataGridView dataGridView1;
+		private System.Windows.Forms.DataGridView AnalogGrid;
 		private System.Windows.Forms.DataGridViewTextBoxColumn id;
 		private System.Windows.Forms.DataGridViewComboBoxColumn ComponentColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn AddressColumn;
+		private System.Windows.Forms.DataGridViewComboBoxColumn ChannelColumn;
+		private System.Windows.Forms.DataGridViewComboBoxColumn UltramatColumn1;
+		private System.Windows.Forms.DataGridViewComboBoxColumn GasColumn;
+		private System.Windows.Forms.DataGridViewComboBoxColumn UnitColumn;
+		private System.Windows.Forms.Button btnDiscreteSave;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+		private System.Windows.Forms.DataGridViewComboBoxColumn dataGridViewComboBoxColumn1;
+		private System.Windows.Forms.DataGridViewComboBoxColumn dataGridViewComboBoxColumn2;
+		private System.Windows.Forms.DataGridViewComboBoxColumn dataGridViewComboBoxColumn3;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+		private System.Windows.Forms.TabPage tabAnalog;
+		private System.Windows.Forms.Button btnChannelSave;
+		private System.Windows.Forms.TabPage tabDiscrete;
+		private System.Windows.Forms.DataGridView DiscreteGrid;
 		
 	
-		
-		/// <summary>
-		/// Disposes resources used by the form.
-		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing) {
-				if (components != null) {
-					components.Dispose();
-				}
-			}
-			base.Dispose(disposing);
-		}
-		
-		/// <summary>
-		/// This method is required for Windows Forms designer support.
-		/// Do not change the method contents inside the source code editor. The Forms designer might
-		/// not be able to load this method if it was changed manually.
-		/// </summary>
 		private void InitializeComponent()
 		{
 			this.btnInstall = new System.Windows.Forms.Button();
@@ -131,18 +124,33 @@ namespace SGK509
 			this.label12 = new System.Windows.Forms.Label();
 			this.label11 = new System.Windows.Forms.Label();
 			this.label10 = new System.Windows.Forms.Label();
-			this.tabChannels = new System.Windows.Forms.TabPage();
-			this.dataGridView1 = new System.Windows.Forms.DataGridView();
+			this.tabAnalog = new System.Windows.Forms.TabPage();
+			this.AnalogGrid = new System.Windows.Forms.DataGridView();
 			this.id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.ChannelColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
+			this.UltramatColumn1 = new System.Windows.Forms.DataGridViewComboBoxColumn();
 			this.ComponentColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
+			this.GasColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
+			this.UnitColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
 			this.AddressColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.btnChannelSave = new System.Windows.Forms.Button();
+			this.tabDiscrete = new System.Windows.Forms.TabPage();
+			this.DiscreteGrid = new System.Windows.Forms.DataGridView();
+			this.btnDiscreteSave = new System.Windows.Forms.Button();
+			this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.dataGridViewComboBoxColumn1 = new System.Windows.Forms.DataGridViewComboBoxColumn();
+			this.dataGridViewComboBoxColumn2 = new System.Windows.Forms.DataGridViewComboBoxColumn();
+			this.dataGridViewComboBoxColumn3 = new System.Windows.Forms.DataGridViewComboBoxColumn();
+			this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.tabSGK.SuspendLayout();
 			this.tabSerialPort.SuspendLayout();
 			this.groupTCP.SuspendLayout();
 			this.groupRTU.SuspendLayout();
 			this.tabDB.SuspendLayout();
-			this.tabChannels.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+			this.tabAnalog.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.AnalogGrid)).BeginInit();
+			this.tabDiscrete.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.DiscreteGrid)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// btnInstall
@@ -197,7 +205,8 @@ namespace SGK509
 			this.tabSGK.Controls.Add(this.tabData);
 			this.tabSGK.Controls.Add(this.tabSerialPort);
 			this.tabSGK.Controls.Add(this.tabDB);
-			this.tabSGK.Controls.Add(this.tabChannels);
+			this.tabSGK.Controls.Add(this.tabAnalog);
+			this.tabSGK.Controls.Add(this.tabDiscrete);
 			this.tabSGK.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.tabSGK.Location = new System.Drawing.Point(0, 1);
 			this.tabSGK.Name = "tabSGK";
@@ -593,30 +602,38 @@ namespace SGK509
 			this.label10.Text = "Тип Базы данных";
 			this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
-			// tabChannels
+			// tabAnalog
 			// 
-			this.tabChannels.Controls.Add(this.dataGridView1);
-			this.tabChannels.Location = new System.Drawing.Point(4, 22);
-			this.tabChannels.Name = "tabChannels";
-			this.tabChannels.Padding = new System.Windows.Forms.Padding(3);
-			this.tabChannels.Size = new System.Drawing.Size(800, 519);
-			this.tabChannels.TabIndex = 3;
-			this.tabChannels.Text = "Каналы";
-			this.tabChannels.UseVisualStyleBackColor = true;
+			this.tabAnalog.Controls.Add(this.btnChannelSave);
+			this.tabAnalog.Controls.Add(this.AnalogGrid);
+			this.tabAnalog.Location = new System.Drawing.Point(4, 22);
+			this.tabAnalog.Name = "tabAnalog";
+			this.tabAnalog.Padding = new System.Windows.Forms.Padding(3);
+			this.tabAnalog.Size = new System.Drawing.Size(800, 519);
+			this.tabAnalog.TabIndex = 3;
+			this.tabAnalog.Text = "Аналоговые сигналы";
+			this.tabAnalog.UseVisualStyleBackColor = true;
 			// 
-			// dataGridView1
+			// AnalogGrid
 			// 
-			this.dataGridView1.AllowUserToOrderColumns = true;
-			this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+			this.AnalogGrid.AllowUserToOrderColumns = true;
+			this.AnalogGrid.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleVertical;
+			this.AnalogGrid.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.Disable;
+			this.AnalogGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.AnalogGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
 			this.id,
+			this.ChannelColumn,
+			this.UltramatColumn1,
 			this.ComponentColumn,
+			this.GasColumn,
+			this.UnitColumn,
 			this.AddressColumn});
-			this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.dataGridView1.Location = new System.Drawing.Point(3, 3);
-			this.dataGridView1.Name = "dataGridView1";
-			this.dataGridView1.Size = new System.Drawing.Size(794, 513);
-			this.dataGridView1.TabIndex = 1;
+			this.AnalogGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.AnalogGrid.Location = new System.Drawing.Point(3, 3);
+			this.AnalogGrid.Name = "AnalogGrid";
+			this.AnalogGrid.Size = new System.Drawing.Size(794, 513);
+			this.AnalogGrid.TabIndex = 0;
+			this.AnalogGrid.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.AutoIncriment);
 			// 
 			// id
 			// 
@@ -624,14 +641,42 @@ namespace SGK509
 			this.id.HeaderText = "№ Канала";
 			this.id.Name = "id";
 			this.id.ReadOnly = true;
-			this.id.Width = 83;
+			this.id.Width = 77;
+			// 
+			// ChannelColumn
+			// 
+			this.ChannelColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.ChannelColumn.HeaderText = "Точки отбора";
+			this.ChannelColumn.Name = "ChannelColumn";
+			this.ChannelColumn.Width = 73;
+			// 
+			// UltramatColumn1
+			// 
+			this.UltramatColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.UltramatColumn1.HeaderText = "Ultramat";
+			this.UltramatColumn1.Name = "UltramatColumn1";
+			this.UltramatColumn1.Width = 52;
 			// 
 			// ComponentColumn
 			// 
 			this.ComponentColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.ComponentColumn.HeaderText = "Компонент";
+			this.ComponentColumn.HeaderText = "Параметр";
 			this.ComponentColumn.Name = "ComponentColumn";
-			this.ComponentColumn.Width = 69;
+			this.ComponentColumn.Width = 64;
+			// 
+			// GasColumn
+			// 
+			this.GasColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.GasColumn.HeaderText = "Газ";
+			this.GasColumn.Name = "GasColumn";
+			this.GasColumn.Width = 38;
+			// 
+			// UnitColumn
+			// 
+			this.UnitColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.UnitColumn.HeaderText = "Единицы измерения";
+			this.UnitColumn.Name = "UnitColumn";
+			this.UnitColumn.Width = 105;
 			// 
 			// AddressColumn
 			// 
@@ -639,6 +684,91 @@ namespace SGK509
 			this.AddressColumn.HeaderText = "Адрес Modbus";
 			this.AddressColumn.Name = "AddressColumn";
 			this.AddressColumn.Width = 96;
+			// 
+			// btnChannelSave
+			// 
+			this.btnChannelSave.Location = new System.Drawing.Point(713, 6);
+			this.btnChannelSave.Name = "btnChannelSave";
+			this.btnChannelSave.Size = new System.Drawing.Size(75, 38);
+			this.btnChannelSave.TabIndex = 1;
+			this.btnChannelSave.Text = "Сохранить";
+			this.btnChannelSave.UseVisualStyleBackColor = true;
+			// 
+			// tabDiscrete
+			// 
+			this.tabDiscrete.Controls.Add(this.btnDiscreteSave);
+			this.tabDiscrete.Controls.Add(this.DiscreteGrid);
+			this.tabDiscrete.Location = new System.Drawing.Point(4, 22);
+			this.tabDiscrete.Name = "tabDiscrete";
+			this.tabDiscrete.Padding = new System.Windows.Forms.Padding(3);
+			this.tabDiscrete.Size = new System.Drawing.Size(800, 519);
+			this.tabDiscrete.TabIndex = 4;
+			this.tabDiscrete.Text = "Дискретные сигналы";
+			this.tabDiscrete.UseVisualStyleBackColor = true;
+			// 
+			// DiscreteGrid
+			// 
+			this.DiscreteGrid.AllowUserToOrderColumns = true;
+			this.DiscreteGrid.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleVertical;
+			this.DiscreteGrid.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.Disable;
+			this.DiscreteGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.DiscreteGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+			this.dataGridViewTextBoxColumn1,
+			this.dataGridViewComboBoxColumn1,
+			this.dataGridViewComboBoxColumn2,
+			this.dataGridViewComboBoxColumn3,
+			this.dataGridViewTextBoxColumn2});
+			this.DiscreteGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.DiscreteGrid.Location = new System.Drawing.Point(3, 3);
+			this.DiscreteGrid.Name = "DiscreteGrid";
+			this.DiscreteGrid.Size = new System.Drawing.Size(794, 513);
+			this.DiscreteGrid.TabIndex = 1;
+			this.DiscreteGrid.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.AutoIncriment);
+			// 
+			// btnDiscreteSave
+			// 
+			this.btnDiscreteSave.Location = new System.Drawing.Point(713, 6);
+			this.btnDiscreteSave.Name = "btnDiscreteSave";
+			this.btnDiscreteSave.Size = new System.Drawing.Size(75, 38);
+			this.btnDiscreteSave.TabIndex = 2;
+			this.btnDiscreteSave.Text = "Сохранить";
+			this.btnDiscreteSave.UseVisualStyleBackColor = true;
+			// 
+			// dataGridViewTextBoxColumn1
+			// 
+			this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.dataGridViewTextBoxColumn1.HeaderText = "№ Канала";
+			this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+			this.dataGridViewTextBoxColumn1.ReadOnly = true;
+			this.dataGridViewTextBoxColumn1.Width = 83;
+			// 
+			// dataGridViewComboBoxColumn1
+			// 
+			this.dataGridViewComboBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.dataGridViewComboBoxColumn1.HeaderText = "Точки отбора";
+			this.dataGridViewComboBoxColumn1.Name = "dataGridViewComboBoxColumn1";
+			this.dataGridViewComboBoxColumn1.Width = 81;
+			// 
+			// dataGridViewComboBoxColumn2
+			// 
+			this.dataGridViewComboBoxColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.dataGridViewComboBoxColumn2.HeaderText = "Ultramat";
+			this.dataGridViewComboBoxColumn2.Name = "dataGridViewComboBoxColumn2";
+			this.dataGridViewComboBoxColumn2.Width = 52;
+			// 
+			// dataGridViewComboBoxColumn3
+			// 
+			this.dataGridViewComboBoxColumn3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.dataGridViewComboBoxColumn3.HeaderText = "Параметр";
+			this.dataGridViewComboBoxColumn3.Name = "dataGridViewComboBoxColumn3";
+			this.dataGridViewComboBoxColumn3.Width = 64;
+			// 
+			// dataGridViewTextBoxColumn2
+			// 
+			this.dataGridViewTextBoxColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.dataGridViewTextBoxColumn2.HeaderText = "Адрес Modbus";
+			this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+			this.dataGridViewTextBoxColumn2.Width = 96;
 			// 
 			// MainForm
 			// 
@@ -659,8 +789,10 @@ namespace SGK509
 			this.groupRTU.ResumeLayout(false);
 			this.tabDB.ResumeLayout(false);
 			this.tabDB.PerformLayout();
-			this.tabChannels.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+			this.tabAnalog.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.AnalogGrid)).EndInit();
+			this.tabDiscrete.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.DiscreteGrid)).EndInit();
 			this.ResumeLayout(false);
 
 		}
