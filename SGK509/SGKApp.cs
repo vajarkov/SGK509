@@ -39,8 +39,8 @@ namespace SGK509
 		private SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(); 	// Переменная для строки соединения
 		private System.Configuration.Configuration appConfig;							// Переменная для чтения конфигурации
 		private ServiceController controller;   										// Переменная для работы со службой
-		private SlaveSettings slaveSettings;    										// Переменная для конфигурации файлов с данными
-		private AppSettingsSection SerialPortSection;  									// Переменная для конфигурации порта
+		private ModbusSettings modbusSettings = new ModbusSettings();    										// Переменная для конфигурации файлов с данными
+		private AppSettingsSection dbSettings;  									// Переменная для конфигурации порта
 		private EventLog events = new EventLog();										// Переменная для записи событий
 		private const string serviceName = "SGKService";								// Переменная для имени службы
 		private DataSet dsChannels = new DataSet();												// Переменная для обновления справочника Точек отбора
@@ -79,8 +79,8 @@ namespace SGK509
 		private void ConfigurationInit()
 		{
 			appConfig = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-			slaveSettings = (SlaveSettings)appConfig.GetSection("SlaveSettings");
-			SerialPortSection = (AppSettingsSection)appConfig.GetSection("SerialPortSettings");
+			modbusSettings = (ModbusSettings)appConfig.GetSection("ModbusSettings");	
+			dbSettings = (AppSettingsSection)appConfig.GetSection("DBSettings");
 
 		}
 		#endregion
@@ -346,10 +346,9 @@ namespace SGK509
 				case "MS SQL Server":
 					if(MsSQLTest())
 					{
-						//AnalogGrid.Columns[0]
+												MessageBox.Show("Связь есть");
 						GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[1], "dictChannels");
 						GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[2], "dictUltramat");
-						MessageBox.Show("Связь есть");
 						GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[3], "dictParameters");
 						GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[4], "dictGases");
 						GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[5], "dictUnits");
@@ -499,6 +498,9 @@ namespace SGK509
 				//dvgItem.DataSource = table;
 			}
 		}
+		#endregion
+		
+		#region Сохранение изиенений в справочниках
 		void btnDictSave_Click(object sender, EventArgs e)
 		{
 			UpdateDict(ChannelGrid, dsChannels, "dictChannels");
@@ -507,6 +509,32 @@ namespace SGK509
 			UpdateDict(ParamGrid, dsParameters, "dictParameters");
 			UpdateDict(DiscGrid,dsDiscretes,"dictDiscretes");
 			UpdateDict(UnitGrid,dsUnits,"dictUnits");
+		}
+		#endregion
+		
+		#region Сохранение конфигурации
+		void btnProtocolSave_Click(object sender, EventArgs e)
+		{
+			/*
+			if(radioRTU.Checked)
+			{
+				modbusSettings.ModbusParams["Type"].value = "RTU";
+				modbusSettings.ModbusParams["COM"] = cbPort.SelectedText;
+				modbusSettings.ModbusParams["BaudRate"] = cbBaudRate.SelectedText;
+				modbusSettings.ModbusParams["Parity"] = cbParity.SelectedText;
+				modbusSettings.ModbusParams["StopBits"] = cbStopBit.SelectedText;
+				modbusSettings.ModbusParams["DataBits"] = cbDataBits.SelectedText;
+				modbusSettings.ModbusParams["SlaveId"] = tbModbusRTUSlave.Text;
+				
+			}
+			else if (radioTCP.Checked)
+			{
+				modbusSettings.ModbusParams["IP"] = tbModbusTCPAddress.Text;
+				modbusSettings.ModbusParams["TCPPort"] = tbModbusTCPPort.Text;
+				modbusSettings.ModbusParams["SlaveId"] = tbModbusTCPSlave.Text;
+			}
+			appConfig.Save();
+			*/
 		}
 		#endregion
 	}

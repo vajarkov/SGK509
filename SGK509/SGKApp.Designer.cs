@@ -72,10 +72,8 @@ namespace SGK509
 		private System.Windows.Forms.DataGridViewComboBoxColumn dataGridViewComboBoxColumn3;
 		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
 		private System.Windows.Forms.TabPage tabAnalog;
-		private System.Windows.Forms.Button btnChannelSave;
 		private System.Windows.Forms.TabPage tabDiscrete;
 		private System.Windows.Forms.DataGridView DiscreteGrid;
-		private System.Windows.Forms.Button btnDescreteSave;
 		private System.Windows.Forms.Button btnDiscreteSave;
 		private System.Windows.Forms.Button btnAnalogSave;
 		private System.Windows.Forms.TabPage tabDict;
@@ -91,13 +89,9 @@ namespace SGK509
 		private System.Windows.Forms.DataGridView UltramatGrid;
 		private System.Windows.Forms.DataGridView ChannelGrid;
 		private System.Windows.Forms.Label label15;
-		private System.Windows.Forms.BindingSource bindChannel;
-		private System.Windows.Forms.BindingSource bindUltramat;
-		private System.Windows.Forms.BindingSource bindGas;
-		private System.Windows.Forms.BindingSource bindParameter;
-		private System.Windows.Forms.BindingSource bindDiscrete;
-		private System.Windows.Forms.BindingSource bindUnit;
 		private System.Windows.Forms.Button btnDictSave;
+		private System.Windows.Forms.TextBox tbModbusRTUSlave;
+		private System.Windows.Forms.Label label21;
 		
 	
 		/// <summary>
@@ -121,7 +115,6 @@ namespace SGK509
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
 			this.btnInstall = new System.Windows.Forms.Button();
 			this.btnDelete = new System.Windows.Forms.Button();
 			this.btnStart = new System.Windows.Forms.Button();
@@ -140,6 +133,8 @@ namespace SGK509
 			this.label8 = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
 			this.groupRTU = new System.Windows.Forms.GroupBox();
+			this.tbModbusRTUSlave = new System.Windows.Forms.TextBox();
+			this.label21 = new System.Windows.Forms.Label();
 			this.cbDataBits = new System.Windows.Forms.ComboBox();
 			this.cbStopBit = new System.Windows.Forms.ComboBox();
 			this.cbParity = new System.Windows.Forms.ComboBox();
@@ -168,7 +163,6 @@ namespace SGK509
 			this.label10 = new System.Windows.Forms.Label();
 			this.tabAnalog = new System.Windows.Forms.TabPage();
 			this.btnAnalogSave = new System.Windows.Forms.Button();
-			this.btnChannelSave = new System.Windows.Forms.Button();
 			this.AnalogGrid = new System.Windows.Forms.DataGridView();
 			this.id = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.ChannelColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
@@ -178,7 +172,6 @@ namespace SGK509
 			this.UnitColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
 			this.AddressColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.tabDiscrete = new System.Windows.Forms.TabPage();
-			this.btnDescreteSave = new System.Windows.Forms.Button();
 			this.btnDiscreteSave = new System.Windows.Forms.Button();
 			this.DiscreteGrid = new System.Windows.Forms.DataGridView();
 			this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -200,12 +193,6 @@ namespace SGK509
 			this.UltramatGrid = new System.Windows.Forms.DataGridView();
 			this.ChannelGrid = new System.Windows.Forms.DataGridView();
 			this.label15 = new System.Windows.Forms.Label();
-			this.bindChannel = new System.Windows.Forms.BindingSource(this.components);
-			this.bindUltramat = new System.Windows.Forms.BindingSource(this.components);
-			this.bindGas = new System.Windows.Forms.BindingSource(this.components);
-			this.bindParameter = new System.Windows.Forms.BindingSource(this.components);
-			this.bindDiscrete = new System.Windows.Forms.BindingSource(this.components);
-			this.bindUnit = new System.Windows.Forms.BindingSource(this.components);
 			this.tabSGK.SuspendLayout();
 			this.tabSerialPort.SuspendLayout();
 			this.groupTCP.SuspendLayout();
@@ -222,12 +209,6 @@ namespace SGK509
 			((System.ComponentModel.ISupportInitialize)(this.ParamGrid)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.UltramatGrid)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.ChannelGrid)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.bindChannel)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.bindUltramat)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.bindGas)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.bindParameter)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.bindDiscrete)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.bindUnit)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// btnInstall
@@ -321,12 +302,14 @@ namespace SGK509
 			// 
 			// btnProtocolSave
 			// 
-			this.btnProtocolSave.Location = new System.Drawing.Point(553, 32);
+			this.btnProtocolSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.btnProtocolSave.Location = new System.Drawing.Point(712, 6);
 			this.btnProtocolSave.Name = "btnProtocolSave";
-			this.btnProtocolSave.Size = new System.Drawing.Size(75, 23);
+			this.btnProtocolSave.Size = new System.Drawing.Size(75, 38);
 			this.btnProtocolSave.TabIndex = 5;
 			this.btnProtocolSave.Text = "Сохранить";
 			this.btnProtocolSave.UseVisualStyleBackColor = true;
+			this.btnProtocolSave.Click += new System.EventHandler(this.btnProtocolSave_Click);
 			// 
 			// radioTCP
 			// 
@@ -361,7 +344,7 @@ namespace SGK509
 			this.groupTCP.Enabled = false;
 			this.groupTCP.Location = new System.Drawing.Point(281, 32);
 			this.groupTCP.Name = "groupTCP";
-			this.groupTCP.Size = new System.Drawing.Size(266, 481);
+			this.groupTCP.Size = new System.Drawing.Size(266, 470);
 			this.groupTCP.TabIndex = 3;
 			this.groupTCP.TabStop = false;
 			this.groupTCP.Text = "Параметры Modbus TCP";
@@ -415,6 +398,8 @@ namespace SGK509
 			// 
 			// groupRTU
 			// 
+			this.groupRTU.Controls.Add(this.tbModbusRTUSlave);
+			this.groupRTU.Controls.Add(this.label21);
 			this.groupRTU.Controls.Add(this.cbDataBits);
 			this.groupRTU.Controls.Add(this.cbStopBit);
 			this.groupRTU.Controls.Add(this.cbParity);
@@ -428,10 +413,26 @@ namespace SGK509
 			this.groupRTU.Enabled = false;
 			this.groupRTU.Location = new System.Drawing.Point(8, 32);
 			this.groupRTU.Name = "groupRTU";
-			this.groupRTU.Size = new System.Drawing.Size(267, 481);
+			this.groupRTU.Size = new System.Drawing.Size(267, 470);
 			this.groupRTU.TabIndex = 2;
 			this.groupRTU.TabStop = false;
 			this.groupRTU.Text = "Параметры Modbus RTU";
+			// 
+			// tbModbusRTUSlave
+			// 
+			this.tbModbusRTUSlave.Location = new System.Drawing.Point(121, 136);
+			this.tbModbusRTUSlave.Name = "tbModbusRTUSlave";
+			this.tbModbusRTUSlave.Size = new System.Drawing.Size(121, 20);
+			this.tbModbusRTUSlave.TabIndex = 2;
+			this.tbModbusRTUSlave.Text = "0";
+			// 
+			// label21
+			// 
+			this.label21.Location = new System.Drawing.Point(15, 139);
+			this.label21.Name = "label21";
+			this.label21.Size = new System.Drawing.Size(100, 23);
+			this.label21.TabIndex = 6;
+			this.label21.Text = "Адрес устройства";
 			// 
 			// cbDataBits
 			// 
@@ -683,7 +684,6 @@ namespace SGK509
 			// tabAnalog
 			// 
 			this.tabAnalog.Controls.Add(this.btnAnalogSave);
-			this.tabAnalog.Controls.Add(this.btnChannelSave);
 			this.tabAnalog.Controls.Add(this.AnalogGrid);
 			this.tabAnalog.Location = new System.Drawing.Point(4, 22);
 			this.tabAnalog.Name = "tabAnalog";
@@ -695,21 +695,12 @@ namespace SGK509
 			// 
 			// btnAnalogSave
 			// 
-			this.btnAnalogSave.Location = new System.Drawing.Point(613, 6);
+			this.btnAnalogSave.Location = new System.Drawing.Point(712, 6);
 			this.btnAnalogSave.Name = "btnAnalogSave";
 			this.btnAnalogSave.Size = new System.Drawing.Size(75, 38);
 			this.btnAnalogSave.TabIndex = 0;
 			this.btnAnalogSave.Text = "Сохранить";
 			this.btnAnalogSave.UseVisualStyleBackColor = true;
-			// 
-			// btnChannelSave
-			// 
-			this.btnChannelSave.Location = new System.Drawing.Point(713, 6);
-			this.btnChannelSave.Name = "btnChannelSave";
-			this.btnChannelSave.Size = new System.Drawing.Size(75, 38);
-			this.btnChannelSave.TabIndex = 1;
-			this.btnChannelSave.Text = "Сохранить";
-			this.btnChannelSave.UseVisualStyleBackColor = true;
 			// 
 			// AnalogGrid
 			// 
@@ -784,7 +775,6 @@ namespace SGK509
 			// 
 			// tabDiscrete
 			// 
-			this.tabDiscrete.Controls.Add(this.btnDescreteSave);
 			this.tabDiscrete.Controls.Add(this.btnDiscreteSave);
 			this.tabDiscrete.Controls.Add(this.DiscreteGrid);
 			this.tabDiscrete.Location = new System.Drawing.Point(4, 22);
@@ -795,18 +785,9 @@ namespace SGK509
 			this.tabDiscrete.Text = "Дискретные сигналы";
 			this.tabDiscrete.UseVisualStyleBackColor = true;
 			// 
-			// btnDescreteSave
-			// 
-			this.btnDescreteSave.Location = new System.Drawing.Point(613, 6);
-			this.btnDescreteSave.Name = "btnDescreteSave";
-			this.btnDescreteSave.Size = new System.Drawing.Size(75, 38);
-			this.btnDescreteSave.TabIndex = 3;
-			this.btnDescreteSave.Text = "Сохранить";
-			this.btnDescreteSave.UseVisualStyleBackColor = true;
-			// 
 			// btnDiscreteSave
 			// 
-			this.btnDiscreteSave.Location = new System.Drawing.Point(713, 6);
+			this.btnDiscreteSave.Location = new System.Drawing.Point(712, 6);
 			this.btnDiscreteSave.Name = "btnDiscreteSave";
 			this.btnDiscreteSave.Size = new System.Drawing.Size(75, 38);
 			this.btnDiscreteSave.TabIndex = 2;
@@ -893,9 +874,9 @@ namespace SGK509
 			// 
 			// btnDictSave
 			// 
-			this.btnDictSave.Location = new System.Drawing.Point(701, 6);
+			this.btnDictSave.Location = new System.Drawing.Point(712, 6);
 			this.btnDictSave.Name = "btnDictSave";
-			this.btnDictSave.Size = new System.Drawing.Size(75, 39);
+			this.btnDictSave.Size = new System.Drawing.Size(75, 38);
 			this.btnDictSave.TabIndex = 12;
 			this.btnDictSave.Text = "Сохранить";
 			this.btnDictSave.UseVisualStyleBackColor = true;
@@ -1026,6 +1007,7 @@ namespace SGK509
 			this.groupTCP.ResumeLayout(false);
 			this.groupTCP.PerformLayout();
 			this.groupRTU.ResumeLayout(false);
+			this.groupRTU.PerformLayout();
 			this.tabDB.ResumeLayout(false);
 			this.tabDB.PerformLayout();
 			this.tabAnalog.ResumeLayout(false);
@@ -1039,12 +1021,6 @@ namespace SGK509
 			((System.ComponentModel.ISupportInitialize)(this.ParamGrid)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.UltramatGrid)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.ChannelGrid)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.bindChannel)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.bindUltramat)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.bindGas)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.bindParameter)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.bindDiscrete)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.bindUnit)).EndInit();
 			this.ResumeLayout(false);
 
 		}

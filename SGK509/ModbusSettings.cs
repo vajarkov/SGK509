@@ -11,21 +11,16 @@ using System.Configuration;
 
 namespace SGK509
 {
-	/// <summary>
-	/// Configuration section &lt;Class1&gt;
-	/// </summary>
-	/// <remarks>
-	/// Assign properties to your child class that has the attribute 
-	/// <c>[ConfigurationProperty]</c> to store said properties in the xml.
-	/// </remarks>
+	
 	public class ModbusSettings : ConfigurationSection
 	{
 		//System.Configuration.Configuration _Config;
 
-		[ConfigurationProperty("", IsDefaultCollection = true)]
+		[ConfigurationProperty("", IsDefaultCollection = true, IsRequired = false)]
 		public ModbusParamsSettings ModbusParams
 		{
 		 	get { return (ModbusParamsSettings) base[""]; }
+		 	set { base[""] = value; }
 		}
 	}
 	
