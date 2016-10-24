@@ -27,6 +27,7 @@ using Microsoft.SqlServer.Management;
 using Microsoft.SqlServer.Server;
 using Microsoft.SqlServer.Management.Smo;
 using System.Data.SqlClient;
+using System.Threading;
 
 
 namespace SGK509
@@ -58,9 +59,6 @@ namespace SGK509
 			CheckService(serviceName);					// Проверка существования службы
 			ConfigurationInit();						// Инициализация конфигурации
 			fillRTU();
-			// Заполнение протоколов передачи
-			//ComboBoxInit(cbProtocol, new string[] {"Modbus RTU", "Modbus TCP"}, "Protocol");
-			
 		}
 		#endregion
 		
@@ -71,17 +69,56 @@ namespace SGK509
 			{
 				cbItem.Items.Add(item);
 			}
-			//cbItem.SelectedItem = SerialPortSection.Settings[section].Value;
+			if ((!String.IsNullOrEmpty(section))&&(!String.IsNullOrEmpty(dbSettings.Settings[section].Value)))
+				cbItem.SelectedItem = dbSettings.Settings[section].Value;
 		}
 		#endregion
 
 		#region Конфигурация программы
 		private void ConfigurationInit()
 		{
+			// Чтение конфигурационного файла программы
 			appConfig = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-			modbusSettings = (ModbusSettings)appConfig.GetSection("ModbusSettings");	
+			// Считывание конфигурации БД
 			dbSettings = (AppSettingsSection)appConfig.GetSection("DBSettings");
+			
+			
+			// Заполнение типов Базы данных
+			ComboBoxInit(cbDBType, new string[] {"MS SQL Server", "Oracle", "PostgreSQL", "MySQL"}, "DBType");
+			
+			// Заполнение периода опроса
+			ComboBoxInit(cbPeriod, new string[] {"1 секунда", "5 секунд", "30 секунд", "1 минута", "5 минут"}, "DBPeriod");
 
+			
+			// Выбор источника данных БД из конфигурации, если он прописан
+			if (!String.IsNullOrEmpty(dbSettings.Settings["DBDataSource"].Value))
+			{
+				cbDataSource.Enabled = true;
+				Thread dataSourceThread = new Thread(new ThreadStart(GetDataSources));
+				//GetDataSources();
+				dataSourceThread.Start();
+				dataSourceThread.Join();
+				cbDataSource.Text = dbSettings.Settings["DBDataSource"].Value;
+			
+			}
+				
+			// Выбор БД из конфигурации, если он прописан
+			if (!String.IsNullOrEmpty(dbSettings.Settings["DBName"].Value))
+			{
+				cbDBName.Enabled = true;
+				Thread dbListThread = new Thread(new ThreadStart(GetDBList));
+				dbListThread.Start();
+				dbListThread.Join();
+				cbDBName.Text = dbSettings.Settings["DBName"].Value;
+			}
+				
+			// Заполнение пользователя из конфигурации, если он прописан
+			if (!String.IsNullOrEmpty(dbSettings.Settings["DBUser"].Value))
+				tbUserName.Text = dbSettings.Settings["DBUser"].Value;
+			
+			// Заполнение пароля из конфигурации, если он прописан
+			if (!String.IsNullOrEmpty(dbSettings.Settings["DBPassword"].Value))
+				tbPassword.Text = dbSettings.Settings["DBPassword"].Value;
 		}
 		#endregion
 		
@@ -216,17 +253,15 @@ namespace SGK509
 		void fillRTU()
 		{
 			// Заполнение доступных портов
-			ComboBoxInit(cbPort, SerialPort.GetPortNames(), "PortName");
+			ComboBoxInit(cbPort, SerialPort.GetPortNames(), "");
 			// Заполнение скорости передачи
-			ComboBoxInit(cbBaudRate, new string[] { "1200", "2400", "4800", "9600", "19200", "38400", "57600", "115200", "230400" }, "BaudRate");
+			ComboBoxInit(cbBaudRate, new string[] { "1200", "2400", "4800", "9600", "19200", "38400", "57600", "115200", "230400" }, "");
 			// Заполнение четности портов
-			ComboBoxInit(cbParity, Enum.GetNames(typeof (Parity)), "Parity");
+			ComboBoxInit(cbParity, Enum.GetNames(typeof (Parity)), "");
 			// Заполнение Стоп-Битов
-			ComboBoxInit(cbStopBit, Enum.GetNames(typeof (StopBits)), "StopBits");
+			ComboBoxInit(cbStopBit, Enum.GetNames(typeof (StopBits)), "");
 			// Заполнение Битов Данных
-			ComboBoxInit(cbDataBits, new string[] { "4", "5", "6", "7", "8", }, "DataBits");
-			// Заполнение типов Базы данных
-			ComboBoxInit(cbDBType, new string[] {"MS SQL Server", "Oracle", "PostgreSQL", "MySQL"}, "DB");
+			ComboBoxInit(cbDataBits, new string[] { "4", "5", "6", "7", "8", }, "");
 		}
 		#endregion
 		
@@ -250,7 +285,7 @@ namespace SGK509
 	#region Работа с БД
 	
 		#region Выбор типа базы дынных
-		void GetDataSources(object sender, MouseEventArgs e)
+		void GetDataSources()
 		{
 			//MessageBox.Show(cbDBType.SelectedItem.ToString());
 			switch (cbDBType.SelectedItem.ToString())
@@ -317,11 +352,19 @@ namespace SGK509
 		#endregion
 		
 		#region Получение списка БД
-		void GetDBList(object sender, EventArgs e)
+		void GetDBList()
 		{
+			cbDBName.Items.Clear();
 			var DBList = new Microsoft.SqlServer.Management.Smo.Server(cbDataSource.SelectedItem.ToString());
-			foreach(Microsoft.SqlServer.Management.Smo.Database db in DBList.Databases){
-				cbDBName.Items.Add(db.Name);
+			try
+			{
+				foreach(Microsoft.SqlServer.Management.Smo.Database db in DBList.Databases){
+					cbDBName.Items.Add(db.Name);
+				}
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.Message);
 			}
 			cbDBName.Enabled = true;
 		}
@@ -346,7 +389,7 @@ namespace SGK509
 				case "MS SQL Server":
 					if(MsSQLTest())
 					{
-												MessageBox.Show("Связь есть");
+						MessageBox.Show("Связь есть");
 						GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[1], "dictChannels");
 						GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[2], "dictUltramat");
 						GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[3], "dictParameters");
@@ -360,9 +403,7 @@ namespace SGK509
 						GetData(GasGrid, dsGases, "dictGases");
 						GetData(ParamGrid, dsParameters, "dictParameters");
 						GetData(DiscGrid, dsDiscretes,"dictDiscretes");
-						GetData(UnitGrid, dsUnits,"dictUnits");
-						
-						
+						GetData(UnitGrid, dsUnits,"dictUnits");						
 					}
 					else
 					{
@@ -420,7 +461,6 @@ namespace SGK509
 		}
 		#endregion
 			
-		
 		
 		#region Проверка связи с MSSQL
 		bool MsSQLTest()
@@ -535,6 +575,48 @@ namespace SGK509
 			}
 			appConfig.Save();
 			*/
+		}
+		#endregion
+		
+		
+		#region Сохранение конфигурации БД
+		void btnDBSave_Click(object sender, EventArgs e)
+		{
+			dbSettings.Settings["DBType"].Value = cbDBType.Text;
+			
+			dbSettings.Settings["DBDataSource"].Value = cbDataSource.Text;
+			
+			dbSettings.Settings["DBName"].Value = cbDBName.Text;
+			
+			dbSettings.Settings["DBUser"].Value = tbUserName.Text;
+			
+			dbSettings.Settings["DBPassword"].Value = tbPassword.Text;
+			
+			dbSettings.Settings["DBPeriod"].Value = cbPeriod.Text;
+			
+			try
+			{
+				appConfig.Save(ConfigurationSaveMode.Modified);
+				ConfigurationManager.RefreshSection("DBSettings");
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.Message);
+			}
+		}
+		#endregion
+		
+		#region Нажатие кнопки получения источников данных 
+		void btnDBType_Click(object sender, EventArgs e)
+		{
+			GetDataSources();
+		}
+		#endregion
+		
+		#region Нажатие кнопки получения списка БД
+		void btnDBList_Click(object sender, EventArgs e)
+		{
+			GetDBList();
 		}
 		#endregion
 	}

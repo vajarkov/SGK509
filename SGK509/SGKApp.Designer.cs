@@ -92,6 +92,8 @@ namespace SGK509
 		private System.Windows.Forms.Button btnDictSave;
 		private System.Windows.Forms.TextBox tbModbusRTUSlave;
 		private System.Windows.Forms.Label label21;
+		private System.Windows.Forms.ComboBox cbPeriod;
+		private System.Windows.Forms.Label label22;
 		
 	
 		/// <summary>
@@ -147,6 +149,8 @@ namespace SGK509
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.tabDB = new System.Windows.Forms.TabPage();
+			this.cbPeriod = new System.Windows.Forms.ComboBox();
+			this.label22 = new System.Windows.Forms.Label();
 			this.btnTest = new System.Windows.Forms.Button();
 			this.btnDBList = new System.Windows.Forms.Button();
 			this.btnDBType = new System.Windows.Forms.Button();
@@ -527,6 +531,8 @@ namespace SGK509
 			// 
 			// tabDB
 			// 
+			this.tabDB.Controls.Add(this.cbPeriod);
+			this.tabDB.Controls.Add(this.label22);
 			this.tabDB.Controls.Add(this.btnTest);
 			this.tabDB.Controls.Add(this.btnDBList);
 			this.tabDB.Controls.Add(this.btnDBType);
@@ -549,10 +555,27 @@ namespace SGK509
 			this.tabDB.Text = "База Данных";
 			this.tabDB.UseVisualStyleBackColor = true;
 			// 
+			// cbPeriod
+			// 
+			this.cbPeriod.FormattingEnabled = true;
+			this.cbPeriod.Location = new System.Drawing.Point(134, 196);
+			this.cbPeriod.Name = "cbPeriod";
+			this.cbPeriod.Size = new System.Drawing.Size(121, 21);
+			this.cbPeriod.TabIndex = 8;
+			// 
+			// label22
+			// 
+			this.label22.Location = new System.Drawing.Point(12, 196);
+			this.label22.Name = "label22";
+			this.label22.Size = new System.Drawing.Size(116, 23);
+			this.label22.TabIndex = 7;
+			this.label22.Text = "Период опроса";
+			this.label22.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
 			// btnTest
 			// 
 			this.btnTest.Enabled = false;
-			this.btnTest.Location = new System.Drawing.Point(12, 216);
+			this.btnTest.Location = new System.Drawing.Point(12, 241);
 			this.btnTest.Name = "btnTest";
 			this.btnTest.Size = new System.Drawing.Size(112, 32);
 			this.btnTest.TabIndex = 6;
@@ -569,7 +592,7 @@ namespace SGK509
 			this.btnDBList.TabIndex = 5;
 			this.btnDBList.Text = "Список доступных БД";
 			this.btnDBList.UseVisualStyleBackColor = true;
-			this.btnDBList.Click += new System.EventHandler(this.GetDBList);
+			this.btnDBList.Click += new System.EventHandler(this.btnDBList_Click);
 			// 
 			// btnDBType
 			// 
@@ -580,17 +603,18 @@ namespace SGK509
 			this.btnDBType.TabIndex = 5;
 			this.btnDBType.Text = "Список доступных серверов";
 			this.btnDBType.UseVisualStyleBackColor = true;
-			this.btnDBType.MouseClick += new System.Windows.Forms.MouseEventHandler(this.GetDataSources);
+			this.btnDBType.Click += new System.EventHandler(this.btnDBType_Click);
 			// 
 			// btnDBSave
 			// 
 			this.btnDBSave.Enabled = false;
-			this.btnDBSave.Location = new System.Drawing.Point(12, 254);
+			this.btnDBSave.Location = new System.Drawing.Point(12, 279);
 			this.btnDBSave.Name = "btnDBSave";
 			this.btnDBSave.Size = new System.Drawing.Size(112, 32);
 			this.btnDBSave.TabIndex = 4;
 			this.btnDBSave.Text = "Сохранить";
 			this.btnDBSave.UseVisualStyleBackColor = true;
+			this.btnDBSave.Click += new System.EventHandler(this.btnDBSave_Click);
 			// 
 			// cbDBName
 			// 
