@@ -40,7 +40,7 @@ namespace SGK509
 		private SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(); 	// Переменная для строки соединения
 		private System.Configuration.Configuration appConfig;							// Переменная для чтения конфигурации
 		private ServiceController controller;   										// Переменная для работы со службой
-		private ModbusSettings modbusSettings = new ModbusSettings();    										// Переменная для конфигурации файлов с данными
+		private AppSettingsSection modbusSettings;    										// Переменная для конфигурации файлов с данными
 		private AppSettingsSection dbSettings;  									// Переменная для конфигурации порта
 		private EventLog events = new EventLog();										// Переменная для записи событий
 		private const string serviceName = "SGKService";								// Переменная для имени службы
@@ -58,7 +58,6 @@ namespace SGK509
 			InitializeComponent();
 			CheckService(serviceName);					// Проверка существования службы
 			ConfigurationInit();						// Инициализация конфигурации
-			fillRTU();
 		}
 		#endregion
 		
@@ -81,14 +80,69 @@ namespace SGK509
 			appConfig = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 			// Считывание конфигурации БД
 			dbSettings = (AppSettingsSection)appConfig.GetSection("DBSettings");
+			// Считывание конфигурации Modbus
+			modbusSettings = (AppSettingsSection)appConfig.GetSection("ModbusSettings");
 			
+			#region Загрузка параметров для Modbus
+			// Заполнение конфигурационных 
+			fillRTU();
+			// Проверка есть ли данные
+			if (!String.IsNullOrEmpty(modbusSettings.Settings["MBType"].Value))
+			{
+				// Modbus RTU
+				if(modbusSettings.Settings["MBType"].Value == "RTU")
+				{
+					radioRTU.Checked = true;
+					// COM-порт
+					if(!String.IsNullOrEmpty(modbusSettings.Settings["MBSerialPort"].Value))
+						cbPort.Text = modbusSettings.Settings["MBSerialPort"].Value;
+					// Скорость
+					if(!String.IsNullOrEmpty(modbusSettings.Settings["MBBaudRate"].Value))
+						cbBaudRate.Text = modbusSettings.Settings["MBBaudRate"].Value;
+					// Четность
+					if(!String.IsNullOrEmpty(modbusSettings.Settings["MBParity"].Value))
+						cbParity.Text = modbusSettings.Settings["MBParity"].Value;
+					// Стоп-бит
+					if(!String.IsNullOrEmpty(modbusSettings.Settings["MBStopBit"].Value))
+						cbStopBit.Text = modbusSettings.Settings["MBStopBit"].Value;
+					// Биты данных
+					if(!String.IsNullOrEmpty(modbusSettings.Settings["MBDataBits"].Value))
+						cbDataBits.Text = modbusSettings.Settings["MBDataBits"].Value;
+					// Адрес устройства Modbus
+					if(!String.IsNullOrEmpty(modbusSettings.Settings["MBSlave"].Value))
+						tbModbusRTUSlave.Text = modbusSettings.Settings["MBSlave"].Value;
+				}
+				// Modbus TCP
+				else if (modbusSettings.Settings["MBType"].Value == "TCP")
+				{
+					radioTCP.Checked = true;
+					// IP адрес
+					if(!String.IsNullOrEmpty(modbusSettings.Settings["MBIPAddress"].Value))
+						tbModbusTCPAddress.Text = modbusSettings.Settings["MBIPAddress"].Value;
+					// TCP порт
+					if(!String.IsNullOrEmpty(modbusSettings.Settings["MBTCPPort"].Value))
+						tbModbusTCPPort.Text = modbusSettings.Settings["MBTCPPort"].Value;
+					// Адрес устройства Modbus
+					if(!String.IsNullOrEmpty(modbusSettings.Settings["MBSlave"].Value))
+						tbModbusTCPSlave.Text = modbusSettings.Settings["MBSlave"].Value;
+				}
+			}
+			#endregion
 			
+			#region Загрузка параметров БД 
 			// Заполнение типов Базы данных
 			ComboBoxInit(cbDBType, new string[] {"MS SQL Server", "Oracle", "PostgreSQL", "MySQL"}, "DBType");
 			
 			// Заполнение периода опроса
 			ComboBoxInit(cbPeriod, new string[] {"1 секунда", "5 секунд", "30 секунд", "1 минута", "5 минут"}, "DBPeriod");
 
+			// Заполнение пользователя из конфигурации, если он прописан
+			if (!String.IsNullOrEmpty(dbSettings.Settings["DBUser"].Value))
+				tbUserName.Text = dbSettings.Settings["DBUser"].Value;
+			
+			// Заполнение пароля из конфигурации, если он прописан
+			if (!String.IsNullOrEmpty(dbSettings.Settings["DBPassword"].Value))
+				tbPassword.Text = dbSettings.Settings["DBPassword"].Value;
 			
 			// Выбор источника данных БД из конфигурации, если он прописан
 			if (!String.IsNullOrEmpty(dbSettings.Settings["DBDataSource"].Value))
@@ -112,13 +166,8 @@ namespace SGK509
 				cbDBName.Text = dbSettings.Settings["DBName"].Value;
 			}
 				
-			// Заполнение пользователя из конфигурации, если он прописан
-			if (!String.IsNullOrEmpty(dbSettings.Settings["DBUser"].Value))
-				tbUserName.Text = dbSettings.Settings["DBUser"].Value;
 			
-			// Заполнение пароля из конфигурации, если он прописан
-			if (!String.IsNullOrEmpty(dbSettings.Settings["DBPassword"].Value))
-				tbPassword.Text = dbSettings.Settings["DBPassword"].Value;
+			#endregion
 		}
 		#endregion
 		
@@ -356,6 +405,9 @@ namespace SGK509
 		{
 			cbDBName.Items.Clear();
 			var DBList = new Microsoft.SqlServer.Management.Smo.Server(cbDataSource.SelectedItem.ToString());
+			DBList.ConnectionContext.LoginSecure = false;
+			DBList.ConnectionContext.Login = tbUserName.Text;
+			DBList.ConnectionContext.Password = tbPassword.Text;
 			try
 			{
 				foreach(Microsoft.SqlServer.Management.Smo.Database db in DBList.Databases){
@@ -390,20 +442,8 @@ namespace SGK509
 					if(MsSQLTest())
 					{
 						MessageBox.Show("Связь есть");
-						GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[1], "dictChannels");
-						GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[2], "dictUltramat");
-						GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[3], "dictParameters");
-						GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[4], "dictGases");
-						GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[5], "dictUnits");
-						GetParameters((DataGridViewComboBoxColumn)DiscreteGrid.Columns[1], "dictChannels");
-						GetParameters((DataGridViewComboBoxColumn)DiscreteGrid.Columns[2], "dictUltramat");
-						GetParameters((DataGridViewComboBoxColumn)DiscreteGrid.Columns[3], "dictDiscretes");
-						GetData(ChannelGrid, dsChannels, "dictChannels");
-						GetData(UltramatGrid, dsUltramat, "dictUltramat");
-						GetData(GasGrid, dsGases, "dictGases");
-						GetData(ParamGrid, dsParameters, "dictParameters");
-						GetData(DiscGrid, dsDiscretes,"dictDiscretes");
-						GetData(UnitGrid, dsUnits,"dictUnits");						
+						ReloadParameters();
+						ReloadData();
 					}
 					else
 					{
@@ -431,8 +471,8 @@ namespace SGK509
 		void GetParameters(DataGridViewComboBoxColumn cbItem, string tableName)
 		{
 				
-			builder.DataSource = cbDataSource.SelectedItem.ToString();
-			builder.InitialCatalog = cbDBName.SelectedItem.ToString();
+			builder.DataSource = cbDataSource.Text;
+			builder.InitialCatalog = cbDBName.Text;
 			builder.UserID = tbUserName.Text;
 			builder.Password = tbPassword.Text;
 						
@@ -460,13 +500,36 @@ namespace SGK509
 			}
 		}
 		#endregion
+		
+		void ReloadParameters()
+		{
+			GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[1], "dictChannels");
+			GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[2], "dictUltramat");
+			GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[3], "dictParameters");
+			GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[4], "dictGases");
+			GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[5], "dictUnits");
+			GetParameters((DataGridViewComboBoxColumn)DiscreteGrid.Columns[1], "dictChannels");
+			GetParameters((DataGridViewComboBoxColumn)DiscreteGrid.Columns[2], "dictUltramat");
+			GetParameters((DataGridViewComboBoxColumn)DiscreteGrid.Columns[3], "dictDiscretes");
+		}
+		
+		
+		void ReloadData()
+		{
 			
+			GetData(ChannelGrid, dsChannels, "dictChannels");
+			GetData(UltramatGrid, dsUltramat, "dictUltramat");
+			GetData(GasGrid, dsGases, "dictGases");
+			GetData(ParamGrid, dsParameters, "dictParameters");
+			GetData(DiscGrid, dsDiscretes,"dictDiscretes");
+			GetData(UnitGrid, dsUnits,"dictUnits");			
+		}
 		
 		#region Проверка связи с MSSQL
 		bool MsSQLTest()
 		{
-			builder.DataSource = cbDataSource.SelectedItem.ToString();
-			builder.InitialCatalog = cbDBName.SelectedItem.ToString();
+			builder.DataSource = cbDataSource.Text;
+			builder.InitialCatalog = cbDBName.Text;
 			builder.UserID = tbUserName.Text;
 			builder.Password = tbPassword.Text;
 			
@@ -506,8 +569,8 @@ namespace SGK509
 		#region Заполнение справочников из БД
 		void GetData(DataGridView dvgItem, DataSet ds, string tblItem)
 		{
-			builder.DataSource = cbDataSource.SelectedItem.ToString();
-			builder.InitialCatalog = cbDBName.SelectedItem.ToString();
+			builder.DataSource = cbDataSource.Text;
+			builder.InitialCatalog = cbDBName.Text;
 			builder.UserID = tbUserName.Text;
 			builder.Password = tbPassword.Text;
 			
@@ -524,8 +587,8 @@ namespace SGK509
 		#region Обновление справочников в БД
 		private void UpdateDict(DataGridView dvgItem, DataSet ds, string tblItem)
 		{
-			builder.DataSource = cbDataSource.SelectedItem.ToString();
-			builder.InitialCatalog = cbDBName.SelectedItem.ToString();
+			builder.DataSource = cbDataSource.Text;
+			builder.InitialCatalog = cbDBName.Text;
 			builder.UserID = tbUserName.Text;
 			builder.Password = tbPassword.Text;
 			
@@ -549,32 +612,42 @@ namespace SGK509
 			UpdateDict(ParamGrid, dsParameters, "dictParameters");
 			UpdateDict(DiscGrid,dsDiscretes,"dictDiscretes");
 			UpdateDict(UnitGrid,dsUnits,"dictUnits");
+			ReloadParameters();
 		}
 		#endregion
 		
-		#region Сохранение конфигурации
+		#region Сохранение конфигурации Modbus
 		void btnProtocolSave_Click(object sender, EventArgs e)
 		{
-			/*
 			if(radioRTU.Checked)
 			{
-				modbusSettings.ModbusParams["Type"].value = "RTU";
-				modbusSettings.ModbusParams["COM"] = cbPort.SelectedText;
-				modbusSettings.ModbusParams["BaudRate"] = cbBaudRate.SelectedText;
-				modbusSettings.ModbusParams["Parity"] = cbParity.SelectedText;
-				modbusSettings.ModbusParams["StopBits"] = cbStopBit.SelectedText;
-				modbusSettings.ModbusParams["DataBits"] = cbDataBits.SelectedText;
-				modbusSettings.ModbusParams["SlaveId"] = tbModbusRTUSlave.Text;
+				modbusSettings.Settings["MBType"].Value = "RTU";
+				modbusSettings.Settings["MBSerialport"].Value = cbPort.Text;
+				modbusSettings.Settings["MBBaudRate"].Value = cbBaudRate.Text;
+				modbusSettings.Settings["MBParity"].Value = cbParity.Text;
+				modbusSettings.Settings["MBStopBit"].Value = cbStopBit.Text;
+				modbusSettings.Settings["MBDataBits"].Value = cbDataBits.Text;
+				modbusSettings.Settings["MBSlave"].Value = tbModbusRTUSlave.Text;
 				
 			}
 			else if (radioTCP.Checked)
 			{
-				modbusSettings.ModbusParams["IP"] = tbModbusTCPAddress.Text;
-				modbusSettings.ModbusParams["TCPPort"] = tbModbusTCPPort.Text;
-				modbusSettings.ModbusParams["SlaveId"] = tbModbusTCPSlave.Text;
+				modbusSettings.Settings["MBType"].Value = "TCP";
+				modbusSettings.Settings["MBIPAddress"].Value = tbModbusTCPAddress.Text;
+				modbusSettings.Settings["MBTCPPort"].Value = tbModbusTCPPort.Text;
+				modbusSettings.Settings["MBSlave"].Value = tbModbusTCPSlave.Text;
 			}
-			appConfig.Save();
-			*/
+			
+			// Сохранение конфигурации
+			try
+			{
+				appConfig.Save(ConfigurationSaveMode.Modified);
+				ConfigurationManager.RefreshSection("ModbusSettings");
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.Message);
+			}
 		}
 		#endregion
 		
@@ -582,18 +655,20 @@ namespace SGK509
 		#region Сохранение конфигурации БД
 		void btnDBSave_Click(object sender, EventArgs e)
 		{
+			// Тип БД
 			dbSettings.Settings["DBType"].Value = cbDBType.Text;
-			
+			// Источник данных
 			dbSettings.Settings["DBDataSource"].Value = cbDataSource.Text;
-			
+			// Имя БД
 			dbSettings.Settings["DBName"].Value = cbDBName.Text;
-			
+			// Пользователь
 			dbSettings.Settings["DBUser"].Value = tbUserName.Text;
-			
+			// Пароль
 			dbSettings.Settings["DBPassword"].Value = tbPassword.Text;
-			
+			// Период опроса
 			dbSettings.Settings["DBPeriod"].Value = cbPeriod.Text;
 			
+			// Сохранение конфигурации
 			try
 			{
 				appConfig.Save(ConfigurationSaveMode.Modified);

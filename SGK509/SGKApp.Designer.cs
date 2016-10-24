@@ -586,7 +586,7 @@ namespace SGK509
 			// btnDBList
 			// 
 			this.btnDBList.Enabled = false;
-			this.btnDBList.Location = new System.Drawing.Point(383, 53);
+			this.btnDBList.Location = new System.Drawing.Point(383, 160);
 			this.btnDBList.Name = "btnDBList";
 			this.btnDBList.Size = new System.Drawing.Size(172, 23);
 			this.btnDBList.TabIndex = 5;
