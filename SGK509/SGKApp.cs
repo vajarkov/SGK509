@@ -573,31 +573,38 @@ namespace SGK509
 		{
 			GetConnectionString();
 			
-			using(SqlConnection connection = new SqlConnection(builder.ConnectionString))
+			try
 			{
-				SqlCommand command = new SqlCommand("DELETE FROM " + tblItem, connection);
-				connection.Open();
-				command.ExecuteNonQuery();
-				StringBuilder query = new StringBuilder();
-				query.AppendFormat("INSERT INTO {0} VALUES ", tblItem);
-				for(int i = 0; i < dvgItem.Rows.Count - 1; i++)
-				{ 
-					query.Append("(");
-					for (int j = 0; j < dvgItem.Rows[i].Cells.Count; j++ )
-    				{
-						query.AppendFormat("{0}, ", dvgItem.Rows[i].Cells[j].Value.ToString());
-    				}
-					query.Remove(query.Length-2,2);
-					query.Append("),");
-				
+				using(SqlConnection connection = new SqlConnection(builder.ConnectionString))
+				{
+					SqlCommand command = new SqlCommand("DELETE FROM " + tblItem, connection);
+					connection.Open();
+					command.ExecuteNonQuery();
+					StringBuilder query = new StringBuilder();
+					query.AppendFormat("INSERT INTO {0} VALUES ", tblItem);
+					for(int i = 0; i < dvgItem.Rows.Count - 1; i++)
+					{ 
+						query.Append("(");
+						for (int j = 0; j < dvgItem.Rows[i].Cells.Count; j++ )
+	    				{
+							query.AppendFormat("{0}, ", dvgItem.Rows[i].Cells[j].Value.ToString());
+	    				}
+						query.Remove(query.Length-2,2);
+						query.Append("),");
+					
+					}
+					
+					query.Remove(query.Length-1, 1);
+					
+					
+					command = new SqlCommand(query.ToString(), connection);
+					command.ExecuteNonQuery();
+					
 				}
-				
-				query.Remove(query.Length-1, 1);
-				
-				
-				command = new SqlCommand(query.ToString(), connection);
-				command.ExecuteNonQuery();
-				
+			}
+			catch(Exception ex)
+			{
+				MessageBox.Show(ex.Message);
 			}
 		}
 		#endregion

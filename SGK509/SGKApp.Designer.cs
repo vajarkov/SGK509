@@ -719,6 +719,7 @@ namespace SGK509
 			// 
 			// btnAnalogSave
 			// 
+			this.btnAnalogSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnAnalogSave.Location = new System.Drawing.Point(712, 6);
 			this.btnAnalogSave.Name = "btnAnalogSave";
 			this.btnAnalogSave.Size = new System.Drawing.Size(75, 38);
@@ -810,6 +811,7 @@ namespace SGK509
 			// 
 			// btnDiscreteSave
 			// 
+			this.btnDiscreteSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnDiscreteSave.Location = new System.Drawing.Point(712, 6);
 			this.btnDiscreteSave.Name = "btnDiscreteSave";
 			this.btnDiscreteSave.Size = new System.Drawing.Size(75, 38);
@@ -896,6 +898,7 @@ namespace SGK509
 			// 
 			// btnDictSave
 			// 
+			this.btnDictSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnDictSave.Location = new System.Drawing.Point(712, 6);
 			this.btnDictSave.Name = "btnDictSave";
 			this.btnDictSave.Size = new System.Drawing.Size(75, 38);
@@ -1046,7 +1049,6 @@ namespace SGK509
 			this.ResumeLayout(false);
 
 		}
-		
 
 		}
 	}
