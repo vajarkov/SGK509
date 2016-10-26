@@ -7,6 +7,7 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.Text;
 //using System.ComponentModel;
 //using System.Text;
 //using System.Collections.Generic;
@@ -40,17 +41,18 @@ namespace SGK509
 		private SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(); 	// Переменная для строки соединения
 		private System.Configuration.Configuration appConfig;							// Переменная для чтения конфигурации
 		private ServiceController controller;   										// Переменная для работы со службой
-		private AppSettingsSection modbusSettings;    										// Переменная для конфигурации файлов с данными
-		private AppSettingsSection dbSettings;  									// Переменная для конфигурации порта
+		private AppSettingsSection modbusSettings;    									// Переменная для конфигурации файлов с данными
+		private AppSettingsSection dbSettings;  										// Переменная для конфигурации порта
 		private EventLog events = new EventLog();										// Переменная для записи событий
 		private const string serviceName = "SGKService";								// Переменная для имени службы
-		private DataSet dsChannels = new DataSet();												// Переменная для обновления справочника Точек отбора
-		private DataSet dsUltramat = new DataSet();												// Переменная для обновления справочника Ultramat
-		private DataSet dsUnits = new DataSet();												// Переменная для обновления справочника Единиц измерения
-		private DataSet dsGases = new DataSet();												// Переменная для обновления справочника Точек отбора
-		private DataSet dsDiscretes = new DataSet();											// Переменная для обновления справочника Точек отбора
-		private DataSet dsParameters = new DataSet();											// Переменная для обновления справочника Точек отбора
-		
+		private DataSet dsChannels = new DataSet();										// Переменная для обновления справочника Точек отбора
+		private DataSet dsUltramat = new DataSet();										// Переменная для обновления справочника Ultramat
+		private DataSet dsUnits = new DataSet();										// Переменная для обновления справочника Единиц измерения
+		private DataSet dsGases = new DataSet();										// Переменная для обновления справочника Точек отбора
+		private DataSet dsDiscretes = new DataSet();									// Переменная для обновления справочника Точек отбора
+		private DataSet dsParameters = new DataSet();									// Переменная для обновления справочника Точек отбора
+		private DataSet dsAnalogConf = new DataSet();									// Переменная для конфигурации аналоговых сигналов
+		private DataSet dsDiscreteConf = new DataSet();									// Переменная для конфигурации дискретных сигналов
 		
 		#region Конструктор для приложения
 		public MainForm()
@@ -149,7 +151,6 @@ namespace SGK509
 			{
 				cbDataSource.Enabled = true;
 				Thread dataSourceThread = new Thread(new ThreadStart(GetDataSources));
-				//GetDataSources();
 				dataSourceThread.Start();
 				dataSourceThread.Join();
 				cbDataSource.Text = dbSettings.Settings["DBDataSource"].Value;
@@ -464,17 +465,32 @@ namespace SGK509
 			}
 		}
 		#endregion
+		#region Проверка связи с MSSQL
+		bool MsSQLTest()
+		{
+			GetConnectionString();
+			
+			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+			{
+				try
+				{
+					connection.Open();
+					return true;
+				}
+				catch (SqlException)
+				{
+					return false;
+				}
+			}
+			
+		}
+		#endregion
 		
-	#endregion
-	
 		#region Заполнение ячеек таблиц конфигурации данными
 		void GetParameters(DataGridViewComboBoxColumn cbItem, string tableName)
 		{
 				
-			builder.DataSource = cbDataSource.Text;
-			builder.InitialCatalog = cbDBName.Text;
-			builder.UserID = tbUserName.Text;
-			builder.Password = tbPassword.Text;
+			GetConnectionString();
 						
 			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
 			{
@@ -501,6 +517,107 @@ namespace SGK509
 		}
 		#endregion
 		
+		#region Заполнение данными конфигурации комплекса
+		void GetData(DataGridView dvgItem, string tblName)
+		{
+			GetConnectionString();
+			
+			using(SqlConnection connection = new SqlConnection(builder.ConnectionString))
+			{
+				SqlCommand command = new SqlCommand("SELECT * FROM " + tblName, connection);
+				connection.Open();
+				SqlDataReader reader = command.ExecuteReader();
+				if(reader.HasRows)
+				{
+					while(reader.Read())
+					{
+						dvgItem.Rows.Add(reader.GetInt32(0), reader.GetInt32(1),reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(4));
+					}
+				}
+				reader.Close();
+			}
+		}
+		
+		#endregion
+		
+		#region Заполнение справочников из БД
+		void GetData(DataGridView dvgItem, DataSet ds, string tblItem)
+		{
+			GetConnectionString();
+			
+			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+			{
+				SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM " + tblItem, connection);
+				adapter.Fill(ds);
+				dvgItem.DataSource = ds.Tables[0];
+			}
+		}
+		#endregion
+		
+		#region Обновление справочников в БД
+		private void UpdateData(DataGridView dvgItem, DataSet ds, string tblItem)
+		{
+			GetConnectionString();
+			
+			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+			{
+				SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM " + tblItem, connection);
+				SqlCommandBuilder build = new SqlCommandBuilder(adapter);
+				adapter.Update(ds.Tables[0]);
+			}
+		}
+		#endregion
+		
+		#region Обновление данных конфигурации комплекса
+		private void UpdateData(DataGridView dvgItem, string tblItem)
+		{
+			GetConnectionString();
+			
+			using(SqlConnection connection = new SqlConnection(builder.ConnectionString))
+			{
+				SqlCommand command = new SqlCommand("DELETE FROM " + tblItem, connection);
+				connection.Open();
+				command.ExecuteNonQuery();
+				StringBuilder query = new StringBuilder();
+				query.AppendFormat("INSERT INTO {0} VALUES ", tblItem);
+				for(int i = 0; i < dvgItem.Rows.Count - 1; i++)
+				{ 
+					query.Append("(");
+					for (int j = 0; j < dvgItem.Rows[i].Cells.Count; j++ )
+    				{
+						query.AppendFormat("{0}, ", dvgItem.Rows[i].Cells[j].Value.ToString());
+    				}
+					query.Remove(query.Length-2,2);
+					query.Append("),");
+				
+				}
+				
+				query.Remove(query.Length-1, 1);
+				
+				
+				command = new SqlCommand(query.ToString(), connection);
+				command.ExecuteNonQuery();
+				
+			}
+		}
+		#endregion
+		
+		#region Создание строки соединения
+		void GetConnectionString()
+		{
+			builder.DataSource = cbDataSource.Text;
+			builder.InitialCatalog = cbDBName.Text;
+			builder.UserID = tbUserName.Text;
+			builder.Password = tbPassword.Text;
+		}
+		#endregion
+		
+		
+	#endregion
+	
+	#region Работа с конфигурацией
+	
+		#region Обновление списков параметров
 		void ReloadParameters()
 		{
 			GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[1], "dictChannels");
@@ -512,8 +629,9 @@ namespace SGK509
 			GetParameters((DataGridViewComboBoxColumn)DiscreteGrid.Columns[2], "dictUltramat");
 			GetParameters((DataGridViewComboBoxColumn)DiscreteGrid.Columns[3], "dictDiscretes");
 		}
+		#endregion
 		
-		
+		#region Обновление данных из справочников
 		void ReloadData()
 		{
 			
@@ -521,98 +639,10 @@ namespace SGK509
 			GetData(UltramatGrid, dsUltramat, "dictUltramat");
 			GetData(GasGrid, dsGases, "dictGases");
 			GetData(ParamGrid, dsParameters, "dictParameters");
-			GetData(DiscGrid, dsDiscretes,"dictDiscretes");
-			GetData(UnitGrid, dsUnits,"dictUnits");			
-		}
-		
-		#region Проверка связи с MSSQL
-		bool MsSQLTest()
-		{
-			builder.DataSource = cbDataSource.Text;
-			builder.InitialCatalog = cbDBName.Text;
-			builder.UserID = tbUserName.Text;
-			builder.Password = tbPassword.Text;
-			
-			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
-			{
-				try
-				{
-					connection.Open();
-					return true;
-				}
-				catch (SqlException)
-				{
-					return false;
-				}
-			}
-			
-		}
-		#endregion
-		
-		#region Автоматическая нумерация строк для сигналов 
-		void AutoIncriment(object sender, DataGridViewRowsAddedEventArgs e)
-		{
-			DataGridView dgv = (DataGridView)sender;
-			if(e.RowCount==1)
-			{
-				dgv.Rows[e.RowIndex-1].Cells[0].Value = e.RowIndex;
-			}
-			else
-			{
-				for(int i = e.RowIndex-1; i < (e.RowIndex + e.RowCount); i++)
-					dgv.Rows[i].Cells[0].Value = i;
-			}
-		}
-		#endregion
-		
-		
-		#region Заполнение справочников из БД
-		void GetData(DataGridView dvgItem, DataSet ds, string tblItem)
-		{
-			builder.DataSource = cbDataSource.Text;
-			builder.InitialCatalog = cbDBName.Text;
-			builder.UserID = tbUserName.Text;
-			builder.Password = tbPassword.Text;
-			
-			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
-			{
-				SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM " + tblItem, connection);
-				//DataTable table = new DataTable();
-				adapter.Fill(ds);
-				dvgItem.DataSource = ds.Tables[0];
-			}
-		}
-		#endregion
-		
-		#region Обновление справочников в БД
-		private void UpdateDict(DataGridView dvgItem, DataSet ds, string tblItem)
-		{
-			builder.DataSource = cbDataSource.Text;
-			builder.InitialCatalog = cbDBName.Text;
-			builder.UserID = tbUserName.Text;
-			builder.Password = tbPassword.Text;
-			
-			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
-			{
-				SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM " + tblItem, connection);
-				SqlCommandBuilder build = new SqlCommandBuilder(adapter);
-				//DataTable table = new DataTable();
-				adapter.Update(ds.Tables[0]);
-				//dvgItem.DataSource = table;
-			}
-		}
-		#endregion
-		
-		#region Сохранение изиенений в справочниках
-		void btnDictSave_Click(object sender, EventArgs e)
-		{
-			UpdateDict(ChannelGrid, dsChannels, "dictChannels");
-			UpdateDict(UltramatGrid, dsUltramat, "dictUltramat");
-			UpdateDict(GasGrid, dsGases, "dictGases");
-			UpdateDict(ParamGrid, dsParameters, "dictParameters");
-			UpdateDict(DiscGrid,dsDiscretes,"dictDiscretes");
-			UpdateDict(UnitGrid,dsUnits,"dictUnits");
-			ReloadParameters();
+			GetData(DiscGrid, dsDiscretes, "dictDiscretes");
+			GetData(UnitGrid, dsUnits, "dictUnits");
+			GetData(DiscreteGrid, "confDiscrete");
+			GetData(AnalogGrid, "confAnalog");
 		}
 		#endregion
 		
@@ -681,6 +711,43 @@ namespace SGK509
 		}
 		#endregion
 		
+	#endregion
+		
+		
+		
+		#region Автоматическая нумерация строк для сигналов 
+		void AutoIncriment(object sender, DataGridViewRowsAddedEventArgs e)
+		{
+			DataGridView dgv = (DataGridView)sender;
+			if(e.RowCount==1)
+			{
+				dgv.Rows[e.RowIndex-1].Cells[0].Value = e.RowIndex;
+			}
+			else
+			{
+				for(int i = e.RowIndex-1; i < (e.RowIndex + e.RowCount); i++)
+					dgv.Rows[i].Cells[0].Value = i;
+			}
+		}
+		#endregion
+		
+		
+		
+		#region Сохранение изиенений в справочниках
+		void btnDictSave_Click(object sender, EventArgs e)
+		{
+			UpdateData(ChannelGrid, dsChannels, "dictChannels");
+			UpdateData(UltramatGrid, dsUltramat, "dictUltramat");
+			UpdateData(GasGrid, dsGases, "dictGases");
+			UpdateData(ParamGrid, dsParameters, "dictParameters");
+			UpdateData(DiscGrid,dsDiscretes,"dictDiscretes");
+			UpdateData(UnitGrid,dsUnits,"dictUnits");
+			ReloadParameters();
+		}
+		#endregion
+		
+		
+		
 		#region Нажатие кнопки получения источников данных 
 		void btnDBType_Click(object sender, EventArgs e)
 		{
@@ -694,5 +761,20 @@ namespace SGK509
 			GetDBList();
 		}
 		#endregion
+		
+		#region Нажатие сохранение конфигурации аналогох параметров
+		void btnDiscreteSave_Click(object sender, EventArgs e)
+		{
+			UpdateData(DiscreteGrid, "confDiscrete");
+		
+		}
+		void btnAnalogSave_Click(object sender, EventArgs e)
+		{
+			UpdateData(AnalogGrid, "confAnalog");
+		}
+		#endregion
+		
+		
+		
 	}
 }

@@ -725,6 +725,7 @@ namespace SGK509
 			this.btnAnalogSave.TabIndex = 0;
 			this.btnAnalogSave.Text = "Сохранить";
 			this.btnAnalogSave.UseVisualStyleBackColor = true;
+			this.btnAnalogSave.Click += new System.EventHandler(this.btnAnalogSave_Click);
 			// 
 			// AnalogGrid
 			// 
@@ -745,14 +746,12 @@ namespace SGK509
 			this.AnalogGrid.Name = "AnalogGrid";
 			this.AnalogGrid.Size = new System.Drawing.Size(794, 513);
 			this.AnalogGrid.TabIndex = 2;
-			this.AnalogGrid.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.AutoIncriment);
 			// 
 			// id
 			// 
 			this.id.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.id.HeaderText = "№ Канала";
 			this.id.Name = "id";
-			this.id.ReadOnly = true;
 			this.id.Width = 77;
 			// 
 			// ChannelColumn
@@ -817,6 +816,7 @@ namespace SGK509
 			this.btnDiscreteSave.TabIndex = 2;
 			this.btnDiscreteSave.Text = "Сохранить";
 			this.btnDiscreteSave.UseVisualStyleBackColor = true;
+			this.btnDiscreteSave.Click += new System.EventHandler(this.btnDiscreteSave_Click);
 			// 
 			// DiscreteGrid
 			// 
@@ -835,14 +835,12 @@ namespace SGK509
 			this.DiscreteGrid.Name = "DiscreteGrid";
 			this.DiscreteGrid.Size = new System.Drawing.Size(794, 513);
 			this.DiscreteGrid.TabIndex = 1;
-			this.DiscreteGrid.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.AutoIncriment);
 			// 
 			// dataGridViewTextBoxColumn1
 			// 
 			this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.dataGridViewTextBoxColumn1.HeaderText = "№ Канала";
 			this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-			this.dataGridViewTextBoxColumn1.ReadOnly = true;
 			this.dataGridViewTextBoxColumn1.Width = 77;
 			// 
 			// dataGridViewComboBoxColumn1
@@ -1048,7 +1046,6 @@ namespace SGK509
 			this.ResumeLayout(false);
 
 		}
-
 		
 
 		}
