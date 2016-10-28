@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Window
+	x:Class="SGK509ClientWPF.Window1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	Title="SGK509ClientWPF"
+	Width="792"
+	Height="618">
+	<TabControl>
+		<TabItem
+			Header="Данные"
+			FontSize="12"></TabItem>
+		<TabItem
+			Header="Протокол"
+			FontSize="12"
+			RenderTransformOrigin="0.5,0.5">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition
+						Width="*" />
+					<ColumnDefinition
+						Width="*" />
+				</Grid.ColumnDefinitions>
+				<StackPanel
+					Grid.Column="0"
+					Grid.ColumnSpan="1">
+					<RadioButton
+						GroupName="Modbus"
+						x:Name="radioRTU"
+						FontWeight="Normal"
+						FontSize="18"
+						Height="26"
+						Checked="radioRTU_Checked">Modbus RTU</RadioButton>
+					<GroupBox
+						x:Name="groupRTU"
+						IsEnabled="False">
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition
+									Width="*" />
+								<ColumnDefinition
+									Width="*" />
+							</Grid.ColumnDefinitions>
+							<StackPanel
+								Grid.Column="0">
+								<Label
+									VerticalAlignment="Center"
+									FontSize="12">Порт</Label>
+								<Label
+									VerticalAlignment="Center"
+									FontSize="12">Скорость</Label>
+								<Label
+									VerticalAlignment="Center"
+									FontSize="12">Четность</Label>
+								<Label
+									VerticalAlignment="Center"
+									FontSize="12">Стоп-бит</Label>
+								<Label
+									VerticalAlignment="Center"
+									FontSize="12">Биты данных</Label>
+								<Label
+									VerticalAlignment="Center"
+									FontSize="12">Порт</Label>
+							</StackPanel>
+							<StackPanel
+								Height="200"
+								Grid.Column="1">
+								<ComboBox
+									x:Name="cbPort"
+									Margin="5"></ComboBox>
+								<ComboBox
+									x:Name="cbBaudRate"
+									Margin="5"></ComboBox>
+								<ComboBox
+									x:Name="cbParity"
+									Margin="5"></ComboBox>
+								<ComboBox
+									x:Name="cbStopBit"
+									Margin="5"></ComboBox>
+								<ComboBox
+									x:Name="cbDataBits"
+									Margin="5"></ComboBox>
+								<TextBox
+									x:Name="tbModbusRTUSlave"
+									Margin="5">0</TextBox>
+							</StackPanel>
+						</Grid>
+					</GroupBox>
+				</StackPanel>
+				<StackPanel
+					Grid.Column="1">
+					<RadioButton
+						GroupName="Modbus"
+						x:Name="radioTCP"
+						FontSize="18"
+						FontWeight="Normal"
+						Height="26"
+						Checked="radioTCP_Checked">Modbus TCP</RadioButton>
+					<GroupBox
+						x:Name="groupTCP"
+						IsEnabled="False">
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition
+									Width="*" />
+								<ColumnDefinition
+									Width="*" />
+							</Grid.ColumnDefinitions>
+							<StackPanel
+								Height="200"
+								Grid.Column="0">
+								<Label
+									VerticalAlignment="Center"
+									FontSize="12">IP адрес</Label>
+								<Label
+									VerticalAlignment="Center"
+									FontSize="12">Порт</Label>
+								<Label
+									VerticalAlignment="Center"
+									FontSize="12">Адрес устройства</Label>
+							</StackPanel>
+							<StackPanel
+								Height="200"
+								Grid.Column="1">
+								<TextBox
+									x:Name="tbModbusTCPAddress"
+									Margin="5">127.0.0.1</TextBox>
+								<TextBox
+									x:Name="tbModbusTCPPort"
+									Margin="5">502</TextBox>
+								<TextBox
+									x:Name="tbModbusTCPSlave"
+									Margin="5">0</TextBox>
+							</StackPanel>
+						</Grid>
+					</GroupBox>
+				</StackPanel>
+			</Grid>
+		</TabItem>
+		<TabItem
+			FontSize="12"
+			Header="База Данных"></TabItem>
+		<TabItem
+			FontSize="12"
+			Header="Аналоговые сигналы"></TabItem>
+		<TabItem
+			FontSize="12"
+			Header="Дискретные сигналы"></TabItem>
+		<TabItem
+			FontSize="12"
+			Header="Справвочники"></TabItem>
+	</TabControl>
+</Window>
