@@ -95,6 +95,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MSDataBase\MSDataBase.csproj">
+      <Project>{b82f3731-213e-4dc0-85fd-34aaf9e13136}</Project>
+      <Name>MSDataBase</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SGKService\SGKService.csproj">
       <Project>{4af941df-a517-4477-8a6b-bc70ae7113c3}</Project>
       <Name>SGKService</Name>

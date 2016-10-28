@@ -7,28 +7,15 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
-using System.Text;
-//using System.ComponentModel;
-//using System.Text;
-//using System.Collections.Generic;
-//using System.Drawing;
 using System.Windows.Forms;
-//using SGK509;
-using SGKService;
 using System.Configuration;
 using System.ServiceProcess;
 using System.Configuration.Install;
 using System.Diagnostics;
-//using System.Collections.Specialized;
-using System.Collections.Generic;
 using System.IO.Ports;
 using System.Data;
-using System.Data.Sql;
-using Microsoft.SqlServer.Management;
-using Microsoft.SqlServer.Server;
-using Microsoft.SqlServer.Management.Smo;
-using System.Data.SqlClient;
 using System.Threading;
+using MSDataBase;
 
 
 namespace SGK509
@@ -38,7 +25,6 @@ namespace SGK509
 	/// </summary>
 	public partial class MainForm : Form
 	{
-		private SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(); 	// Переменная для строки соединения
 		private System.Configuration.Configuration appConfig;							// Переменная для чтения конфигурации
 		private ServiceController controller;   										// Переменная для работы со службой
 		private AppSettingsSection modbusSettings;    									// Переменная для конфигурации файлов с данными
@@ -53,6 +39,7 @@ namespace SGK509
 		private DataSet dsParameters = new DataSet();									// Переменная для обновления справочника Точек отбора
 		private DataSet dsAnalogConf = new DataSet();									// Переменная для конфигурации аналоговых сигналов
 		private DataSet dsDiscreteConf = new DataSet();									// Переменная для конфигурации дискретных сигналов
+		private IDataBase dbSource;														// Переменная для работы с БД
 		
 		#region Конструктор для приложения
 		public MainForm()
@@ -85,10 +72,33 @@ namespace SGK509
 			// Считывание конфигурации Modbus
 			modbusSettings = (AppSettingsSection)appConfig.GetSection("ModbusSettings");
 			
-			#region Загрузка параметров для Modbus
 			// Заполнение конфигурационных 
 			fillRTU();
-			// Проверка есть ли данные
+			GetConfigModbus();
+			GetConfigDB();			
+		}
+		#endregion
+		
+		#region Заполнение данных для Modbus RTU
+		void fillRTU()
+		{
+			// Заполнение доступных портов
+			ComboBoxInit(cbPort, SerialPort.GetPortNames(), "");
+			// Заполнение скорости передачи
+			ComboBoxInit(cbBaudRate, new string[] { "1200", "2400", "4800", "9600", "19200", "38400", "57600", "115200", "230400" }, "");
+			// Заполнение четности портов
+			ComboBoxInit(cbParity, Enum.GetNames(typeof (Parity)), "");
+			// Заполнение Стоп-Битов
+			ComboBoxInit(cbStopBit, Enum.GetNames(typeof (StopBits)), "");
+			// Заполнение Битов Данных
+			ComboBoxInit(cbDataBits, new string[] { "4", "5", "6", "7", "8", }, "");
+		}
+		#endregion
+		
+		#region Загрузка параметров для Modbus
+		void GetConfigModbus()
+		{
+		// Проверка есть ли данные
 			if (!String.IsNullOrEmpty(modbusSettings.Settings["MBType"].Value))
 			{
 				// Modbus RTU
@@ -129,23 +139,18 @@ namespace SGK509
 						tbModbusTCPSlave.Text = modbusSettings.Settings["MBSlave"].Value;
 				}
 			}
-			#endregion
+		}
+		#endregion
 			
-			#region Загрузка параметров БД 
+		
+		#region Загрузка параметров БД 
+		void GetConfigDB()
+		{
 			// Заполнение типов Базы данных
 			ComboBoxInit(cbDBType, new string[] {"MS SQL Server", "Oracle", "PostgreSQL", "MySQL"}, "DBType");
 			
 			// Заполнение периода опроса
 			ComboBoxInit(cbPeriod, new string[] {"1 секунда", "5 секунд", "30 секунд", "1 минута", "5 минут"}, "DBPeriod");
-
-			// Заполнение пользователя из конфигурации, если он прописан
-			if (!String.IsNullOrEmpty(dbSettings.Settings["DBUser"].Value))
-				tbUserName.Text = dbSettings.Settings["DBUser"].Value;
-			
-			// Заполнение пароля из конфигурации, если он прописан
-			if (!String.IsNullOrEmpty(dbSettings.Settings["DBPassword"].Value))
-				tbPassword.Text = dbSettings.Settings["DBPassword"].Value;
-			
 			// Выбор источника данных БД из конфигурации, если он прописан
 			if (!String.IsNullOrEmpty(dbSettings.Settings["DBDataSource"].Value))
 			{
@@ -154,24 +159,29 @@ namespace SGK509
 				dataSourceThread.Start();
 				dataSourceThread.Join();
 				cbDataSource.Text = dbSettings.Settings["DBDataSource"].Value;
+			}	
+			// Заполнение пользователя из конфигурации, если он прописан
+			if (!String.IsNullOrEmpty(dbSettings.Settings["DBUser"].Value))
+				tbUserName.Text = dbSettings.Settings["DBUser"].Value;
+			// Заполнение пароля из конфигурации, если он прописан
+			if (!String.IsNullOrEmpty(dbSettings.Settings["DBPassword"].Value))
+				tbPassword.Text = dbSettings.Settings["DBPassword"].Value;
 			
-			}
-				
 			// Выбор БД из конфигурации, если он прописан
 			if (!String.IsNullOrEmpty(dbSettings.Settings["DBName"].Value))
 			{
+				
 				cbDBName.Enabled = true;
-				Thread dbListThread = new Thread(new ThreadStart(GetDBList));
-				dbListThread.Start();
-				dbListThread.Join();
+				dbSource = new MSDataBase.DataBase();
+				cbDBName.Items.Clear();
+				dbSource.SetDBConnectionParameters(cbDataSource.Text, tbUserName.Text, tbPassword.Text);
+				cbDBName.DataSource = dbSource.GetDBList();
 				cbDBName.Text = dbSettings.Settings["DBName"].Value;
 			}
 				
-			
-			#endregion
 		}
 		#endregion
-		
+			
 	#region Работа со службой
 		#region Расстановка действий при установленной службе
 		private void CheckService(string svcName)
@@ -299,21 +309,7 @@ namespace SGK509
 	#endregion
 	
 	#region Работа с протоколом Modbus
-		#region Заполнение данных для Modbus RTU
-		void fillRTU()
-		{
-			// Заполнение доступных портов
-			ComboBoxInit(cbPort, SerialPort.GetPortNames(), "");
-			// Заполнение скорости передачи
-			ComboBoxInit(cbBaudRate, new string[] { "1200", "2400", "4800", "9600", "19200", "38400", "57600", "115200", "230400" }, "");
-			// Заполнение четности портов
-			ComboBoxInit(cbParity, Enum.GetNames(typeof (Parity)), "");
-			// Заполнение Стоп-Битов
-			ComboBoxInit(cbStopBit, Enum.GetNames(typeof (StopBits)), "");
-			// Заполнение Битов Данных
-			ComboBoxInit(cbDataBits, new string[] { "4", "5", "6", "7", "8", }, "");
-		}
-		#endregion
+		
 		
 		#region Выбор протокола Modbus TCP
 		void radioTCP_CheckedChanged(object sender, EventArgs e)
@@ -337,11 +333,13 @@ namespace SGK509
 		#region Выбор типа базы дынных
 		void GetDataSources()
 		{
-			//MessageBox.Show(cbDBType.SelectedItem.ToString());
 			switch (cbDBType.SelectedItem.ToString())
 			{
 				case "MS SQL Server":
-					MsSQLConnect();
+					dbSource = new MSDataBase.DataBase();
+					cbDataSource.DataSource = dbSource.Connect();
+					cbDataSource.Enabled = true;
+					tbUserName.Text = "sa";
 					break;
 				case "Oracle":
 					//OracleConnect();
@@ -358,38 +356,15 @@ namespace SGK509
 		}
 		#endregion
 		
-		#region Считывание доступных баз данных для MS SQL Server
-		void MsSQLConnect()
-		{
-			SqlDataSourceEnumerator instance = SqlDataSourceEnumerator.Instance;
-			System.Data.DataTable tableDataSources = new System.Data.DataTable();
-			if (tableDataSources.Rows.Count == 0)
-			{
-				tableDataSources = instance.GetDataSources();
-				
-				List<string> listServers =  new List<string>();
-				
-				foreach(DataRow rowServer in tableDataSources.Rows)
-				{
-					if(String.IsNullOrEmpty(rowServer["InstanceName"].ToString()))
-						listServers.Add(rowServer["ServerName"].ToString());
-					else
-						listServers.Add(rowServer["ServerName"] + "\\" + rowServer["InstanceName"]);
-				}
-				
-				cbDataSource.DataSource = listServers;
-				cbDataSource.Enabled = true;
-				tbUserName.Text = "sa";
-			}
-			
-		}
-		#endregion
+		
 		
 		#region Выбран тип БД
 		void cbDBType_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (!String.IsNullOrEmpty(cbDBType.SelectedItem.ToString()))
+			{
 				btnDBType.Enabled = true;
+			}
 		}
 		#endregion
 		
@@ -398,28 +373,6 @@ namespace SGK509
 		{
 			if (!String.IsNullOrEmpty(cbDataSource.SelectedItem.ToString()))
 				btnDBList.Enabled = true;
-		}
-		#endregion
-		
-		#region Получение списка БД
-		void GetDBList()
-		{
-			cbDBName.Items.Clear();
-			var DBList = new Microsoft.SqlServer.Management.Smo.Server(cbDataSource.SelectedItem.ToString());
-			DBList.ConnectionContext.LoginSecure = false;
-			DBList.ConnectionContext.Login = tbUserName.Text;
-			DBList.ConnectionContext.Password = tbPassword.Text;
-			try
-			{
-				foreach(Microsoft.SqlServer.Management.Smo.Database db in DBList.Databases){
-					cbDBName.Items.Add(db.Name);
-				}
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show(ex.Message);
-			}
-			cbDBName.Enabled = true;
 		}
 		#endregion
 		
@@ -437,189 +390,20 @@ namespace SGK509
 		#region Проверка связи с БД
 		void btnTest_Click(object sender, EventArgs e)
 		{
-			switch (cbDBType.SelectedItem.ToString())
+			dbSource.SetDBConnectionParameters(cbDataSource.Text, cbDBName.Text, tbUserName.Text, tbPassword.Text);
+			if(dbSource.Test())
 			{
-				case "MS SQL Server":
-					if(MsSQLTest())
-					{
-						MessageBox.Show("Связь есть");
-						ReloadParameters();
-						ReloadData();
-					}
-					else
-					{
-						MessageBox.Show("Связи нет. Проверьте настройки");
-					}
-					break;
-				case "Oracle":
-					//OracleTest();
-					break;
-				case "PosgreSQL":
-					//PostgreSQLTest();
-					break;
-				case "MySQL":
-					//MySQLTest();
-					break;
-				default:
-					break;
+				MessageBox.Show("Связь установлена");
+				ReloadParameters();
+				ReloadData();
 			}
-		}
-		#endregion
-		#region Проверка связи с MSSQL
-		bool MsSQLTest()
-		{
-			GetConnectionString();
-			
-			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+			else
 			{
-				try
-				{
-					connection.Open();
-					return true;
-				}
-				catch (SqlException)
-				{
-					return false;
-				}
+				MessageBox.Show("Проверьте параметры соединения");
 			}
 			
 		}
 		#endregion
-		
-		#region Заполнение ячеек таблиц конфигурации данными
-		void GetParameters(DataGridViewComboBoxColumn cbItem, string tableName)
-		{
-				
-			GetConnectionString();
-						
-			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
-			{
-				try
-				{
-					connection.Open();
-					
-					using (SqlCommand command = new SqlCommand("SELECT id, name from " + tableName, connection))
-					{
-						SqlDataAdapter adapter = new SqlDataAdapter();
-						adapter.SelectCommand = command;
-						DataTable table = new DataTable();
-						table.Locale = System.Globalization.CultureInfo.InvariantCulture;
-						adapter.Fill(table);
-						cbItem.DataSource = table;
-						cbItem.DisplayMember = "name";
-						cbItem.ValueMember = "id";
-					}                                         
-				}
-				catch (Exception e){
-					MessageBox.Show(e.Message);
-				}
-			}
-		}
-		#endregion
-		
-		#region Заполнение данными конфигурации комплекса
-		void GetData(DataGridView dvgItem, string tblName)
-		{
-			GetConnectionString();
-			
-			using(SqlConnection connection = new SqlConnection(builder.ConnectionString))
-			{
-				SqlCommand command = new SqlCommand("SELECT * FROM " + tblName, connection);
-				connection.Open();
-				SqlDataReader reader = command.ExecuteReader();
-				if(reader.HasRows)
-				{
-					while(reader.Read())
-					{
-						dvgItem.Rows.Add(reader.GetInt32(0), reader.GetInt32(1),reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(4));
-					}
-				}
-				reader.Close();
-			}
-		}
-		
-		#endregion
-		
-		#region Заполнение справочников из БД
-		void GetData(DataGridView dvgItem, DataSet ds, string tblItem)
-		{
-			GetConnectionString();
-			
-			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
-			{
-				SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM " + tblItem, connection);
-				adapter.Fill(ds);
-				dvgItem.DataSource = ds.Tables[0];
-			}
-		}
-		#endregion
-		
-		#region Обновление справочников в БД
-		private void UpdateData(DataGridView dvgItem, DataSet ds, string tblItem)
-		{
-			GetConnectionString();
-			
-			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
-			{
-				SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM " + tblItem, connection);
-				SqlCommandBuilder build = new SqlCommandBuilder(adapter);
-				adapter.Update(ds.Tables[0]);
-			}
-		}
-		#endregion
-		
-		#region Обновление данных конфигурации комплекса
-		private void UpdateData(DataGridView dvgItem, string tblItem)
-		{
-			GetConnectionString();
-			
-			try
-			{
-				using(SqlConnection connection = new SqlConnection(builder.ConnectionString))
-				{
-					SqlCommand command = new SqlCommand("DELETE FROM " + tblItem, connection);
-					connection.Open();
-					command.ExecuteNonQuery();
-					StringBuilder query = new StringBuilder();
-					query.AppendFormat("INSERT INTO {0} VALUES ", tblItem);
-					for(int i = 0; i < dvgItem.Rows.Count - 1; i++)
-					{ 
-						query.Append("(");
-						for (int j = 0; j < dvgItem.Rows[i].Cells.Count; j++ )
-	    				{
-							query.AppendFormat("{0}, ", dvgItem.Rows[i].Cells[j].Value.ToString());
-	    				}
-						query.Remove(query.Length-2,2);
-						query.Append("),");
-					
-					}
-					
-					query.Remove(query.Length-1, 1);
-					
-					
-					command = new SqlCommand(query.ToString(), connection);
-					command.ExecuteNonQuery();
-					
-				}
-			}
-			catch(Exception ex)
-			{
-				MessageBox.Show(ex.Message);
-			}
-		}
-		#endregion
-		
-		#region Создание строки соединения
-		void GetConnectionString()
-		{
-			builder.DataSource = cbDataSource.Text;
-			builder.InitialCatalog = cbDBName.Text;
-			builder.UserID = tbUserName.Text;
-			builder.Password = tbPassword.Text;
-		}
-		#endregion
-		
-		
 	#endregion
 	
 	#region Работа с конфигурацией
@@ -627,14 +411,14 @@ namespace SGK509
 		#region Обновление списков параметров
 		void ReloadParameters()
 		{
-			GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[1], "dictChannels");
-			GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[2], "dictUltramat");
-			GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[3], "dictParameters");
-			GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[4], "dictGases");
-			GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[5], "dictUnits");
-			GetParameters((DataGridViewComboBoxColumn)DiscreteGrid.Columns[1], "dictChannels");
-			GetParameters((DataGridViewComboBoxColumn)DiscreteGrid.Columns[2], "dictUltramat");
-			GetParameters((DataGridViewComboBoxColumn)DiscreteGrid.Columns[3], "dictDiscretes");
+			dbSource.GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[1], "dictChannels");
+			dbSource.GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[2], "dictUltramat");
+			dbSource.GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[3], "dictParameters");
+			dbSource.GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[4], "dictGases");
+			dbSource.GetParameters((DataGridViewComboBoxColumn)AnalogGrid.Columns[5], "dictUnits");
+			dbSource.GetParameters((DataGridViewComboBoxColumn)DiscreteGrid.Columns[1], "dictChannels");
+			dbSource.GetParameters((DataGridViewComboBoxColumn)DiscreteGrid.Columns[2], "dictUltramat");
+			dbSource.GetParameters((DataGridViewComboBoxColumn)DiscreteGrid.Columns[3], "dictDiscretes");
 		}
 		#endregion
 		
@@ -642,14 +426,14 @@ namespace SGK509
 		void ReloadData()
 		{
 			
-			GetData(ChannelGrid, dsChannels, "dictChannels");
-			GetData(UltramatGrid, dsUltramat, "dictUltramat");
-			GetData(GasGrid, dsGases, "dictGases");
-			GetData(ParamGrid, dsParameters, "dictParameters");
-			GetData(DiscGrid, dsDiscretes, "dictDiscretes");
-			GetData(UnitGrid, dsUnits, "dictUnits");
-			GetData(DiscreteGrid, "confDiscrete");
-			GetData(AnalogGrid, "confAnalog");
+			dbSource.GetDict(ChannelGrid, dsChannels, "dictChannels");
+			dbSource.GetDict(UltramatGrid, dsUltramat, "dictUltramat");
+			dbSource.GetDict(GasGrid, dsGases, "dictGases");
+			dbSource.GetDict(ParamGrid, dsParameters, "dictParameters");
+			dbSource.GetDict(DiscGrid, dsDiscretes, "dictDiscretes");
+			dbSource.GetDict(UnitGrid, dsUnits, "dictUnits");
+			dbSource.GetConfig(DiscreteGrid, "confDiscrete");
+			dbSource.GetConfig(AnalogGrid, "confAnalog");
 		}
 		#endregion
 		
@@ -692,19 +476,12 @@ namespace SGK509
 		#region Сохранение конфигурации БД
 		void btnDBSave_Click(object sender, EventArgs e)
 		{
-			// Тип БД
-			dbSettings.Settings["DBType"].Value = cbDBType.Text;
-			// Источник данных
-			dbSettings.Settings["DBDataSource"].Value = cbDataSource.Text;
-			// Имя БД
-			dbSettings.Settings["DBName"].Value = cbDBName.Text;
-			// Пользователь
-			dbSettings.Settings["DBUser"].Value = tbUserName.Text;
-			// Пароль
-			dbSettings.Settings["DBPassword"].Value = tbPassword.Text;
-			// Период опроса
-			dbSettings.Settings["DBPeriod"].Value = cbPeriod.Text;
-			
+			dbSettings.Settings["DBType"].Value = cbDBType.Text;			// Тип БД
+			dbSettings.Settings["DBDataSource"].Value = cbDataSource.Text;	// Источник данных
+			dbSettings.Settings["DBName"].Value = cbDBName.Text;			// Имя БД
+			dbSettings.Settings["DBUser"].Value = tbUserName.Text;			// Пользователь
+			dbSettings.Settings["DBPassword"].Value = tbPassword.Text;		// Пароль
+			dbSettings.Settings["DBPeriod"].Value = cbPeriod.Text;			// Период опроса
 			// Сохранение конфигурации
 			try
 			{
@@ -720,8 +497,7 @@ namespace SGK509
 		
 	#endregion
 		
-		
-		
+	#region Вспомогательные функции
 		#region Автоматическая нумерация строк для сигналов 
 		void AutoIncriment(object sender, DataGridViewRowsAddedEventArgs e)
 		{
@@ -743,12 +519,12 @@ namespace SGK509
 		#region Сохранение изиенений в справочниках
 		void btnDictSave_Click(object sender, EventArgs e)
 		{
-			UpdateData(ChannelGrid, dsChannels, "dictChannels");
-			UpdateData(UltramatGrid, dsUltramat, "dictUltramat");
-			UpdateData(GasGrid, dsGases, "dictGases");
-			UpdateData(ParamGrid, dsParameters, "dictParameters");
-			UpdateData(DiscGrid,dsDiscretes,"dictDiscretes");
-			UpdateData(UnitGrid,dsUnits,"dictUnits");
+			dbSource.UpdateDict(ChannelGrid, dsChannels, "dictChannels");
+			dbSource.UpdateDict(UltramatGrid, dsUltramat, "dictUltramat");
+			dbSource.UpdateDict(GasGrid, dsGases, "dictGases");
+			dbSource.UpdateDict(ParamGrid, dsParameters, "dictParameters");
+			dbSource.UpdateDict(DiscGrid,dsDiscretes,"dictDiscretes");
+			dbSource.UpdateDict(UnitGrid,dsUnits,"dictUnits");
 			ReloadParameters();
 		}
 		#endregion
@@ -765,21 +541,27 @@ namespace SGK509
 		#region Нажатие кнопки получения списка БД
 		void btnDBList_Click(object sender, EventArgs e)
 		{
-			GetDBList();
+			cbDBName.Items.Clear();
+			cbDBName.DataSource = dbSource.GetDBList();
+			cbDBName.Enabled = true;
+		}
+		#endregion
+		
+		#region Нажатие сохранение конфигурации дискретных параметров
+		void btnDiscreteSave_Click(object sender, EventArgs e)
+		{
+			dbSource.UpdateConfig(DiscreteGrid, "confDiscrete");
+		
 		}
 		#endregion
 		
 		#region Нажатие сохранение конфигурации аналогох параметров
-		void btnDiscreteSave_Click(object sender, EventArgs e)
-		{
-			UpdateData(DiscreteGrid, "confDiscrete");
-		
-		}
 		void btnAnalogSave_Click(object sender, EventArgs e)
 		{
-			UpdateData(AnalogGrid, "confAnalog");
+			dbSource.UpdateConfig(AnalogGrid, "confAnalog");
 		}
 		#endregion
+	#endregion
 		
 		
 		
