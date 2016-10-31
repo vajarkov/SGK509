@@ -309,6 +309,43 @@ namespace SGK509ClientWPF
 			}
 		}
 		#endregion
+		
+		#region Обновление данных событий службы
+		void btnRefresh_Click(object sender, EventArgs e)
+		{
+			dgEvents.Items.Clear();
+            if (!EventLog.SourceExists("SGKService"))
+            {
+            	// Создаем журнал
+                EventLog.CreateEventSource("SGKService", "SGKService"); 
+            }
+            events.Log = "SGKService";
+            events.Source = "SGKService";
+            if (events.Entries.Count > 0)
+            {
+                foreach (EventLogEntry entry in events.Entries)
+                {
+                	dgEvents.Items.Add(new object {entry.TimeGenerated, entry.Message});
+                    if (entry.EntryType == EventLogEntryType.Error)
+                    {
+                        dgEvents.Items[dgEvents.Items.Count - 1].ystem.Drawing.Color.Red;
+                        gvEvents.Rows[gvEvents.Rows.Count - 1].Cells["DateEvent"].Style.ForeColor = System.Drawing.Color.White;
+                        gvEvents.Rows[gvEvents.Rows.Count - 1].Cells["EventMessage"].Style.BackColor = System.Drawing.Color.Red;
+                        gvEvents.Rows[gvEvents.Rows.Count - 1].Cells["EventMessage"].Style.ForeColor = System.Drawing.Color.White;
+
+                    }
+                    else
+                    {
+                        gvEvents.Rows[gvEvents.Rows.Count - 1].Cells["DateEvent"].Style.BackColor = System.Drawing.Color.White;
+                        gvEvents.Rows[gvEvents.Rows.Count - 1].Cells["DateEvent"].Style.ForeColor = System.Drawing.Color.Black;
+                        gvEvents.Rows[gvEvents.Rows.Count - 1].Cells["EventMessage"].Style.BackColor = System.Drawing.Color.White;
+                        gvEvents.Rows[gvEvents.Rows.Count - 1].Cells["EventMessage"].Style.ForeColor = System.Drawing.Color.Black;
+                    }
+                }
+                gvEvents.Sort(DateEvent, ListSortDirection.Descending);
+            }
+		}
+		#endregion
 	#endregion
 	
 	#region Работа с протоколом Modbus

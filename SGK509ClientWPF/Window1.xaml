@@ -1,104 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Window
-	x:Class="SGK509ClientWPF.Window1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:t="http://schemas.microsoft.com/wpf/2008/toolkit" 
+	x:Class="SGK509ClientWPF.Window1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:t="http://schemas.microsoft.com/wpf/2008/toolkit"
 	Title="SGK509ClientWPF"
 	Width="792"
 	Height="618">
 	<TabControl>
 		<TabItem
 			Header="Данные"
-			FontSize="12">
-			<Grid>
-				<Grid
-					Grid.ColumnSpan="2">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition
-							Width="*" />
-						<ColumnDefinition
-							Width="100" />
-						<ColumnDefinition
-							Width="100" />
-					</Grid.ColumnDefinitions>
-					<Grid.RowDefinitions>
-						<RowDefinition
-							Height="*" />
-						<RowDefinition
-							Height="50" />
-						<RowDefinition
-							Height="50" />
-					</Grid.RowDefinitions>
-					<Button
-						Margin="5"
-						Grid.Column="1"
-						Grid.Row="1"
-						x:Name="btnInstall"
-						IsEnabled="False"
-						VerticalContentAlignment="Center"
-						HorizontalAlignment="Center"
-						FontWeight="Medium"
-						FontSize="12"
-						Width="90"
-						Height="40"
-						Click="btnInstall_Click">
-						<TextBlock>Установить<LineBreak />службу</TextBlock>
-					</Button>
-					<Button
-						Height="40"
-						Width="90"
-						Margin="5"
-						FontSize="12"
-						VerticalAlignment="Center"
-						HorizontalAlignment="Center"
-						FontWeight="Medium"
-						Grid.Column="2"
-						Grid.Row="1"
-						x:Name="btnDelete"
-						IsEnabled="False"
-						Click="btnDelete_Click">
-						<TextBlock>Удалить<LineBreak />службу</TextBlock>
-					</Button>
-					<Button
-						Height="40"
-						Width="90"
-						Margin="5"
-						Grid.Column="1"
-						Grid.Row="2"
-						x:Name="btnStart"
-						FontSize="12"
-						VerticalAlignment="Center"
-						HorizontalAlignment="Center"
-						FontWeight="Medium"
-						IsEnabled="False"
-						Click="btnStart_Click">
-						<TextBlock>Запустить<LineBreak />службу</TextBlock>
-					</Button>
-					<Button
-						Height="40"
-						Width="90"
-						Margin="5"
-						Grid.Column="2"
-						Grid.Row="2"
-						FontSize="12"
-						VerticalAlignment="Center"
-						HorizontalAlignment="Center"
-						FontWeight="Medium"
-						x:Name="btnStop"
-						IsEnabled="False"
-						Click="btnStop_Click">
-						<TextBlock>
-						Остановить<LineBreak />службу</TextBlock>
-					</Button>
-					
-				</Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition
-						Width="0.115284974093264*" />
-					<ColumnDefinition
-						Width="0.884715025906736*" />
-				</Grid.ColumnDefinitions>
-			</Grid>
-		</TabItem>
+			FontSize="12"></TabItem>
 		<TabItem
 			Header="Протокол"
 			FontSize="12"
@@ -319,15 +228,19 @@
 						Margin="5"
 						IsEnabled="False"
 						SelectionChanged="cbDBName_SelectedIndexChanged" />
-					<Grid> 
+					<Grid>
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="2*"/>
-							<ColumnDefinition Width="*"/>
+							<ColumnDefinition
+								Width="2*" />
+							<ColumnDefinition
+								Width="*" />
 						</Grid.ColumnDefinitions>
-						<ComboBox Grid.Column="0"
-						x:Name="cbPeriod"
-						Margin="5"></ComboBox>
-						<Label Grid.Column="1">секунд</Label>
+						<ComboBox
+							Grid.Column="0"
+							x:Name="cbPeriod"
+							Margin="5"></ComboBox>
+						<Label
+							Grid.Column="1">секунд</Label>
 					</Grid>
 				</StackPanel>
 				<StackPanel
@@ -382,7 +295,6 @@
 					x:Name="AnalogGrid">
 					<t:DataGrid.Columns>
 						<t:DataGridTextColumn
-							
 							Header="№ Канала"
 							Binding="{Binding id_num}" />
 						<t:DataGridComboBoxColumn
@@ -428,7 +340,7 @@
 		<TabItem
 			FontSize="12"
 			Header="Дискретные сигналы">
-		<Grid>
+			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition
 						Width="*" />
@@ -446,30 +358,25 @@
 					<t:DataGrid.Columns>
 						<t:DataGridTextColumn
 							Header="№ Канала"
-							Binding ="{Binding id_num}"
-							/>
+							Binding="{Binding id_num}" />
 						<t:DataGridComboBoxColumn
 							Header="Точка отбора"
 							SelectedValueBinding="{Binding id_channel}"
 							DisplayMemberPath="Name"
-							SelectedValuePath="id"
-							/>
+							SelectedValuePath="id" />
 						<t:DataGridComboBoxColumn
 							Header="ULTRAMAT"
 							SelectedValueBinding="{Binding id_ultramat}"
 							DisplayMemberPath="Name"
-							SelectedValuePath="id"
-							/>
+							SelectedValuePath="id" />
 						<t:DataGridComboBoxColumn
 							Header="Параметр"
 							SelectedValueBinding="{Binding id_discrete}"
 							DisplayMemberPath="Name"
-							SelectedValuePath="id"
-							/>
+							SelectedValuePath="id" />
 						<t:DataGridTextColumn
 							Header="Адрес ModBus"
-							Binding="{Binding modbus_address}"
-							/>
+							Binding="{Binding modbus_address}" />
 					</t:DataGrid.Columns>
 				</t:DataGrid>
 				<Button
@@ -485,47 +392,108 @@
 		<TabItem
 			FontSize="12"
 			Header="Справочники">
-		<Grid>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="120"/>
-			</Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="*"/>
-			</Grid.RowDefinitions>
-			<StackPanel Grid.Column="0" Grid.Row="0" >
-				<Label HorizontalAlignment="Center">Точки отбора</Label>
-				<t:DataGrid x:Name="ChannelGrid" CanUserAddRows="True" 
-				CanUserDeleteRows="True" CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True"             AutoGenerateColumns="True"></t:DataGrid>
-			</StackPanel>
-			<StackPanel Grid.Column="1" Grid.Row="0" >
-				<Label HorizontalAlignment="Center">Приборы</Label>
-				<t:DataGrid x:Name="UltramatGrid" CanUserAddRows="True" CanUserDeleteRows="True" CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True" AutoGenerateColumns="True"></t:DataGrid>
-			</StackPanel>
-			<StackPanel Grid.Column="2" Grid.Row="0" >
-				<Label HorizontalAlignment="Center">Точки отбора</Label>
-				<t:DataGrid x:Name="GasGrid" CanUserAddRows="True" 
-				CanUserDeleteRows="True" CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True"             AutoGenerateColumns="True"></t:DataGrid>
-			</StackPanel>
-			<StackPanel Grid.Column="0" Grid.Row="1" >
-				<Label HorizontalAlignment="Center">Параметры</Label>
-				<t:DataGrid x:Name="ParamGrid" CanUserAddRows="True" 
-				CanUserDeleteRows="True" CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True" AutoGenerateColumns="True"></t:DataGrid>
-			</StackPanel>
-			<StackPanel Grid.Column="1" Grid.Row="1" >
-				<Label HorizontalAlignment="Center">Дискртеные сигналы</Label>
-				<t:DataGrid x:Name="DiscGrid" CanUserAddRows="True" 
-				CanUserDeleteRows="True" CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True" AutoGenerateColumns="True"></t:DataGrid>
-			</StackPanel>
-			<StackPanel Grid.Column="2" Grid.Row="1" >
-				<Label HorizontalAlignment="Center">Единицы измерения</Label>
-				<t:DataGrid x:Name="UnitGrid" CanUserAddRows="True" 
-				CanUserDeleteRows="True" CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True" AutoGenerateColumns="True"></t:DataGrid>
-			</StackPanel>
-			<Button
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition
+						Width="*" />
+					<ColumnDefinition
+						Width="*" />
+					<ColumnDefinition
+						Width="*" />
+					<ColumnDefinition
+						Width="120" />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition
+						Height="*" />
+					<RowDefinition
+						Height="*" />
+				</Grid.RowDefinitions>
+				<StackPanel
+					Grid.Column="0"
+					Grid.Row="0">
+					<Label
+						HorizontalAlignment="Center">Точки отбора</Label>
+					<t:DataGrid
+						x:Name="ChannelGrid"
+						CanUserAddRows="True"
+						CanUserDeleteRows="True"
+						CanUserResizeColumns="True"
+						CanUserResizeRows="True"
+						CanUserSortColumns="True"
+						AutoGenerateColumns="True"></t:DataGrid>
+				</StackPanel>
+				<StackPanel
+					Grid.Column="1"
+					Grid.Row="0">
+					<Label
+						HorizontalAlignment="Center">Приборы</Label>
+					<t:DataGrid
+						x:Name="UltramatGrid"
+						CanUserAddRows="True"
+						CanUserDeleteRows="True"
+						CanUserResizeColumns="True"
+						CanUserResizeRows="True"
+						CanUserSortColumns="True"
+						AutoGenerateColumns="True"></t:DataGrid>
+				</StackPanel>
+				<StackPanel
+					Grid.Column="2"
+					Grid.Row="0">
+					<Label
+						HorizontalAlignment="Center">Точки отбора</Label>
+					<t:DataGrid
+						x:Name="GasGrid"
+						CanUserAddRows="True"
+						CanUserDeleteRows="True"
+						CanUserResizeColumns="True"
+						CanUserResizeRows="True"
+						CanUserSortColumns="True"
+						AutoGenerateColumns="True"></t:DataGrid>
+				</StackPanel>
+				<StackPanel
+					Grid.Column="0"
+					Grid.Row="1">
+					<Label
+						HorizontalAlignment="Center">Параметры</Label>
+					<t:DataGrid
+						x:Name="ParamGrid"
+						CanUserAddRows="True"
+						CanUserDeleteRows="True"
+						CanUserResizeColumns="True"
+						CanUserResizeRows="True"
+						CanUserSortColumns="True"
+						AutoGenerateColumns="True"></t:DataGrid>
+				</StackPanel>
+				<StackPanel
+					Grid.Column="1"
+					Grid.Row="1">
+					<Label
+						HorizontalAlignment="Center">Дискртеные сигналы</Label>
+					<t:DataGrid
+						x:Name="DiscGrid"
+						CanUserAddRows="True"
+						CanUserDeleteRows="True"
+						CanUserResizeColumns="True"
+						CanUserResizeRows="True"
+						CanUserSortColumns="True"
+						AutoGenerateColumns="True"></t:DataGrid>
+				</StackPanel>
+				<StackPanel
+					Grid.Column="2"
+					Grid.Row="1">
+					<Label
+						HorizontalAlignment="Center">Единицы измерения</Label>
+					<t:DataGrid
+						x:Name="UnitGrid"
+						CanUserAddRows="True"
+						CanUserDeleteRows="True"
+						CanUserResizeColumns="True"
+						CanUserResizeRows="True"
+						CanUserSortColumns="True"
+						AutoGenerateColumns="True"></t:DataGrid>
+				</StackPanel>
+				<Button
 					Grid.Column="3"
 					x:Name="btnDictSave"
 					Width="100"
@@ -533,7 +501,138 @@
 					Margin="5"
 					VerticalAlignment="Top"
 					Click="btnDictSave_Click">Сохранить</Button>
-		</Grid>
+			</Grid>
+		</TabItem>
+		<TabItem
+			Header="Служба"
+			FontSize="12">
+			<Grid>
+				<Grid
+					Grid.ColumnSpan="2">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition
+							Width="*" />
+						<ColumnDefinition
+							Width="100" />
+						<ColumnDefinition
+							Width="100" />
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition
+							Height="*" />
+						<RowDefinition
+							Height="50" />
+						<RowDefinition
+							Height="50" />
+					</Grid.RowDefinitions>
+					<t:DataGrid
+						x:Name="dgEvents"
+						IsReadOnly="True"
+						Grid.Column="0"
+						Grid.Row="0"
+						Grid.RowSpan="3">
+						<t:DataGridTextColumn
+							Header="Время"
+							Binding="{Binding TimeGenerated}">
+							<DataGridTextColumn.ElementStyle>
+        					<Style TargetType="{x:Type t:DataGridRow}">
+            					<Style.Triggers>
+                					<Trigger Property="Text" Value="John">
+                    					<Setter Property="Background" Value="Red"/>
+            							<Setter Property="ColorContext" Value="White"/>
+                					</Trigger>
+            					</Style.Triggers>
+        					</Style>
+    						</DataGridTextColumn.ElementStyle>
+						</t:DataGridTextColumn>
+						<t:DataGridTextColumn
+							Header="Сообщение"
+							Binding="{Binding Message}" />
+					</t:DataGrid>
+					<Button
+						Margin="5"
+						Grid.Column="1"
+						Grid.Row="0"
+						x:Name="btnRefresh"
+						IsEnabled="False"
+						VerticalAlignment="Top"
+						HorizontalAlignment="Center"
+						FontWeight="Medium"
+						FontSize="12"
+						Width="90"
+						Height="40"
+						Click="btnRefresh_Click">
+						<TextBlock>Системные<LineBreak />сообщения</TextBlock>
+					</Button>
+					<Button
+						Margin="5"
+						Grid.Column="1"
+						Grid.Row="1"
+						x:Name="btnInstall"
+						IsEnabled="False"
+						VerticalContentAlignment="Center"
+						HorizontalAlignment="Center"
+						FontWeight="Medium"
+						FontSize="12"
+						Width="90"
+						Height="40"
+						Click="btnInstall_Click">
+						<TextBlock>Установить<LineBreak />службу</TextBlock>
+					</Button>
+					<Button
+						Height="40"
+						Width="90"
+						Margin="5"
+						FontSize="12"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						FontWeight="Medium"
+						Grid.Column="2"
+						Grid.Row="1"
+						x:Name="btnDelete"
+						IsEnabled="False"
+						Click="btnDelete_Click">
+						<TextBlock>Удалить<LineBreak />службу</TextBlock>
+					</Button>
+					<Button
+						Height="40"
+						Width="90"
+						Margin="5"
+						Grid.Column="1"
+						Grid.Row="2"
+						x:Name="btnStart"
+						FontSize="12"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						FontWeight="Medium"
+						IsEnabled="False"
+						Click="btnStart_Click">
+						<TextBlock>Запустить<LineBreak />службу</TextBlock>
+					</Button>
+					<Button
+						Height="40"
+						Width="90"
+						Margin="5"
+						Grid.Column="2"
+						Grid.Row="2"
+						FontSize="12"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						FontWeight="Medium"
+						x:Name="btnStop"
+						IsEnabled="False"
+						Click="btnStop_Click">
+						<TextBlock>
+						Остановить<LineBreak />службу</TextBlock>
+					</Button>
+				</Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition
+						Width="0.115284974093264*" />
+					<ColumnDefinition
+						Width="0.884715025906736*" />
+				</Grid.ColumnDefinitions>
+			</Grid>
 		</TabItem>
 	</TabControl>
 </Window>

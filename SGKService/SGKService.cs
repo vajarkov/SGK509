@@ -18,6 +18,7 @@ namespace SGKService
 		private System.Timers.Timer timerSrv;           	// Таймер периодичности опроса
 		private AppSettingsSection modbusSettings;    		// Переменная для конфигурации файлов с данными
 		private AppSettingsSection dbSettings;  			// Переменная для конфигурации порта
+		private int periodDBWrite;
 		
 		#region Инициализация службы
 		public SGKService()
@@ -43,7 +44,7 @@ namespace SGKService
 			// Считывание конфигурации Modbus
 			modbusSettings = (AppSettingsSection)appConfig.GetSection("ModbusSettings");
 			// Заполнение конфигурационных данных
-			GetConfigModbus();	// Считывание параметров Modbus из файла
+			//GetConfigModbus();	// Считывание параметров Modbus из файла
 			//GetConfigDB();		// Считывание параметров БД из файла        
 		}
 		#endregion
@@ -127,12 +128,12 @@ namespace SGKService
 			#region Запись в журнал
 			eventLog.WriteEntry("Служба запущена");
 			#endregion
-			
+			Int32.TryParse(dbSettings.Settings["DBPeriod"].Value, out periodDBWrite);
 			#region Инициализация таймера
             //Инициализация таймера
             timerSrv = new System.Timers.Timer();
             //Задание интервала опроса
-            timerSrv.Interval = 60000;
+            timerSrv.Interval =  periodDBWrite*1000;
             //Включение таймера
             timerSrv.Enabled = true;
             //Добавление обработчика на таймер
@@ -150,7 +151,9 @@ namespace SGKService
 		/// </summary>
 		protected override void OnStop()
 		{
-			// TODO: Add tear-down code here (if required) to stop your service.
+			#region Запись в журнал
+            eventLog.WriteEntry("Служба остановлена");
+            #endregion
 		}
 	}
 }
