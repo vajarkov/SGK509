@@ -44,6 +44,12 @@
     <Reference Include="Microsoft.SqlServer.Smo">
       <Private>True</Private>
     </Reference>
+    <Reference Include="PresentationCore">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System">
       <Private>True</Private>
     </Reference>
@@ -79,6 +85,12 @@
     <Reference Include="System.XML">
       <HintPath>..\..\..\..\..\..\Windows\Microsoft.NET\Framework\v2.0.50727\System.XML.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WPFToolkit">
+      <HintPath>C:\Program Files\WPF Toolkit\v3.5.50211.1\WPFToolkit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

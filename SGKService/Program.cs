@@ -7,10 +7,9 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
-using System.Collections.Generic;
 using System.ServiceProcess;
-using System.Text;
-
+using System.Diagnostics;
+	
 namespace SGKService
 {
 	static class Program
@@ -20,8 +19,20 @@ namespace SGKService
 		/// </summary>
 		static void Main()
 		{
-			// To run more than one service you have to add them here
-			ServiceBase.Run(new ServiceBase[] { new SGKService() });
+			try
+			{
+				ServiceBase.Run(new ServiceBase[] { new SGKService() });
+			}
+			catch (Exception ex)
+			{
+				EventLog eventLog = new EventLog();
+                if (!EventLog.SourceExists("SGKService"))
+                {
+                    EventLog.CreateEventSource("SGKService", "SGKService");
+                }
+                eventLog.Source = "SGKService";
+                eventLog.WriteEntry(String.Format("Exception: {0} \n\nStack: {1}", ex.Message + " : " + ex.ToString(), ex.StackTrace) , EventLogEntryType.Error );
+			}
 		}
 	}
 }

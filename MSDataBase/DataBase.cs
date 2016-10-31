@@ -12,10 +12,9 @@ using System.Data;
 using System.Data.Sql;
 using System.Data.SqlClient;
 using Microsoft.SqlServer.Management.Smo;
-using System.Windows.Forms;
 using System.Text;
-
-
+using Microsoft.Windows.Controls;
+using System.Collections.ObjectModel;
 
 namespace MSDataBase
 {
@@ -56,9 +55,7 @@ namespace MSDataBase
 			if (tableDataSources.Rows.Count == 0)
 			{
 				tableDataSources = instance.GetDataSources();
-				
 				var listServers =  new List<string>();
-				
 				foreach(DataRow rowServer in tableDataSources.Rows)
 				{
 					if(String.IsNullOrEmpty(rowServer["InstanceName"].ToString()))
@@ -90,7 +87,6 @@ namespace MSDataBase
 					return false;
 				}
 			}
-			
 		}
 		#endregion
 		
@@ -122,19 +118,16 @@ namespace MSDataBase
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.Message);
+				System.Windows.MessageBox.Show(ex.Message);
 			}
 			return listDB;
 		}
 		#endregion
 		
-		
 		#region Заполнение ячеек таблиц конфигурации данными
-		public void GetParameters(DataGridViewComboBoxColumn cbItem, string tableName)
+		public void GetParameters(DataGridComboBoxColumn cbItem, string tableName)
 		{
-				
 			GetConnectionString();
-						
 			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
 			{
 				try
@@ -148,57 +141,35 @@ namespace MSDataBase
 						DataTable table = new DataTable();
 						table.Locale = System.Globalization.CultureInfo.InvariantCulture;
 						adapter.Fill(table);
-						cbItem.DataSource = table;
-						cbItem.DisplayMember = "name";
-						cbItem.ValueMember = "id";
+						cbItem.ItemsSource= table.AsDataView();
+						cbItem.DisplayMemberPath = "name";
+						cbItem.SelectedValuePath = "id";
 					}                                         
 				}
 				catch (Exception e){
-					MessageBox.Show(e.Message);
+					System.Windows.MessageBox.Show(e.Message);
 				}
 			}
 		}
-		#endregion
-		
-		#region Заполнение данными конфигурации комплекса
-		public void GetConfig(DataGridView dvgItem, string tblName)
-		{
-			GetConnectionString();
-			
-			using(SqlConnection connection = new SqlConnection(builder.ConnectionString))
-			{
-				SqlCommand command = new SqlCommand("SELECT * FROM " + tblName, connection);
-				connection.Open();
-				SqlDataReader reader = command.ExecuteReader();
-				if(reader.HasRows)
-				{
-					while(reader.Read())
-					{
-						dvgItem.Rows.Add(reader.GetInt32(0), reader.GetInt32(1),reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(4));
-					}
-				}
-				reader.Close();
-			}
-		}
-		
 		#endregion
 		
 		#region Заполнение справочников из БД
-		public void GetDict(DataGridView dvgItem, DataSet ds, string tblItem)
+		public void GetData(Microsoft.Windows.Controls.DataGrid dvgItem, DataSet ds, string tblItem)
 		{
 			GetConnectionString();
-			
 			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
 			{
 				SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM " + tblItem, connection);
+				if (ds.Tables.Count != 0)
+					ds.Tables[0].Clear();
 				adapter.Fill(ds);
-				dvgItem.DataSource = ds.Tables[0];
+				dvgItem.ItemsSource = ds.Tables[0].AsDataView();
 			}
 		}
 		#endregion
 		
 		#region Обновление справочников в БД
-		public void UpdateDict(DataGridView dvgItem, DataSet ds, string tblItem)
+		public void UpdateData(Microsoft.Windows.Controls.DataGrid dvgItem, DataSet ds, string tblItem)
 		{
 			GetConnectionString();
 			
@@ -207,47 +178,6 @@ namespace MSDataBase
 				SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM " + tblItem, connection);
 				SqlCommandBuilder build = new SqlCommandBuilder(adapter);
 				adapter.Update(ds.Tables[0]);
-			}
-		}
-		#endregion
-		
-		#region Обновление данных конфигурации комплекса
-		public void UpdateConfig(DataGridView dvgItem, string tblItem)
-		{
-			GetConnectionString();
-			
-			try
-			{
-				using(SqlConnection connection = new SqlConnection(builder.ConnectionString))
-				{
-					SqlCommand command = new SqlCommand("DELETE FROM " + tblItem, connection);
-					connection.Open();
-					command.ExecuteNonQuery();
-					StringBuilder query = new StringBuilder();
-					query.AppendFormat("INSERT INTO {0} VALUES ", tblItem);
-					for(int i = 0; i < dvgItem.Rows.Count - 1; i++)
-					{ 
-						query.Append("(");
-						for (int j = 0; j < dvgItem.Rows[i].Cells.Count; j++ )
-	    				{
-							query.AppendFormat("{0}, ", dvgItem.Rows[i].Cells[j].Value.ToString());
-	    				}
-						query.Remove(query.Length-2,2);
-						query.Append("),");
-					
-					}
-					
-					query.Remove(query.Length-1, 1);
-					
-					
-					command = new SqlCommand(query.ToString(), connection);
-					command.ExecuteNonQuery();
-					
-				}
-			}
-			catch(Exception ex)
-			{
-				MessageBox.Show(ex.Message);
 			}
 		}
 		#endregion

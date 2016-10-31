@@ -19,16 +19,29 @@ namespace SGKService
 	{
 		private ServiceProcessInstaller serviceProcessInstaller;
 		private ServiceInstaller serviceInstaller;
-		
+		private System.Diagnostics.EventLogInstaller eventLogInstaller;
 		public ProjectInstaller()
 		{
 			serviceProcessInstaller = new ServiceProcessInstaller();
 			serviceInstaller = new ServiceInstaller();
-			// Here you can set properties on serviceProcessInstaller or register event handlers
+			this.eventLogInstaller = new System.Diagnostics.EventLogInstaller();
+			// serviceProcessInstaller
 			serviceProcessInstaller.Account = ServiceAccount.LocalService;
 			
+			// serviceInstaller1
+			this.serviceInstaller.Description = "Служба архивации и обмена данными для СГК509 и СГК510";
+            this.serviceInstaller.DisplayName = "Служба СГК";
+            this.serviceInstaller.ServiceName = "SGKService";
+            this.serviceInstaller.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
+            this.serviceInstaller.Installers.Clear();
+            
+            // EventLogInstaller
+            this.eventLogInstaller.Source = "ModbusRTUService";
+            this.eventLogInstaller.Log = "ModbusRTUService";
+            
+            // ProjectInstaller
 			serviceInstaller.ServiceName = SGKService.MyServiceName;
-			this.Installers.AddRange(new Installer[] { serviceProcessInstaller, serviceInstaller });
+			this.Installers.AddRange(new Installer[] { serviceProcessInstaller, serviceInstaller, eventLogInstaller });
 		}
 	}
 }

@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Windows.Forms;
+using Microsoft.Windows.Controls;
 
 namespace MSDataBase
 {
@@ -57,21 +58,24 @@ namespace MSDataBase
 		/// </summary>
 		/// <param name="cbItem">Поле параметра на форме</param>
 		/// <param name="tableName">Имя таблицы в БД</param>
-		void GetParameters(DataGridViewComboBoxColumn cbItem, string tableName);
+		void GetParameters(DataGridComboBoxColumn cbItem, string tableName);
+		
 		
 		/// <summary>
 		/// Получение списка БД
 		/// </summary>
 		List<string> GetDBList();
 		
-		/// <summary>Получение данных из справочника </summary> 
-		void GetDict(DataGridView dvgItem, DataSet ds, string tblItem);
+		/// <summary>Получение данных из справочников и конфигурации в БД</summary> 
+		/// <param name="dvgItem">Объект для отображения данных</param>
+		/// <param name="ds">Промежуточный набор для хранения данных</param>
+		/// <param name="tblItem">Имя таблица в БД</param>
+		void GetData(Microsoft.Windows.Controls.DataGrid dvgItem, DataSet ds, string tblItem);
 		
-		/// <summary> Получение данных из конфигурации </summary>
-		void GetConfig(DataGridView dvgItem, string tblName);
-		// Обновление данных в справочнике
-		void UpdateDict(DataGridView dvgItem, DataSet ds, string tblItem);
-		// Обновление данных в конфигурации
-		void UpdateConfig(DataGridView dvgItem, string tblItem);
+		/// <summary>Обновление данных справочников и конфигурации в БД </summary>
+		/// <param name="dvgItem">Объект для отображения данных</param>
+		/// <param name="ds">Промежуточный набор для хранения данных</param>
+		/// <param name="tblItem">Имя таблица в БД</param>
+		void UpdateData(Microsoft.Windows.Controls.DataGrid dvgItem, DataSet ds, string tblItem);
 	}
 }
