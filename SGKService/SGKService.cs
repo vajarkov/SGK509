@@ -124,7 +124,25 @@ namespace SGKService
 		/// </summary>
 		protected override void OnStart(string[] args)
 		{
-			// TODO: Add start code here (if required) to start your service.
+			#region Запись в журнал
+			eventLog.WriteEntry("Служба запущена");
+			#endregion
+			
+			#region Инициализация таймера
+            //Инициализация таймера
+            timerSrv = new System.Timers.Timer();
+            //Задание интервала опроса
+            timerSrv.Interval = 60000;
+            //Включение таймера
+            timerSrv.Enabled = true;
+            //Добавление обработчика на таймер
+            //timerSrv.Elapsed += new ElapsedEventHandler(ReadAndModbus);
+            //Автоматический взвод таймера 
+            timerSrv.AutoReset = true;
+            //Старт таймера
+            timerSrv.Start();
+   
+            #endregion
 		}
 		
 		/// <summary>

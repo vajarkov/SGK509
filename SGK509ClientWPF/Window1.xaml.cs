@@ -15,36 +15,10 @@ using System.Diagnostics;
 using System.IO.Ports;
 using System.Data;
 using Microsoft.Windows.Controls;
-using MSDataBase;
+using Interfaces;
 
 namespace SGK509ClientWPF
 {
-	/// <summary>
-	/// Класс данных конфигурации аналоговых сигналов
-	/// </summary>
-	public class AnalogSignal
-	{
-		public int IdNum { get; set; }
-		public int IdChannel { get; set; }
-		public int IdUltramat { get; set; }
-		public int IdParam { get; set; }
-		public int IdGas { get; set; }
-		public int IdUnit { get; set; }
-		public int modbusAddress  { get; set; }
-	}
-
-	/// <summary>
-	/// Класс данных конфигурации аналоговых сигналов
-	/// </summary>
-	public class DisreteSignal
-	{
-		public int IdNum { get; set; }
-		public int IdChannel { get; set; }
-		public int IdUltramat { get; set; }
-		public int IdDiscrete { get; set; }
-		public int modbusAddress  { get; set; }
-	}
-		
 	/// <summary>
 	/// Interaction logic for Window1.xaml
 	/// </summary>
@@ -174,7 +148,7 @@ namespace SGK509ClientWPF
 			// Заполнение типов Базы данных
 			ComboBoxInit(cbDBType, new string[] {"MS SQL Server", "Oracle", "PostgreSQL", "MySQL"}, "DBType");
 			// Заполнение периода опроса
-			ComboBoxInit(cbPeriod, new string[] {"1 секунда", "5 секунд", "30 секунд", "1 минута", "5 минут"}, "DBPeriod");
+			ComboBoxInit(cbPeriod, new string[] {"1", "5", "30", "60", "180", "300"}, "DBPeriod");
 			// Выбор источника данных БД из конфигурации, если он прописан
 			if (!String.IsNullOrEmpty(dbSettings.Settings["DBDataSource"].Value))
 			{

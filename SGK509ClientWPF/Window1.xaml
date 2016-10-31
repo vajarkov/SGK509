@@ -319,9 +319,16 @@
 						Margin="5"
 						IsEnabled="False"
 						SelectionChanged="cbDBName_SelectedIndexChanged" />
-					<ComboBox
+					<Grid> 
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="2*"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+						<ComboBox Grid.Column="0"
 						x:Name="cbPeriod"
 						Margin="5"></ComboBox>
+						<Label Grid.Column="1">секунд</Label>
+					</Grid>
 				</StackPanel>
 				<StackPanel
 					Grid.Column="2">
@@ -491,27 +498,32 @@
 			</Grid.RowDefinitions>
 			<StackPanel Grid.Column="0" Grid.Row="0" >
 				<Label HorizontalAlignment="Center">Точки отбора</Label>
-				<t:DataGrid x:Name="ChannelGrid" CanUserAddRows="True" AutoGenerateColumns="True"></t:DataGrid>
+				<t:DataGrid x:Name="ChannelGrid" CanUserAddRows="True" 
+				CanUserDeleteRows="True" CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True"             AutoGenerateColumns="True"></t:DataGrid>
 			</StackPanel>
 			<StackPanel Grid.Column="1" Grid.Row="0" >
 				<Label HorizontalAlignment="Center">Приборы</Label>
-				<t:DataGrid x:Name="UltramatGrid" CanUserAddRows="True" AutoGenerateColumns="True"></t:DataGrid>
+				<t:DataGrid x:Name="UltramatGrid" CanUserAddRows="True" CanUserDeleteRows="True" CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True" AutoGenerateColumns="True"></t:DataGrid>
 			</StackPanel>
 			<StackPanel Grid.Column="2" Grid.Row="0" >
 				<Label HorizontalAlignment="Center">Точки отбора</Label>
-				<t:DataGrid x:Name="GasGrid" CanUserAddRows="True" AutoGenerateColumns="True"></t:DataGrid>
+				<t:DataGrid x:Name="GasGrid" CanUserAddRows="True" 
+				CanUserDeleteRows="True" CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True"             AutoGenerateColumns="True"></t:DataGrid>
 			</StackPanel>
 			<StackPanel Grid.Column="0" Grid.Row="1" >
 				<Label HorizontalAlignment="Center">Параметры</Label>
-				<t:DataGrid x:Name="ParamGrid" CanUserAddRows="True" AutoGenerateColumns="True"></t:DataGrid>
+				<t:DataGrid x:Name="ParamGrid" CanUserAddRows="True" 
+				CanUserDeleteRows="True" CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True" AutoGenerateColumns="True"></t:DataGrid>
 			</StackPanel>
 			<StackPanel Grid.Column="1" Grid.Row="1" >
 				<Label HorizontalAlignment="Center">Дискртеные сигналы</Label>
-				<t:DataGrid x:Name="DiscGrid" CanUserAddRows="True" AutoGenerateColumns="True"></t:DataGrid>
+				<t:DataGrid x:Name="DiscGrid" CanUserAddRows="True" 
+				CanUserDeleteRows="True" CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True" AutoGenerateColumns="True"></t:DataGrid>
 			</StackPanel>
 			<StackPanel Grid.Column="2" Grid.Row="1" >
 				<Label HorizontalAlignment="Center">Единицы измерения</Label>
-				<t:DataGrid x:Name="UnitGrid" CanUserAddRows="True" AutoGenerateColumns="True"></t:DataGrid>
+				<t:DataGrid x:Name="UnitGrid" CanUserAddRows="True" 
+				CanUserDeleteRows="True" CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True" AutoGenerateColumns="True"></t:DataGrid>
 			</StackPanel>
 			<Button
 					Grid.Column="3"

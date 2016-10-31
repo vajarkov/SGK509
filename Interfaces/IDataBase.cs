@@ -9,10 +9,8 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Windows.Forms;
-using Microsoft.Windows.Controls;
 
-namespace MSDataBase
+namespace Interfaces
 {
 	/// <summary>
 	/// Интерфейс для работой с БД.
@@ -58,7 +56,7 @@ namespace MSDataBase
 		/// </summary>
 		/// <param name="cbItem">Поле параметра на форме</param>
 		/// <param name="tableName">Имя таблицы в БД</param>
-		void GetParameters(DataGridComboBoxColumn cbItem, string tableName);
+		void GetParameters(Microsoft.Windows.Controls.DataGridComboBoxColumn cbItem, string tableName);
 		
 		
 		/// <summary>

@@ -10,12 +10,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		..\DOCS\База данных СГК.docx = ..\DOCS\База данных СГК.docx
 		..\PROJECTS\SQL\SGK509.bak = ..\PROJECTS\SQL\SGK509.bak
-		C:\Users\Public\Pictures\Sample Pictures\Koala.jpg = C:\Users\Public\Pictures\Sample Pictures\Koala.jpg
+		..\..\..\..\Public\Pictures\Sample Pictures\Koala.jpg = ..\..\..\..\Public\Pictures\Sample Pictures\Koala.jpg
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSDataBase", "MSDataBase\MSDataBase.csproj", "{B82F3731-213E-4DC0-85FD-34AAF9E13136}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SGK509ClientWPF", "SGK509ClientWPF\SGK509ClientWPF.csproj", "{2BA00485-3401-46E6-A27B-6FC1B007666A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interfaces", "Interfaces\Interfaces.csproj", "{4FC4BA5A-1592-44E3-9C60-C16BDCA030FF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,5 +41,9 @@ Global
 		{2BA00485-3401-46E6-A27B-6FC1B007666A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2BA00485-3401-46E6-A27B-6FC1B007666A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2BA00485-3401-46E6-A27B-6FC1B007666A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FC4BA5A-1592-44E3-9C60-C16BDCA030FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FC4BA5A-1592-44E3-9C60-C16BDCA030FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FC4BA5A-1592-44E3-9C60-C16BDCA030FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FC4BA5A-1592-44E3-9C60-C16BDCA030FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

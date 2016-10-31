@@ -15,6 +15,7 @@ using Microsoft.SqlServer.Management.Smo;
 using System.Text;
 using Microsoft.Windows.Controls;
 using System.Collections.ObjectModel;
+using Interfaces;
 
 namespace MSDataBase
 {
@@ -156,14 +157,21 @@ namespace MSDataBase
 		#region Заполнение справочников из БД
 		public void GetData(Microsoft.Windows.Controls.DataGrid dvgItem, DataSet ds, string tblItem)
 		{
-			GetConnectionString();
-			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+			try
 			{
-				SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM " + tblItem, connection);
-				if (ds.Tables.Count != 0)
-					ds.Tables[0].Clear();
-				adapter.Fill(ds);
-				dvgItem.ItemsSource = ds.Tables[0].AsDataView();
+				GetConnectionString();
+				using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+				{
+					SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM " + tblItem, connection);
+					if (ds.Tables.Count != 0)
+						ds.Tables[0].Clear();
+					adapter.Fill(ds);
+					dvgItem.ItemsSource = ds.Tables[0].AsDataView();
+				}
+			}
+			catch (Exception e)
+			{
+				System.Windows.MessageBox.Show(e.Message);
 			}
 		}
 		#endregion
@@ -171,13 +179,19 @@ namespace MSDataBase
 		#region Обновление справочников в БД
 		public void UpdateData(Microsoft.Windows.Controls.DataGrid dvgItem, DataSet ds, string tblItem)
 		{
-			GetConnectionString();
-			
-			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+			try
 			{
-				SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM " + tblItem, connection);
-				SqlCommandBuilder build = new SqlCommandBuilder(adapter);
-				adapter.Update(ds.Tables[0]);
+				GetConnectionString();
+				using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+				{
+					SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM " + tblItem, connection);
+					SqlCommandBuilder build = new SqlCommandBuilder(adapter);
+					adapter.Update(ds.Tables[0]);
+				}
+			}
+			catch (Exception e)
+			{
+				System.Windows.MessageBox.Show(e.Message);
 			}
 		}
 		#endregion

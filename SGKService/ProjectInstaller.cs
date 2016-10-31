@@ -26,7 +26,7 @@ namespace SGKService
 			serviceInstaller = new ServiceInstaller();
 			this.eventLogInstaller = new System.Diagnostics.EventLogInstaller();
 			// serviceProcessInstaller
-			serviceProcessInstaller.Account = ServiceAccount.LocalService;
+			serviceProcessInstaller.Account = ServiceAccount.NetworkService;
 			
 			// serviceInstaller1
 			this.serviceInstaller.Description = "Служба архивации и обмена данными для СГК509 и СГК510";
@@ -36,8 +36,8 @@ namespace SGKService
             this.serviceInstaller.Installers.Clear();
             
             // EventLogInstaller
-            this.eventLogInstaller.Source = "ModbusRTUService";
-            this.eventLogInstaller.Log = "ModbusRTUService";
+            this.eventLogInstaller.Source = "SGKSersvice";
+            this.eventLogInstaller.Log = "SGKService";
             
             // ProjectInstaller
 			serviceInstaller.ServiceName = SGKService.MyServiceName;

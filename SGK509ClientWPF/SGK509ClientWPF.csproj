@@ -107,11 +107,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <SplashScreen Include="Koala.jpg">
+    <SplashScreen Include="лого.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </SplashScreen>
+    <None Include="Koala.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Interfaces\Interfaces.csproj">
+      <Project>{4fc4ba5a-1592-44e3-9c60-c16bdca030ff}</Project>
+      <Name>Interfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MSDataBase\MSDataBase.csproj">
       <Project>{b82f3731-213e-4dc0-85fd-34aaf9e13136}</Project>
       <Name>MSDataBase</Name>

@@ -76,7 +76,6 @@
     <Compile Include="ProjectInstaller.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SGKService.cs" />
-    <Compile Include="SlaveSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
