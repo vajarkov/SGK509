@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Window
 	x:Class="SGK509ClientWPF.Window1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:t="http://schemas.microsoft.com/wpf/2008/toolkit"
 	Title="SGK509ClientWPF"
@@ -530,31 +530,29 @@
 						IsReadOnly="True"
 						Grid.Column="0"
 						Grid.Row="0"
-						Grid.RowSpan="3">
+						Grid.RowSpan="3"
+						>
+					<t:DataGrid.Columns>
 						<t:DataGridTextColumn
-							Header="Время"
-							Binding="{Binding TimeGenerated}">
-							<DataGridTextColumn.ElementStyle>
-        					<Style TargetType="{x:Type t:DataGridRow}">
-            					<Style.Triggers>
-                					<Trigger Property="Text" Value="John">
-                    					<Setter Property="Background" Value="Red"/>
-            							<Setter Property="ColorContext" Value="White"/>
-                					</Trigger>
-            					</Style.Triggers>
-        					</Style>
-    						</DataGridTextColumn.ElementStyle>
-						</t:DataGridTextColumn>
+						Header="Время"
+						Width="*" 
+						IsReadOnly="True"
+						SortMemberPath="TimeGenerated"
+						Binding="{Binding TimeGenerated, ConverterCulture=ru-RU, StringFormat={}{0:dd.MM.yyyy HH:mm:ss}}" 
+						SortDirection="Descending" />
+					
 						<t:DataGridTextColumn
-							Header="Сообщение"
-							Binding="{Binding Message}" />
+						Header="Сообщение"
+						Width="2*"
+						Binding="{Binding Message}" 
+						IsReadOnly="True"/>
+					</t:DataGrid.Columns>
 					</t:DataGrid>
 					<Button
 						Margin="5"
 						Grid.Column="1"
 						Grid.Row="0"
 						x:Name="btnRefresh"
-						IsEnabled="False"
 						VerticalAlignment="Top"
 						HorizontalAlignment="Center"
 						FontWeight="Medium"

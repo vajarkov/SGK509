@@ -14,8 +14,11 @@ using System.Configuration.Install;
 using System.Diagnostics;
 using System.IO.Ports;
 using System.Data;
+using System.ComponentModel;
 using Microsoft.Windows.Controls;
+using System.Data.Linq;
 using Interfaces;
+
 
 namespace SGK509ClientWPF
 {
@@ -313,36 +316,72 @@ namespace SGK509ClientWPF
 		#region Обновление данных событий службы
 		void btnRefresh_Click(object sender, EventArgs e)
 		{
-			dgEvents.Items.Clear();
-            if (!EventLog.SourceExists("SGKService"))
+			if (!EventLog.SourceExists("SGKService"))
             {
             	// Создаем журнал
                 EventLog.CreateEventSource("SGKService", "SGKService"); 
             }
             events.Log = "SGKService";
             events.Source = "SGKService";
+            // Заполняем таблицу для отображения
             if (events.Entries.Count > 0)
-            {
-                foreach (EventLogEntry entry in events.Entries)
+            {	
+            	dgEvents.ItemsSource = null;
+            	//dgEvents.Items.Clear();
+            	dgEvents.ItemsSource = events.Entries;
+            	dgEvents.Items.Refresh();
+            	dgEvents.Items.SortDescriptions.Clear();
+			    dgEvents.Items.SortDescriptions.Add(new SortDescription(dgEvents.Columns[0].SortMemberPath, ListSortDirection.Descending));
+            	/*//Если есть записи
+            	foreach (EventLogEntry entry in events.Entries)
                 {
-                	dgEvents.Items.Add(new object {entry.TimeGenerated, entry.Message});
-                    if (entry.EntryType == EventLogEntryType.Error)
+            		//Добавляем запись
+            		//DataGridRow grid new DataGridRow();
+					dgEvents.Items.Add(new {DateEvent = entry.TimeGenerated, EventMessage = entry.Message});
+                    //Берем полседнюю запись
+                    var row = (DataGridRow)dgEvents.Items[dgEvents.Items.Count - 1];
+            			//dgEvents.ItemContainerGenerator.ContainerFromIndex(dgEvents.Items.Count - 1);
+                    // И разукрашиваем...
+            		if (entry.EntryType == EventLogEntryType.Error)
                     {
-                        dgEvents.Items[dgEvents.Items.Count - 1].ystem.Drawing.Color.Red;
-                        gvEvents.Rows[gvEvents.Rows.Count - 1].Cells["DateEvent"].Style.ForeColor = System.Drawing.Color.White;
-                        gvEvents.Rows[gvEvents.Rows.Count - 1].Cells["EventMessage"].Style.BackColor = System.Drawing.Color.Red;
-                        gvEvents.Rows[gvEvents.Rows.Count - 1].Cells["EventMessage"].Style.ForeColor = System.Drawing.Color.White;
-
+            			row.Background = Brushes.Red;
+            			row.Foreground = Brushes.White;
+            			// Если ошибка
+            			/*dgEvents.ItemContainerGenerator.StatusChanged += (s, evnt) =>
+    					{
+       							if (dgEvents.ItemContainerGenerator.Status ==  GeneratorStatus.ContainersGenerated)
+       							{
+          							var row = (DataGridRow)dgEvents.ItemContainerGenerator
+                                               .ContainerFromIndex(dgEvents.Items.Count - 1);
+          							row.Background = Brushes.Red;
+          							row.Foreground = Brushes.White;
+       							}
+    					};
                     }
                     else
-                    {
-                        gvEvents.Rows[gvEvents.Rows.Count - 1].Cells["DateEvent"].Style.BackColor = System.Drawing.Color.White;
-                        gvEvents.Rows[gvEvents.Rows.Count - 1].Cells["DateEvent"].Style.ForeColor = System.Drawing.Color.Black;
-                        gvEvents.Rows[gvEvents.Rows.Count - 1].Cells["EventMessage"].Style.BackColor = System.Drawing.Color.White;
-                        gvEvents.Rows[gvEvents.Rows.Count - 1].Cells["EventMessage"].Style.ForeColor = System.Drawing.Color.Black;
+                    {	
+                    	row.Background = Brushes.LightBlue;
+            			row.Foreground = Brushes.DarkBlue;
+                    	/*
+                    	// Обычное сообщение
+                    	dgEvents.ItemContainerGenerator.StatusChanged += (s, evnt) =>
+    					{
+       							if (dgEvents.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
+       							{
+          							var row = (DataGridRow)dgEvents.ItemContainerGenerator.ContainerFromItem(dgEvents.Items.Get);
+          							row.Background = Brushes.LightBlue;
+          							row.Foreground = Brushes.DarkBlue;
+       							}
+    					};
                     }
-                }
-                gvEvents.Sort(DateEvent, ListSortDirection.Descending);
+                }*/
+            	// Сортируем по убыванию
+            	foreach (var col in dgEvents.Columns)
+    			{
+        			col.SortDirection = null;
+    			}
+            	dgEvents.Columns[0].SortDirection = ListSortDirection.Descending;
+            	dgEvents.Items.Refresh();
             }
 		}
 		#endregion
