@@ -29,11 +29,11 @@ namespace SGKService
             AutoLog = false;
             
             // Создаем журнал событий и записываем в него
-            if (!EventLog.SourceExists("SGKService")) //Если журнал с таким названием не существует
+            if (!EventLog.SourceExists(MyServiceName)) //Если журнал с таким названием не существует
             {
-                EventLog.CreateEventSource("SGKService", "SGKService"); // Создаем журнал
+                EventLog.CreateEventSource(MyServiceName, MyServiceName); // Создаем журнал
             }
-            eventLog.Source = "SGKService"; //Помечаем, что будем писать в этот журнал
+            eventLog.Source = MyServiceName; //Помечаем, что будем писать в этот журнал
             
             // Путь к конфигурации 
             string exePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SGK509ClientWPF.exe");
@@ -125,24 +125,31 @@ namespace SGKService
 		/// </summary>
 		protected override void OnStart(string[] args)
 		{
-			#region Запись в журнал
+			// Запись в журнал
 			eventLog.WriteEntry("Служба запущена");
-			#endregion
+			
+			#region Задание интервала и метода выполнения
 			Int32.TryParse(dbSettings.Settings["DBPeriod"].Value, out periodDBWrite);
-			#region Инициализация таймера
-            //Инициализация таймера
-            timerSrv = new System.Timers.Timer();
-            //Задание интервала опроса
-            timerSrv.Interval =  periodDBWrite*1000;
-            //Включение таймера
-            timerSrv.Enabled = true;
-            //Добавление обработчика на таймер
-            //timerSrv.Elapsed += new ElapsedEventHandler(ReadAndModbus);
-            //Автоматический взвод таймера 
-            timerSrv.AutoReset = true;
-            //Старт таймера
-            timerSrv.Start();
-   
+			
+			if (periodDBWrite > 0)
+			{
+				//Инициализация таймера
+            	timerSrv = new System.Timers.Timer();
+            	//Задание интервала опроса
+            	timerSrv.Interval =  periodDBWrite*1000;
+            	//Включение таймера
+            	timerSrv.Enabled = true;
+            	//Добавление обработчика на таймер
+            	//timerSrv.Elapsed += new ElapsedEventHandler(ReadAndModbus);
+            	//Автоматический взвод таймера 
+            	timerSrv.AutoReset = true;
+            	//Старт таймера
+            	timerSrv.Start();
+			}
+			else
+			{
+				eventLog.WriteEntry("Введите период опроса");
+			}
             #endregion
 		}
 		

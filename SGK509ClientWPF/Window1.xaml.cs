@@ -15,8 +15,8 @@ using System.Diagnostics;
 using System.IO.Ports;
 using System.Data;
 using System.ComponentModel;
+using System.Windows.Data;
 using Microsoft.Windows.Controls;
-using System.Data.Linq;
 using Interfaces;
 
 
@@ -316,23 +316,38 @@ namespace SGK509ClientWPF
 		#region Обновление данных событий службы
 		void btnRefresh_Click(object sender, EventArgs e)
 		{
-			if (!EventLog.SourceExists("SGKService"))
+			if (EventLog.SourceExists("SGKService"))
             {
-            	// Создаем журнал
+				string logName = EventLog.LogNameFromSourceName("SGKService", ".");
+				if (logName != "SGKService")
+				{
+					EventLog.DeleteEventSource("SGKService");
+					EventLog.CreateEventSource("SGKService", "SGKService");
+					//events.Clear();
+				}
+				
+			} else {
+				// Создаем журнал
                 EventLog.CreateEventSource("SGKService", "SGKService"); 
-            }
+                //events.Clear();
+			}
+		
             events.Log = "SGKService";
             events.Source = "SGKService";
+           	
             // Заполняем таблицу для отображения
             if (events.Entries.Count > 0)
             {	
-            	dgEvents.ItemsSource = null;
+            	if(dgEvents.ItemsSource == null)
+            		dgEvents.ItemsSource = events.Entries;
+            	//dgEvents.ItemsSource = null;
             	//dgEvents.Items.Clear();
-            	dgEvents.ItemsSource = events.Entries;
-            	dgEvents.Items.Refresh();
+            	//dgEvents.ItemsSource = events.Entries;
+            	CollectionViewSource.GetDefaultView(dgEvents.ItemsSource).Refresh();
             	dgEvents.Items.SortDescriptions.Clear();
 			    dgEvents.Items.SortDescriptions.Add(new SortDescription(dgEvents.Columns[0].SortMemberPath, ListSortDirection.Descending));
-            	/*//Если есть записи
+            	//EventLogEntryType.SuccessAudit
+			    /*//Если есть записи
             	foreach (EventLogEntry entry in events.Entries)
                 {
             		//Добавляем запись
@@ -401,6 +416,13 @@ namespace SGK509ClientWPF
 		{
 			groupRTU.IsEnabled = true;
 			groupTCP.IsEnabled = false;
+		}
+		#endregion
+		
+		#region Обновление статуса Службы на форме
+		void tabItem1_GotFocus(object sender, RoutedEventArgs e)
+		{
+			CheckService(serviceName);
 		}
 		#endregion
 	#endregion
@@ -654,6 +676,7 @@ namespace SGK509ClientWPF
 			dbSource.UpdateData(AnalogGrid, dsAnalogConf, "confAnalog");
 		}
 		#endregion
+		
 	#endregion
 	}
 }
