@@ -18,6 +18,7 @@ using System.ComponentModel;
 using System.Windows.Data;
 using Microsoft.Windows.Controls;
 using Interfaces;
+using System.Collections.Generic;
 
 
 namespace SGK509ClientWPF
@@ -338,66 +339,33 @@ namespace SGK509ClientWPF
             // Заполняем таблицу для отображения
             if (events.Entries.Count > 0)
             {	
+            	// Если таблица пустая, то привязываем ее к журналу 
             	if(dgEvents.ItemsSource == null)
             		dgEvents.ItemsSource = events.Entries;
-            	//dgEvents.ItemsSource = null;
-            	//dgEvents.Items.Clear();
-            	//dgEvents.ItemsSource = events.Entries;
+            	// Обновляем записи
             	CollectionViewSource.GetDefaultView(dgEvents.ItemsSource).Refresh();
+            	// Очищаем описание сортировки
             	dgEvents.Items.SortDescriptions.Clear();
-			    dgEvents.Items.SortDescriptions.Add(new SortDescription(dgEvents.Columns[0].SortMemberPath, ListSortDirection.Descending));
-            	//EventLogEntryType.SuccessAudit
-			    /*//Если есть записи
-            	foreach (EventLogEntry entry in events.Entries)
-                {
-            		//Добавляем запись
-            		//DataGridRow grid new DataGridRow();
-					dgEvents.Items.Add(new {DateEvent = entry.TimeGenerated, EventMessage = entry.Message});
-                    //Берем полседнюю запись
-                    var row = (DataGridRow)dgEvents.Items[dgEvents.Items.Count - 1];
-            			//dgEvents.ItemContainerGenerator.ContainerFromIndex(dgEvents.Items.Count - 1);
-                    // И разукрашиваем...
-            		if (entry.EntryType == EventLogEntryType.Error)
-                    {
-            			row.Background = Brushes.Red;
-            			row.Foreground = Brushes.White;
-            			// Если ошибка
-            			/*dgEvents.ItemContainerGenerator.StatusChanged += (s, evnt) =>
-    					{
-       							if (dgEvents.ItemContainerGenerator.Status ==  GeneratorStatus.ContainersGenerated)
-       							{
-          							var row = (DataGridRow)dgEvents.ItemContainerGenerator
-                                               .ContainerFromIndex(dgEvents.Items.Count - 1);
-          							row.Background = Brushes.Red;
-          							row.Foreground = Brushes.White;
-       							}
-    					};
-                    }
-                    else
-                    {	
-                    	row.Background = Brushes.LightBlue;
-            			row.Foreground = Brushes.DarkBlue;
-                    	/*
-                    	// Обычное сообщение
-                    	dgEvents.ItemContainerGenerator.StatusChanged += (s, evnt) =>
-    					{
-       							if (dgEvents.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
-       							{
-          							var row = (DataGridRow)dgEvents.ItemContainerGenerator.ContainerFromItem(dgEvents.Items.Get);
-          							row.Background = Brushes.LightBlue;
-          							row.Foreground = Brushes.DarkBlue;
-       							}
-    					};
-                    }
-                }*/
-            	// Сортируем по убыванию
+			    // Созадем описание сортировки
+            	dgEvents.Items.SortDescriptions.Add(new SortDescription(dgEvents.Columns[0].SortMemberPath, ListSortDirection.Descending));
+            	
+            	// Очищаем сортировку всех столбцов
             	foreach (var col in dgEvents.Columns)
     			{
         			col.SortDirection = null;
     			}
+            	// Задаем сортировку времени по убыванию (последняя запись вверху)
             	dgEvents.Columns[0].SortDirection = ListSortDirection.Descending;
+            	// Обновляем записи
             	dgEvents.Items.Refresh();
             }
+		}
+		#endregion
+		
+		#region Окно просмотра сообщения журнала событий
+		void DataGridHeader_MouseDoubleClick(object sender, CurrentChangingEventManager e)
+		{
+			//e.
 		}
 		#endregion
 	#endregion
@@ -674,6 +642,33 @@ namespace SGK509ClientWPF
 		void btnAnalogSave_Click(object sender, EventArgs e)
 		{
 			dbSource.UpdateData(AnalogGrid, dsAnalogConf, "confAnalog");
+		}
+		
+		
+		/*
+		void dgEvents_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			//search the object hierarchy for a datagrid row
+			DependencyObject source = (DependencyObject) e.OriginalSource;
+  			DataGridRow row = UIHelpers.TryFindParent<DataGridRow>(source);
+  			
+  			//the user did not click on a row
+  			if (row == null) return;
+  			
+  			MessageBox.Show(row.Item.ToString());
+  			
+  			e.Handled = true;
+		}
+		
+		*/
+		void dgEvents_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
+		{
+			IList<DataGridCellInfo> cells = e.AddedCells;
+    		foreach (DataGridCellInfo di in cells)
+    		{
+        		EventLogEntry dvr = (EventLogEntry)di.Item;
+        		MessageBox.Show(dvr.Message.ToString(), dvr.TimeGenerated.ToString());
+    		}
 		}
 		#endregion
 		

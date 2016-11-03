@@ -510,7 +510,8 @@
 			GotFocus="tabItem1_GotFocus">
 			<Grid>
 				<Grid
-					Grid.ColumnSpan="2">
+					Grid.ColumnSpan="2"
+					x:Name="gvE">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition
 							Width="*" />
@@ -533,22 +534,40 @@
 						Grid.Column="0"
 						Grid.Row="0"
 						Grid.RowSpan="3"
-						
-					>
+						SelectedCellsChanged="dgEvents_SelectedCellsChanged">
 						<t:DataGrid.RowStyle>
-							<Style TargetType="t:DataGridRow">
+							<Style
+								TargetType="t:DataGridRow">
 								<Style.Triggers>
-									<DataTrigger Binding="{Binding EntryType}" Value="Error">
-										<Setter Property="Background" Value="Red"></Setter>
-										<Setter Property="Foreground" Value="White"></Setter>
+									<DataTrigger
+										Binding="{Binding EntryType}"
+										Value="Error">
+										<Setter
+											Property="Background"
+											Value="Red"></Setter>
+										<Setter
+											Property="Foreground"
+											Value="White"></Setter>
 									</DataTrigger>
-									<DataTrigger Binding="{Binding EntryType}" Value="Warning">
-										<Setter Property="Background" Value="Yellow"></Setter>
-										<Setter Property="Foreground" Value="White"></Setter>
+									<DataTrigger
+										Binding="{Binding EntryType}"
+										Value="Warning">
+										<Setter
+											Property="Background"
+											Value="Yellow"></Setter>
+										<Setter
+											Property="Foreground"
+											Value="White"></Setter>
 									</DataTrigger>
-									<DataTrigger Binding="{Binding EntryType}" Value="Information">
-										<Setter Property="Background" Value="LightBlue"></Setter>
-										<Setter Property="Foreground" Value="DarkBlue"></Setter>
+									<DataTrigger
+										Binding="{Binding EntryType}"
+										Value="Information">
+										<Setter
+											Property="Background"
+											Value="LightBlue"></Setter>
+										<Setter
+											Property="Foreground"
+											Value="DarkBlue"></Setter>
 									</DataTrigger>
 								</Style.Triggers>
 							</Style>
@@ -566,7 +585,6 @@
 								Width="2*"
 								Binding="{Binding Message}"
 								IsReadOnly="True" />
-							
 						</t:DataGrid.Columns>
 					</t:DataGrid>
 					<Button
