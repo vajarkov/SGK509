@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SGK509ClientWPF", "SGK509Cl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interfaces", "Interfaces\Interfaces.csproj", "{4FC4BA5A-1592-44E3-9C60-C16BDCA030FF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataTypes", "DataTypes\DataTypes.csproj", "{88A57B2F-D18A-4D29-8BAC-3FFDC9715EEC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,5 +47,9 @@ Global
 		{4FC4BA5A-1592-44E3-9C60-C16BDCA030FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FC4BA5A-1592-44E3-9C60-C16BDCA030FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4FC4BA5A-1592-44E3-9C60-C16BDCA030FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88A57B2F-D18A-4D29-8BAC-3FFDC9715EEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88A57B2F-D18A-4D29-8BAC-3FFDC9715EEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88A57B2F-D18A-4D29-8BAC-3FFDC9715EEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88A57B2F-D18A-4D29-8BAC-3FFDC9715EEC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

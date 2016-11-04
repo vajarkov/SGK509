@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Configuration.Install;
 using System.Linq;
+using DataTypes;
 
 
 namespace SGKService
@@ -14,11 +15,21 @@ namespace SGKService
 	public class SGKService : ServiceBase
 	{
 		public const string MyServiceName = "SGKService";
-		public EventLog eventLog = new EventLog();      	// Переменная для записи в журнал событий
-		private System.Timers.Timer timerSrv;           	// Таймер периодичности опроса
-		private AppSettingsSection modbusSettings;    		// Переменная для конфигурации файлов с данными
-		private AppSettingsSection dbSettings;  			// Переменная для конфигурации порта
+		// Переменная для записи в журнал событий
+		public EventLog eventLog = new EventLog();
+		// Таймер периодичности опроса
+		private System.Timers.Timer timerSrv;
+		// Переменная для конфигурации файлов с данными
+		private AppSettingsSection modbusSettings;
+		// Переменная для конфигурации порта
+		private AppSettingsSection dbSettings;
+		// Переменная периода записи в БД
 		private int periodDBWrite;
+		// Переменная для хранения значений аналоговых сигналов
+		private Dictionary<int, AnalogSignal> AnalogSignals = new Dictionary<int, AnalogSignal>();
+		// Переменная для хранения значений дискретных сигналов
+		private Dictionary<int, DiscreteSignal> DiscreteSignals = new Dictionary<int, DiscreteSignal>();
+		
 		
 		#region Инициализация службы
 		public SGKService()
