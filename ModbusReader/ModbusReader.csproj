@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
   <PropertyGroup>
-    <ProjectGuid>{4FC4BA5A-1592-44E3-9C60-C16BDCA030FF}</ProjectGuid>
+    <ProjectGuid>{EABEE784-0605-464D-A4E3-5E46CE92908D}</ProjectGuid>
     <ProjectTypeGuids>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <OutputType>Library</OutputType>
-    <RootNamespace>Interfaces</RootNamespace>
-    <AssemblyName>Interfaces</AssemblyName>
+    <RootNamespace>ModbusReader</RootNamespace>
+    <AssemblyName>ModbusReader</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <TargetFrameworkProfile />
@@ -32,34 +32,29 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationCore">
-      <HintPath>..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\PresentationCore.dll</HintPath>
-    </Reference>
-    <Reference Include="PresentationFramework">
-      <HintPath>..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\PresentationFramework.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data">
-      <HintPath>..\..\..\..\..\..\Windows\Microsoft.NET\Framework\v2.0.50727\System.Data.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="WindowsBase">
-      <HintPath>..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\WindowsBase.dll</HintPath>
-    </Reference>
-    <Reference Include="WPFToolkit">
-      <HintPath>..\..\..\..\..\..\Program Files\WPF Toolkit\v3.5.50211.1\WPFToolkit.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IDataBase.cs" />
-    <Compile Include="IModbusReader.cs" />
+    <Compile Include="ModbusRTUReader.cs" />
+    <Compile Include="ModbusTCPReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Interfaces\Interfaces.csproj">
+      <Project>{4fc4ba5a-1592-44e3-9c60-c16bdca030ff}</Project>
+      <Name>Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Nmodbus-master\Modbus\Modbus.csproj">
+      <Project>{ff96b252-2b24-44a1-a09c-6401b5d7ed23}</Project>
+      <Name>Modbus</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

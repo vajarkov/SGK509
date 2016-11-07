@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interfaces", "Interfaces\In
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataTypes", "DataTypes\DataTypes.csproj", "{88A57B2F-D18A-4D29-8BAC-3FFDC9715EEC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModbusReader", "ModbusReader\ModbusReader.csproj", "{EABEE784-0605-464D-A4E3-5E46CE92908D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,5 +53,9 @@ Global
 		{88A57B2F-D18A-4D29-8BAC-3FFDC9715EEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88A57B2F-D18A-4D29-8BAC-3FFDC9715EEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88A57B2F-D18A-4D29-8BAC-3FFDC9715EEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EABEE784-0605-464D-A4E3-5E46CE92908D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EABEE784-0605-464D-A4E3-5E46CE92908D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EABEE784-0605-464D-A4E3-5E46CE92908D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EABEE784-0605-464D-A4E3-5E46CE92908D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

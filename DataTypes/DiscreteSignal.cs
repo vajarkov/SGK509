@@ -13,7 +13,7 @@ namespace DataTypes
 	/// <summary>
 	/// Описание дискретного сигнала для архивации
 	/// </summary>
-	public class DiscreteSignal
+	public class DiscreteSignal : Signal
 	{
 		public bool Status { get; set; }
 	}
