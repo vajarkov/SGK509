@@ -17,6 +17,7 @@ using Microsoft.Windows.Controls;
 using System.Collections.ObjectModel;
 using Interfaces;
 
+
 namespace MSDataBase
 {
 	/// <summary>
@@ -192,6 +193,41 @@ namespace MSDataBase
 			catch (Exception e)
 			{
 				System.Windows.MessageBox.Show(e.Message);
+			}
+		}
+		#endregion
+		
+		#region Запрос параметров для опроса по Modbus
+		public Dictionary<int, int> GetParams(string tblItem)
+		{
+			Dictionary <int, int> retValue = new Dictionary<int, int>();
+			GetConnectionString();
+			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+			{
+				connection.Open();
+				SqlCommand command = new SqlCommand("SELECT id_num, modbus_address from " + tblItem, connection);
+				
+				using (var reader = command.ExecuteReader())
+				{
+					while(reader.Read())
+					{
+						retValue[(int)reader["id_num"]] = (int)reader["modbus_address"];
+					}
+				}
+			}
+			return retValue;
+		}
+		#endregion
+		
+		#region Запись в БД значения
+		public void InsertSignal(string tblItem, string id_num, string timestamp, string value)
+		{
+			GetConnectionString();
+			using(SqlConnection connection = new SqlConnection(builder.ConnectionString))
+			{
+				connection.Open();
+				SqlCommand command = new SqlCommand("INSERT INTO " + tblItem + " VALUES ('" + timestamp + "', " + id_num  + ", " + value + ")", connection);
+				command.ExecuteNonQuery();
 			}
 		}
 		#endregion

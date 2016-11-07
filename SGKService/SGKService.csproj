@@ -87,6 +87,18 @@
       <Project>{88a57b2f-d18a-4d29-8bac-3ffdc9715eec}</Project>
       <Name>DataTypes</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Interfaces\Interfaces.csproj">
+      <Project>{4fc4ba5a-1592-44e3-9c60-c16bdca030ff}</Project>
+      <Name>Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ModbusReader\ModbusReader.csproj">
+      <Project>{eabee784-0605-464d-a4e3-5e46ce92908d}</Project>
+      <Name>ModbusReader</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MSDataBase\MSDataBase.csproj">
+      <Project>{b82f3731-213e-4dc0-85fd-34aaf9e13136}</Project>
+      <Name>MSDataBase</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

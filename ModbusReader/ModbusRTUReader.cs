@@ -53,7 +53,7 @@ namespace ModbusReader
 		public float ReadAnalog(byte slaveId, ushort address)
 		{
 			ushort[] registers = master.ReadInputRegisters(slaveId, address, 2);
-			return ModbusUtility.GetSingle(registers[1], registers[0]);
+			return ModbusUtility.GetSingle(registers[0], registers[1]);
 				
 		}
 		#endregion
@@ -65,7 +65,7 @@ namespace ModbusReader
 			for (ushort i = 0; i < Count; i++)
 			{
 				ushort[] registers = master.ReadInputRegisters(slaveId, address, 2);
-				retValue[i] = ModbusUtility.GetSingle(registers[1], registers[0]);
+				retValue[i] = ModbusUtility.GetSingle(registers[0], registers[1]);
 			}
 			return retValue;
 		}

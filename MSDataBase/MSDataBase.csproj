@@ -75,6 +75,10 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DataTypes\DataTypes.csproj">
+      <Project>{88a57b2f-d18a-4d29-8bac-3ffdc9715eec}</Project>
+      <Name>DataTypes</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">
       <Project>{4fc4ba5a-1592-44e3-9c60-c16bdca030ff}</Project>
       <Name>Interfaces</Name>

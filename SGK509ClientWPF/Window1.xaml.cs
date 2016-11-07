@@ -666,8 +666,10 @@ namespace SGK509ClientWPF
 			IList<DataGridCellInfo> cells = e.AddedCells;
     		foreach (DataGridCellInfo di in cells)
     		{
-        		EventLogEntry dvr = (EventLogEntry)di.Item;
+        		
+    			EventLogEntry dvr = (EventLogEntry)di.Item;
         		MessageBox.Show(dvr.Message.ToString(), dvr.TimeGenerated.ToString());
+        		break;
     		}
 		}
 		#endregion

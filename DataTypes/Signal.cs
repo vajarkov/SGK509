@@ -19,7 +19,6 @@ namespace DataTypes
 	/// <param name="Value">Значение параметра</param>
 	public abstract class Signal
 	{
-		public int Num { get; set; }
 		public DateTime Timestamp { get; set; }
 		public int Modbus_address { get; set; }
 	}

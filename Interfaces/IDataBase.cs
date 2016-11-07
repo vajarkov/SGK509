@@ -75,5 +75,21 @@ namespace Interfaces
 		/// <param name="ds">Промежуточный набор для хранения данных</param>
 		/// <param name="tblItem">Имя таблица в БД</param>
 		void UpdateData(Microsoft.Windows.Controls.DataGrid dvgItem, DataSet ds, string tblItem);
+		
+		/// <summary>
+		/// Запрос параметров для опроса по Modbus
+		/// </summary>
+		/// <param name="tblItems">Таблица с параметрами</param>
+		/// <returns></returns>
+		Dictionary<int, int> GetParams(string tblItems);
+		
+		/// <summary>
+		/// Запись параметров в журнал
+		/// </summary>
+		/// <param name="tblItem">Имя журнала</param>
+		/// <param name="id_num">Идентификатор параметра</param>
+		/// <param name="timestamp">Время записи</param>
+		/// <param name="value">Значение</param>
+		void InsertSignal(string tblItem, string id_num, string timestamp, string value);
 	}
 }
