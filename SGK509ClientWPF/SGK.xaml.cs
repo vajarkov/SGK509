@@ -26,27 +26,40 @@ namespace SGK509ClientWPF
 	/// <summary>
 	/// Логика основного приложения Клиент СГК509
 	/// </summary>
-	public partial class Window1 : Window
+	public partial class SGK : Window
 	{
-		private System.Configuration.Configuration appConfig;	// Переменная для чтения конфигурации
-		private ServiceController controller;   				// Переменная для работы со службой
-		private AppSettingsSection modbusSettings;    			// Переменная для конфигурации файлов с данными
-		private AppSettingsSection dbSettings;  				// Переменная для конфигурации порта
-		private EventLog events = new EventLog();				// Переменная для записи событий
-		private const string serviceName = "SGKService";		// Переменная для имени службы
-		private DataSet dsChannels = new DataSet();				// Переменная для обновления справочника Точек отбора
-		private DataSet dsUltramat = new DataSet();				// Переменная для обновления справочника Ultramat
-		private DataSet dsUnits = new DataSet();				// Переменная для обновления справочника Единиц измерения
-		private DataSet dsGases = new DataSet();				// Переменная для обновления справочника Точек отбора
-		private DataSet dsDiscretes = new DataSet();			// Переменная для обновления справочника Точек отбора
-		private DataSet dsParameters = new DataSet();			// Переменная для обновления справочника Точек отбора
-		private DataSet dsTypes = new DataSet();				// Переменная для справочника типов аналоговых данных
-		private DataSet dsAnalogConf = new DataSet();			// Переменная для конфигурации аналоговых сигналов
-		private DataSet dsDiscreteConf = new DataSet();			// Переменная для конфигурации дискретных сигналов
-		private IDataBase dbSource;								// Переменная для работы с БД
+		#region Переменные для работы со службой
+		private const string serviceName = "SGKService";		// Название службы
+		private ServiceController controller;   				// Контроллер службы службой
+		#endregion
+		
+		#region Переменные для работы с настройками программы
+		private System.Configuration.Configuration appConfig;	// Конфигурации
+		private AppSettingsSection dbSettings;  				// База данных
+		private AppSettingsSection modbusSettings;    			// Modbus
+		private AppSettingsSection serviceSettings;				// Служба
+		private AppSettingsSection clientSettings;				// Клиент
+		#endregion
+		
+		#region Переменные для работы с журналом событий
+		private EventLog events = new EventLog();				// Журнал событий
+		#endregion
+		
+		#region Переменные для работы с БД
+		private DataSet dsChannels = new DataSet();				// справочника Точек отбора
+		private DataSet dsUltramat = new DataSet();				// справочника Ultramat
+		private DataSet dsUnits = new DataSet();				// справочника Единиц измерения
+		private DataSet dsGases = new DataSet();				// справочника Точек отбора
+		private DataSet dsDiscretes = new DataSet();			// справочника Точек отбора
+		private DataSet dsParameters = new DataSet();			// справочника Точек отбора
+		private DataSet dsTypes = new DataSet();				// справочника Типов аналоговых данных
+		private DataSet dsAnalogConf = new DataSet();			// конфигурации аналоговых сигналов
+		private DataSet dsDiscreteConf = new DataSet();			// конфигурации дискретных сигналов
+		private IDataBase dbSource;								// работы с БД
+		#endregion
 		
 		#region Конструктор приложения
-		public Window1()
+		public SGK()
 		{
 			InitializeComponent();
 			CheckService(serviceName);	// Проверка существования службы
@@ -63,11 +76,17 @@ namespace SGK509ClientWPF
 			dbSettings = (AppSettingsSection)appConfig.GetSection("DBSettings");
 			// Считывание конфигурации Modbus
 			modbusSettings = (AppSettingsSection)appConfig.GetSection("ModbusSettings");
+			// Считывание конфигурации Службы
+			serviceSettings = (AppSettingsSection)appConfig.GetSection("ServiceSettings");
+			// Считывание конфигурации Клиента
+			clientSettings = (AppSettingsSection)appConfig.GetSection("ClientSettings");
 			
 			// Заполнение конфигурационных данных
 			fillRTU();			// Параметры Modbus RTU
 			GetConfigModbus();	// Считывание параметров Modbus из файла
 			GetConfigDB();		// Считывание параметров БД из файла
+			GetConfigService();	// Считывание параметров Службы из файла
+			GetConfigClient();	// Считывание параметров Клиента из файла
 		}
 		#endregion
 		
@@ -187,6 +206,27 @@ namespace SGK509ClientWPF
 				ReloadData();
 				btnTest.IsEnabled = true;
 			}
+		}
+		#endregion
+		
+		#region Загрузка параметров Службы
+		void GetConfigService()
+		{
+			// IP адрес службы
+			if(!String.IsNullOrEmpty(serviceSettings.Settings["IP"].Value))
+				tbServiceIP.Text = serviceSettings.Settings["IP"].Value;
+			// Порт службы
+			if(!String.IsNullOrEmpty(serviceSettings.Settings["Port"].Value))
+				tbServicePort.Text = serviceSettings.Settings["Port"].Value;
+		}
+		#endregion
+		
+		#region Загрузка параметров Клиента
+		void GetConfigClient()
+		{
+			// IP адрес службы
+			if(!String.IsNullOrEmpty(clientSettings.Settings["alarm"].Value))
+				tbServiceIP.Text = clientSettings.Settings["alarm"].Value;
 		}
 		#endregion
 		
@@ -371,10 +411,60 @@ namespace SGK509ClientWPF
 		}
 		#endregion
 		
-		#region Окно просмотра сообщения журнала событий
-		void DataGridHeader_MouseDoubleClick(object sender, CurrentChangingEventManager e)
+		#region Нажатие на событие в журнале	
+		void dgEvents_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
 		{
-			//e.
+			IList<DataGridCellInfo> cells = e.AddedCells;
+    		foreach (DataGridCellInfo di in cells)
+    		{
+        		
+    			EventLogEntry dvr = (EventLogEntry)di.Item;
+        		MessageBox.Show(dvr.Message.ToString(), dvr.TimeGenerated.ToString());
+        		break;
+    		}
+		}
+		#endregion
+		
+		#region Очистка журнала событий
+		void btnClear_Click(object sender, RoutedEventArgs e)
+		{
+			// Если журнал существует
+			if (EventLog.SourceExists("SGKService"))
+            {
+				// Считываем источник журнала
+				string logName = EventLog.LogNameFromSourceName("SGKService", ".");
+				// Если не совпадает с нужным
+				if (logName != "SGKService")
+				{
+					// Удаляем источник
+					EventLog.DeleteEventSource("SGKService");
+					// Создаем нужный источник
+					EventLog.CreateEventSource("SGKService", "SGKService");
+					
+				}
+				
+			} else {
+				// Создаем журнал
+                EventLog.CreateEventSource("SGKService", "SGKService"); 
+                
+			}
+			// Имя журнала 
+            events.Log = "SGKService";
+            // Имя источника
+            events.Source = "SGKService";
+            // Имя компьютера
+            //events.MachineName =
+            
+            events.Clear();
+            dgEvents.ItemsSource = null;
+		}
+		#endregion
+		
+		
+		#region Обновление статуса Службы на форме
+		void tabItem1_GotFocus(object sender, RoutedEventArgs e)
+		{
+			CheckService(serviceName);
 		}
 		#endregion
 	#endregion
@@ -396,15 +486,27 @@ namespace SGK509ClientWPF
 		}
 		#endregion
 		
-		#region Обновление статуса Службы на форме
-		void tabItem1_GotFocus(object sender, RoutedEventArgs e)
-		{
-			CheckService(serviceName);
-		}
-		#endregion
+		
 	#endregion
 	
 	#region Работа с БД
+	
+		#region Автоматическая нумерация строк для сигналов 
+		/*void AutoIncriment(object sender, DataGrid e)
+		{
+			DataGridView dgv = (DataGridView)sender;
+			if(e.RowCount==1)
+			{
+				dgv.Rows[e.RowIndex-1].Cells[0].Value = e.RowIndex;
+			}
+			else
+			{
+				for(int i = e.RowIndex-1; i < (e.RowIndex + e.RowCount); i++)
+					dgv.Rows[i].Cells[0].Value = i;
+			}
+		}*/
+		#endregion
+		
 		#region Выбор типа базы дынных
 		void GetDataSources()
 		{
@@ -477,134 +579,6 @@ namespace SGK509ClientWPF
 			
 		}
 		#endregion
-	#endregion
-	
-	#region Работа с конфигурацией
-	
-		#region Обновление списков параметров
-		void ReloadParameters()
-		{
-			// Заполнение точек отбора для аналоговых сигналов
-			dbSource.GetParameters((DataGridComboBoxColumn)AnalogGrid.Columns[1], "dictChannels");
-			// Заполнение ULTRAMAT для аналоговых сигналов
-			dbSource.GetParameters((DataGridComboBoxColumn)AnalogGrid.Columns[2], "dictUltramat");
-			// Заполнение параметров для аналоговых сигналов
-			dbSource.GetParameters((DataGridComboBoxColumn)AnalogGrid.Columns[3], "dictParameters");
-			// Заполнение газов для аналоговых сигналов
-			dbSource.GetParameters((DataGridComboBoxColumn)AnalogGrid.Columns[4], "dictGases");
-			// Заполнение единиц измерения для аналоговых сигналов
-			dbSource.GetParameters((DataGridComboBoxColumn)AnalogGrid.Columns[5], "dictUnits");
-			// Заполнение типов данных для аналоговых сигналов
-			dbSource.GetParameters((DataGridComboBoxColumn)AnalogGrid.Columns[6], "dictTypes");
-			// Заполнение точек отбора для дискретных сигналов
-			dbSource.GetParameters((DataGridComboBoxColumn)DiscreteGrid.Columns[1], "dictChannels");
-			// Заполнение ULTRAMAT для дискретных сигналов
-			dbSource.GetParameters((DataGridComboBoxColumn)DiscreteGrid.Columns[2], "dictUltramat");
-			// Заполнение дискретных параметров для дискретных сигналов
-			dbSource.GetParameters((DataGridComboBoxColumn)DiscreteGrid.Columns[3], "dictDiscretes");
-		}
-		#endregion
-		
-		#region Обновление данных из справочников
-		void ReloadData()
-		{	
-			// Загрузка справочника точек отбора
-			dbSource.GetData(ChannelGrid, dsChannels, "dictChannels");
-			// Загрузка справочника приборов ULTRAMAT
-			dbSource.GetData(UltramatGrid, dsUltramat, "dictUltramat");
-			// Загрузка справочника газов
-			dbSource.GetData(GasGrid, dsGases, "dictGases");
-			// Загрузка справочника аналоговых параметров
-			dbSource.GetData(ParamGrid, dsParameters, "dictParameters");
-			// Загрузка справочника дискретных сигналов
-			dbSource.GetData(DiscGrid, dsDiscretes, "dictDiscretes");
-			// Загрузка справочника единиц измерения
-			dbSource.GetData(UnitGrid, dsUnits, "dictUnits");
-			// Загрузка справочника типов данных
-			dbSource.GetData(TypeGrid, dsTypes, "dictTypes");
-			// Загрузка конфигурации для дискретных сигналов
-			dbSource.GetData(DiscreteGrid, dsDiscreteConf, "confDiscrete");
-			// Загрузка конфигурации для аналоговых сигналов
-			dbSource.GetData(AnalogGrid, dsAnalogConf, "confAnalog");
-		}
-		#endregion
-		
-		#region Сохранение конфигурации Modbus
-		void btnProtocolSave_Click(object sender, EventArgs e)
-		{
-			if(radioRTU.IsChecked==true)
-			{
-				modbusSettings.Settings["MBType"].Value = "RTU";
-				modbusSettings.Settings["MBSerialport"].Value = cbPort.Text;
-				modbusSettings.Settings["MBBaudRate"].Value = cbBaudRate.Text;
-				modbusSettings.Settings["MBParity"].Value = cbParity.Text;
-				modbusSettings.Settings["MBStopBit"].Value = cbStopBit.Text;
-				modbusSettings.Settings["MBDataBits"].Value = cbDataBits.Text;
-				modbusSettings.Settings["MBSlave"].Value = tbModbusRTUSlave.Text;		
-			}
-			else if (radioTCP.IsChecked==true)
-			{
-				modbusSettings.Settings["MBType"].Value = "TCP";
-				modbusSettings.Settings["MBIPAddress"].Value = tbModbusTCPAddress.Text;
-				modbusSettings.Settings["MBTCPPort"].Value = tbModbusTCPPort.Text;
-				modbusSettings.Settings["MBSlave"].Value = tbModbusTCPSlave.Text;
-			}
-			
-			// Сохранение конфигурации
-			try
-			{
-				appConfig.Save(ConfigurationSaveMode.Modified);
-				ConfigurationManager.RefreshSection("ModbusSettings");
-			}
-			catch (Exception ex)
-			{
-				System.Windows.MessageBox.Show(ex.Message);
-			}
-		}
-		#endregion
-		
-		#region Сохранение конфигурации БД
-		void btnDBSave_Click(object sender, EventArgs e)
-		{
-			dbSettings.Settings["DBType"].Value = cbDBType.Text;			// Тип БД
-			dbSettings.Settings["DBDataSource"].Value = cbDataSource.Text;	// Источник данных
-			dbSettings.Settings["DBName"].Value = cbDBName.Text;			// Имя БД
-			dbSettings.Settings["DBUser"].Value = tbUserName.Text;			// Пользователь
-			dbSettings.Settings["DBPassword"].Value = tbPassword.Password;	// Пароль
-			dbSettings.Settings["DBPeriod"].Value = cbPeriod.Text;			// Период опроса
-			// Сохранение конфигурации
-			try
-			{
-				appConfig.Save(ConfigurationSaveMode.Modified);
-				ConfigurationManager.RefreshSection("DBSettings");
-			}
-			catch (Exception ex)
-			{
-				System.Windows.MessageBox.Show(ex.Message);
-			}
-		}
-		#endregion
-		
-	#endregion
-		
-	#region Вспомогательные функции
-		#region Автоматическая нумерация строк для сигналов 
-		/*void AutoIncriment(object sender, DataGrid e)
-		{
-			DataGridView dgv = (DataGridView)sender;
-			if(e.RowCount==1)
-			{
-				dgv.Rows[e.RowIndex-1].Cells[0].Value = e.RowIndex;
-			}
-			else
-			{
-				for(int i = e.RowIndex-1; i < (e.RowIndex + e.RowCount); i++)
-					dgv.Rows[i].Cells[0].Value = i;
-			}
-		}*/
-		#endregion
-		
-		
 		
 		#region Сохранение изиенений в справочниках
 		void btnDictSave_Click(object sender, EventArgs e)
@@ -661,49 +635,121 @@ namespace SGK509ClientWPF
 		}
 		#endregion
 		
-		#region Нажатие на событие в журнале	
-		void dgEvents_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
+		#region Обновление списков параметров
+		void ReloadParameters()
 		{
-			IList<DataGridCellInfo> cells = e.AddedCells;
-    		foreach (DataGridCellInfo di in cells)
-    		{
-        		
-    			EventLogEntry dvr = (EventLogEntry)di.Item;
-        		MessageBox.Show(dvr.Message.ToString(), dvr.TimeGenerated.ToString());
-        		break;
-    		}
+			// Заполнение точек отбора для аналоговых сигналов
+			dbSource.GetParameters((DataGridComboBoxColumn)AnalogGrid.Columns[1], "dictChannels");
+			// Заполнение ULTRAMAT для аналоговых сигналов
+			dbSource.GetParameters((DataGridComboBoxColumn)AnalogGrid.Columns[2], "dictUltramat");
+			// Заполнение параметров для аналоговых сигналов
+			dbSource.GetParameters((DataGridComboBoxColumn)AnalogGrid.Columns[3], "dictParameters");
+			// Заполнение газов для аналоговых сигналов
+			dbSource.GetParameters((DataGridComboBoxColumn)AnalogGrid.Columns[4], "dictGases");
+			// Заполнение единиц измерения для аналоговых сигналов
+			dbSource.GetParameters((DataGridComboBoxColumn)AnalogGrid.Columns[5], "dictUnits");
+			// Заполнение типов данных для аналоговых сигналов
+			dbSource.GetParameters((DataGridComboBoxColumn)AnalogGrid.Columns[6], "dictTypes");
+			// Заполнение точек отбора для дискретных сигналов
+			dbSource.GetParameters((DataGridComboBoxColumn)DiscreteGrid.Columns[1], "dictChannels");
+			// Заполнение ULTRAMAT для дискретных сигналов
+			dbSource.GetParameters((DataGridComboBoxColumn)DiscreteGrid.Columns[2], "dictUltramat");
+			// Заполнение дискретных параметров для дискретных сигналов
+			dbSource.GetParameters((DataGridComboBoxColumn)DiscreteGrid.Columns[3], "dictDiscretes");
 		}
-		void btnClear_Click(object sender, RoutedEventArgs e)
+		#endregion
+		
+		#region Обновление данных из справочников
+		void ReloadData()
+		{	
+			// Загрузка справочника точек отбора
+			dbSource.GetData(ChannelGrid, dsChannels, "dictChannels");
+			// Загрузка справочника приборов ULTRAMAT
+			dbSource.GetData(UltramatGrid, dsUltramat, "dictUltramat");
+			// Загрузка справочника газов
+			dbSource.GetData(GasGrid, dsGases, "dictGases");
+			// Загрузка справочника аналоговых параметров
+			dbSource.GetData(ParamGrid, dsParameters, "dictParameters");
+			// Загрузка справочника дискретных сигналов
+			dbSource.GetData(DiscGrid, dsDiscretes, "dictDiscretes");
+			// Загрузка справочника единиц измерения
+			dbSource.GetData(UnitGrid, dsUnits, "dictUnits");
+			// Загрузка справочника типов данных
+			dbSource.GetData(TypeGrid, dsTypes, "dictTypes");
+			// Загрузка конфигурации для дискретных сигналов
+			dbSource.GetData(DiscreteGrid, dsDiscreteConf, "confDiscrete");
+			// Загрузка конфигурации для аналоговых сигналов
+			dbSource.GetData(AnalogGrid, dsAnalogConf, "confAnalog");
+		}
+		#endregion
+		
+	#endregion
+	
+	#region Работа с конфигурацией
+		
+		#region Сохранение конфигурации Modbus
+		void btnProtocolSave_Click(object sender, EventArgs e)
 		{
-			// Если журнал существует
-			if (EventLog.SourceExists("SGKService"))
-            {
-				// Считываем источник журнала
-				string logName = EventLog.LogNameFromSourceName("SGKService", ".");
-				// Если не совпадает с нужным
-				if (logName != "SGKService")
-				{
-					// Удаляем источник
-					EventLog.DeleteEventSource("SGKService");
-					// Создаем нужный источник
-					EventLog.CreateEventSource("SGKService", "SGKService");
-					
-				}
-				
-			} else {
-				// Создаем журнал
-                EventLog.CreateEventSource("SGKService", "SGKService"); 
-                
+			if(radioRTU.IsChecked==true)
+			{
+				modbusSettings.Settings["MBType"].Value = "RTU";
+				modbusSettings.Settings["MBSerialport"].Value = cbPort.Text;
+				modbusSettings.Settings["MBBaudRate"].Value = cbBaudRate.Text;
+				modbusSettings.Settings["MBParity"].Value = cbParity.Text;
+				modbusSettings.Settings["MBStopBit"].Value = cbStopBit.Text;
+				modbusSettings.Settings["MBDataBits"].Value = cbDataBits.Text;
+				modbusSettings.Settings["MBSlave"].Value = tbModbusRTUSlave.Text;		
 			}
-			// Имя журнала 
-            events.Log = "SGKService";
-            // Имя источника
-            events.Source = "SGKService";
-            // Имя компьютера
-            //events.MachineName =
-            
-            events.Clear();
-            dgEvents.ItemsSource = null;
+			else if (radioTCP.IsChecked==true)
+			{
+				modbusSettings.Settings["MBType"].Value = "TCP";
+				modbusSettings.Settings["MBIPAddress"].Value = tbModbusTCPAddress.Text;
+				modbusSettings.Settings["MBTCPPort"].Value = tbModbusTCPPort.Text;
+				modbusSettings.Settings["MBSlave"].Value = tbModbusTCPSlave.Text;
+			}
+			
+			// Сохранение конфигурации
+			SaveConfig("ModbusSettings");
+		}
+		#endregion
+		
+		#region Сохранение конфигурации БД
+		void btnDBSave_Click(object sender, EventArgs e)
+		{
+			dbSettings.Settings["DBType"].Value = cbDBType.Text;			// Тип БД
+			dbSettings.Settings["DBDataSource"].Value = cbDataSource.Text;	// Источник данных
+			dbSettings.Settings["DBName"].Value = cbDBName.Text;			// Имя БД
+			dbSettings.Settings["DBUser"].Value = tbUserName.Text;			// Пользователь
+			dbSettings.Settings["DBPassword"].Value = tbPassword.Password;	// Пароль
+			dbSettings.Settings["DBPeriod"].Value = cbPeriod.Text;			// Период опроса
+			// Сохранение конфигурации
+			SaveConfig("DBSettings");
+		}
+		#endregion
+		
+		#region Сохранение конфигурации Службы	
+		void btnServiceSave_Click(object sender, RoutedEventArgs e)
+		{
+			serviceSettings.Settings["IP"].Value = tbServiceIP.Text;		// IP адрес службы
+			serviceSettings.Settings["Port"].Value = tbServicePort.Text;	// Порт службы
+			// Сохранение конфигурации
+			SaveConfig("ServiceSettings");
+		}
+		#endregion
+		
+		#region Сохранение конфигурации
+		void SaveConfig(string sectionName)
+		{
+			try
+			{
+				appConfig.Save(ConfigurationSaveMode.Modified);
+				ConfigurationManager.RefreshSection(sectionName);
+			}
+			catch (Exception ex)
+			{
+				System.Windows.MessageBox.Show(ex.Message);
+			}
+			
 		}
 		#endregion
 		
