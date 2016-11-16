@@ -24,7 +24,7 @@ using System.Collections.Generic;
 namespace SGK509ClientWPF
 {
 	/// <summary>
-	/// Interaction logic for Window1.xaml
+	/// Логика основного приложения Клиент СГК509
 	/// </summary>
 	public partial class Window1 : Window
 	{
@@ -40,6 +40,7 @@ namespace SGK509ClientWPF
 		private DataSet dsGases = new DataSet();				// Переменная для обновления справочника Точек отбора
 		private DataSet dsDiscretes = new DataSet();			// Переменная для обновления справочника Точек отбора
 		private DataSet dsParameters = new DataSet();			// Переменная для обновления справочника Точек отбора
+		private DataSet dsTypes = new DataSet();				// Переменная для справочника типов аналоговых данных
 		private DataSet dsAnalogConf = new DataSet();			// Переменная для конфигурации аналоговых сигналов
 		private DataSet dsDiscreteConf = new DataSet();			// Переменная для конфигурации дискретных сигналов
 		private IDataBase dbSource;								// Переменная для работы с БД
@@ -485,6 +486,8 @@ namespace SGK509ClientWPF
 			dbSource.GetParameters((DataGridComboBoxColumn)AnalogGrid.Columns[4], "dictGases");
 			// Заполнение единиц измерения для аналоговых сигналов
 			dbSource.GetParameters((DataGridComboBoxColumn)AnalogGrid.Columns[5], "dictUnits");
+			// Заполнение типов данных для аналоговых сигналов
+			dbSource.GetParameters((DataGridComboBoxColumn)AnalogGrid.Columns[6], "dictTypes");
 			// Заполнение точек отбора для дискретных сигналов
 			dbSource.GetParameters((DataGridComboBoxColumn)DiscreteGrid.Columns[1], "dictChannels");
 			// Заполнение ULTRAMAT для дискретных сигналов
@@ -509,6 +512,8 @@ namespace SGK509ClientWPF
 			dbSource.GetData(DiscGrid, dsDiscretes, "dictDiscretes");
 			// Загрузка справочника единиц измерения
 			dbSource.GetData(UnitGrid, dsUnits, "dictUnits");
+			// Загрузка справочника типов данных
+			dbSource.GetData(TypeGrid, dsTypes, "dictTypes");
 			// Загрузка конфигурации для дискретных сигналов
 			dbSource.GetData(DiscreteGrid, dsDiscreteConf, "confDiscrete");
 			// Загрузка конфигурации для аналоговых сигналов
@@ -605,9 +610,11 @@ namespace SGK509ClientWPF
 			// Обновление данных в справочнике аналоговых параметров
 			dbSource.UpdateData(ParamGrid, dsParameters, "dictParameters");
 			// Обновление данных в справочнике дискретных сигналов
-			dbSource.UpdateData(DiscGrid,dsDiscretes,"dictDiscretes");
+			dbSource.UpdateData(DiscGrid, dsDiscretes, "dictDiscretes");
 			// Обновление данных в справочнике единиц измерения
-			dbSource.UpdateData(UnitGrid,dsUnits,"dictUnits");
+			dbSource.UpdateData(UnitGrid, dsUnits, "dictUnits");
+			// Обновление данных в справочнике типов данных
+			dbSource.UpdateData(TypeGrid, dsTypes, "dictTypes");
 			// Обновление параметров в конфигурации
 			ReloadParameters();
 			ReloadData();
