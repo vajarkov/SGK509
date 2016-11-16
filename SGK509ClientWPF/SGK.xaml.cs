@@ -318,24 +318,32 @@ namespace SGK509ClientWPF
 		#region Обновление данных событий службы
 		void btnRefresh_Click(object sender, EventArgs e)
 		{
+			// Если журнал существует
 			if (EventLog.SourceExists("SGKService"))
             {
+				// Считываем источник журнала
 				string logName = EventLog.LogNameFromSourceName("SGKService", ".");
+				// Если не совпадает с нужным
 				if (logName != "SGKService")
 				{
+					// Удаляем источник
 					EventLog.DeleteEventSource("SGKService");
+					// Создаем нужный источник
 					EventLog.CreateEventSource("SGKService", "SGKService");
-					//events.Clear();
+					
 				}
 				
 			} else {
 				// Создаем журнал
                 EventLog.CreateEventSource("SGKService", "SGKService"); 
-                //events.Clear();
+                
 			}
-		
+			// Имя журнала 
             events.Log = "SGKService";
+            // Имя источника
             events.Source = "SGKService";
+            // Имя компьютера
+            //events.MachineName =
            	
             // Заполняем таблицу для отображения
             if (events.Entries.Count > 0)
@@ -617,6 +625,7 @@ namespace SGK509ClientWPF
 			dbSource.UpdateData(TypeGrid, dsTypes, "dictTypes");
 			// Обновление параметров в конфигурации
 			ReloadParameters();
+			// Обновление данных в гридах
 			ReloadData();
 		}
 		#endregion
@@ -650,24 +659,9 @@ namespace SGK509ClientWPF
 		{
 			dbSource.UpdateData(AnalogGrid, dsAnalogConf, "confAnalog");
 		}
+		#endregion
 		
-		
-		/*
-		void dgEvents_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
-		{
-			//search the object hierarchy for a datagrid row
-			DependencyObject source = (DependencyObject) e.OriginalSource;
-  			DataGridRow row = UIHelpers.TryFindParent<DataGridRow>(source);
-  			
-  			//the user did not click on a row
-  			if (row == null) return;
-  			
-  			MessageBox.Show(row.Item.ToString());
-  			
-  			e.Handled = true;
-		}
-		
-		*/
+		#region Нажатие на событие в журнале	
 		void dgEvents_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
 		{
 			IList<DataGridCellInfo> cells = e.AddedCells;
@@ -678,6 +672,38 @@ namespace SGK509ClientWPF
         		MessageBox.Show(dvr.Message.ToString(), dvr.TimeGenerated.ToString());
         		break;
     		}
+		}
+		void btnClear_Click(object sender, RoutedEventArgs e)
+		{
+			// Если журнал существует
+			if (EventLog.SourceExists("SGKService"))
+            {
+				// Считываем источник журнала
+				string logName = EventLog.LogNameFromSourceName("SGKService", ".");
+				// Если не совпадает с нужным
+				if (logName != "SGKService")
+				{
+					// Удаляем источник
+					EventLog.DeleteEventSource("SGKService");
+					// Создаем нужный источник
+					EventLog.CreateEventSource("SGKService", "SGKService");
+					
+				}
+				
+			} else {
+				// Создаем журнал
+                EventLog.CreateEventSource("SGKService", "SGKService"); 
+                
+			}
+			// Имя журнала 
+            events.Log = "SGKService";
+            // Имя источника
+            events.Source = "SGKService";
+            // Имя компьютера
+            //events.MachineName =
+            
+            events.Clear();
+            dgEvents.ItemsSource = null;
 		}
 		#endregion
 		
