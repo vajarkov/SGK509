@@ -19,6 +19,7 @@ using System.Windows.Data;
 using Microsoft.Windows.Controls;
 using Interfaces;
 using System.Collections.Generic;
+using System.Net;
 
 
 namespace SGK509ClientWPF
@@ -358,24 +359,33 @@ namespace SGK509ClientWPF
 		#region Обновление данных событий службы
 		void btnRefresh_Click(object sender, EventArgs e)
 		{
+			string machineName;
+			// Если IP не указан, то используем локальный адрес
+			if(String.IsNullOrEmpty(tbServiceIP.Text))
+				machineName = "127.0.0.1";
+			else
+				// Иначе берем тот, что указан
+				machineName = tbServiceIP.Text;
+			// Получаем DNS из IP адреса
+			string hostName = Dns.GetHostEntry(machineName).HostName.Split('.')[0];
 			// Если журнал существует
-			if (EventLog.SourceExists("SGKService"))
+			if (EventLog.SourceExists("SGKService", hostName))
             {
 				// Считываем источник журнала
-				string logName = EventLog.LogNameFromSourceName("SGKService", ".");
+				string logName = EventLog.LogNameFromSourceName("SGKService", hostName);
 				// Если не совпадает с нужным
 				if (logName != "SGKService")
 				{
 					// Удаляем источник
-					EventLog.DeleteEventSource("SGKService");
+					EventLog.DeleteEventSource("SGKService", hostName);
 					// Создаем нужный источник
-					EventLog.CreateEventSource("SGKService", "SGKService");
+					EventLog.CreateEventSource("SGKService", "SGKService", hostName);
 					
 				}
 				
 			} else {
 				// Создаем журнал
-                EventLog.CreateEventSource("SGKService", "SGKService"); 
+                EventLog.CreateEventSource("SGKService", "SGKService", hostName); 
                 
 			}
 			// Имя журнала 
@@ -383,7 +393,7 @@ namespace SGK509ClientWPF
             // Имя источника
             events.Source = "SGKService";
             // Имя компьютера
-            //events.MachineName =
+            events.MachineName = hostName;
            	
             // Заполняем таблицу для отображения
             if (events.Entries.Count > 0)
@@ -411,6 +421,51 @@ namespace SGK509ClientWPF
 		}
 		#endregion
 		
+		#region Очистка журнала событий
+		void btnClear_Click(object sender, RoutedEventArgs e)
+		{
+			string machineName;
+			// Если IP не указан, то используем локальный адрес
+			if(String.IsNullOrEmpty(tbServiceIP.Text))
+				machineName = "127.0.0.1";
+			else
+				// Иначе берем тот, что указан
+				machineName = tbServiceIP.Text;
+			// Получаем DNS из IP адреса
+			string hostName = Dns.GetHostEntry(machineName).HostName.Split('.')[0];
+			// Если журнал существует
+			// Если журнал существует
+			if (EventLog.SourceExists("SGKService", hostName))
+            {
+				// Считываем источник журнала
+				string logName = EventLog.LogNameFromSourceName("SGKService", hostName);
+				// Если не совпадает с нужным
+				if (logName != "SGKService")
+				{
+					// Удаляем источник
+					EventLog.DeleteEventSource("SGKService", hostName);
+					// Создаем нужный источник
+					EventLog.CreateEventSource("SGKService", "SGKService", hostName);
+					
+				}
+				
+			} else {
+				// Создаем журнал
+                EventLog.CreateEventSource("SGKService", "SGKService", hostName); 
+                
+			}
+			// Имя журнала 
+            events.Log = "SGKService";
+            // Имя источника
+            events.Source = "SGKService";
+            // Имя компьютера
+            events.MachineName = hostName;
+            
+            events.Clear();
+            dgEvents.ItemsSource = null;
+		}
+		#endregion
+		
 		#region Нажатие на событие в журнале	
 		void dgEvents_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
 		{
@@ -424,42 +479,6 @@ namespace SGK509ClientWPF
     		}
 		}
 		#endregion
-		
-		#region Очистка журнала событий
-		void btnClear_Click(object sender, RoutedEventArgs e)
-		{
-			// Если журнал существует
-			if (EventLog.SourceExists("SGKService"))
-            {
-				// Считываем источник журнала
-				string logName = EventLog.LogNameFromSourceName("SGKService", ".");
-				// Если не совпадает с нужным
-				if (logName != "SGKService")
-				{
-					// Удаляем источник
-					EventLog.DeleteEventSource("SGKService");
-					// Создаем нужный источник
-					EventLog.CreateEventSource("SGKService", "SGKService");
-					
-				}
-				
-			} else {
-				// Создаем журнал
-                EventLog.CreateEventSource("SGKService", "SGKService"); 
-                
-			}
-			// Имя журнала 
-            events.Log = "SGKService";
-            // Имя источника
-            events.Source = "SGKService";
-            // Имя компьютера
-            //events.MachineName =
-            
-            events.Clear();
-            dgEvents.ItemsSource = null;
-		}
-		#endregion
-		
 		
 		#region Обновление статуса Службы на форме
 		void tabItem1_GotFocus(object sender, RoutedEventArgs e)

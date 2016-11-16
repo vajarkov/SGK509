@@ -122,7 +122,8 @@
 								<Label
 									VerticalAlignment="Center"
 									FontSize="12"
-									Margin="3">IP адрес</Label>
+									Margin="3"
+									>IP адрес</Label>
 								<Label
 									VerticalAlignment="Center"
 									FontSize="12"
