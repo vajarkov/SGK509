@@ -20,7 +20,7 @@ using Microsoft.Windows.Controls;
 using Interfaces;
 using System.Collections.Generic;
 using System.Net;
-
+using Microsoft.Win32;
 
 namespace SGK509ClientWPF
 {
@@ -226,8 +226,8 @@ namespace SGK509ClientWPF
 		void GetConfigClient()
 		{
 			// IP адрес службы
-			if(!String.IsNullOrEmpty(clientSettings.Settings["alarm"].Value))
-				tbServiceIP.Text = clientSettings.Settings["alarm"].Value;
+			//if(!String.IsNullOrEmpty(clientSettings.Settings["alarmAna"].Value))
+			//	tbServiceIP.Text = clientSettings.Settings["alarm"].Value;
 		}
 		#endregion
 		
@@ -769,6 +769,52 @@ namespace SGK509ClientWPF
 				System.Windows.MessageBox.Show(ex.Message);
 			}
 			
+		}
+		#endregion
+		
+		#region Выбор сигнала для Аналогового сигнала
+		void btnAnalogAlarm_Click(object sender, RoutedEventArgs e)
+		{
+			OpenFileDialog dialog = new OpenFileDialog();
+			dialog.Filter = "Звуки *.wav |*.wav";
+			if (dialog.ShowDialog() == true)
+			{
+				clientSettings.Settings["alarmAnalog"].Value = dialog.FileName;
+				SaveConfig("ClientSettings");
+			}
+		}
+		#endregion
+		
+		#region Воспроизведение Аналогового аларма
+		void btnAnalogAlarmPlay_Click(object sender, RoutedEventArgs e)
+		{
+			System.Media.SoundPlayer player = new System.Media.SoundPlayer();
+			player.SoundLocation = clientSettings.Settings["alarmAnalog"].Value;
+			player.Load();
+			player.Play();
+		}
+		#endregion
+		
+		#region Выбор сигнала для Дискретного сигнала
+		void btnDiscreteAlarm_Click(object sender, RoutedEventArgs e)
+		{
+			OpenFileDialog dialog = new OpenFileDialog();
+			dialog.Filter = "Звуки *.wav |*.wav";
+			if (dialog.ShowDialog() == true)
+			{
+				clientSettings.Settings["alarmDiscrete"].Value = dialog.FileName;
+				SaveConfig("ClientSettings");
+			}
+		}
+		#endregion
+		
+		#region Воспроизведение Дискретного аларма
+		void btnDiscreteAlarmPlay_Click(object sender, RoutedEventArgs e)
+		{
+			System.Media.SoundPlayer player = new System.Media.SoundPlayer();
+			player.SoundLocation = clientSettings.Settings["alarmDiscrete"].Value;
+			player.Load();
+			player.Play();
 		}
 		#endregion
 		

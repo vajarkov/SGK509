@@ -339,14 +339,29 @@
 							Binding="{Binding modbus_address}" />
 					</t:DataGrid.Columns>
 				</t:DataGrid>
-				<Button
-					Grid.Column="1"
-					x:Name="btnAnalogSave"
-					Width="100"
-					Height="50"
-					Margin="5"
-					VerticalAlignment="Top"
-					Click="btnAnalogSave_Click">Сохранить</Button>
+				<StackPanel Grid.Column="1">
+					<Button
+						x:Name="btnAnalogSave"
+						Width="100"
+						Height="50"
+						Margin="5"
+						VerticalAlignment="Top"
+						Click="btnAnalogSave_Click">Сохранить</Button>
+					<Button
+						x:Name="btnAnalogAlarm"
+						Width="100"
+						Height="50"
+						Margin="5"
+						VerticalAlignment="Top"
+						Click="btnAnalogAlarm_Click">Выбрать сигнал</Button>
+					<Button
+						x:Name="btnAnalogAlarmPlay"
+						Width="100"
+						Height="50"
+						Margin="5"
+						VerticalAlignment="Top"
+						Click="btnAnalogAlarmPlay_Click">Воспроизвести</Button>
+			</StackPanel>
 			</Grid>
 		</TabItem>
 		<TabItem
@@ -391,14 +406,30 @@
 							Binding="{Binding modbus_address}" />
 					</t:DataGrid.Columns>
 				</t:DataGrid>
-				<Button
-					x:Name="btnDiscreteSave"
-					Width="100"
-					Height="50"
-					Margin="5"
-					VerticalAlignment="Top"
-					Click="btnDiscreteSave_Click"
-					Grid.Column="1">Сохранить</Button>
+				<StackPanel Grid.Column="1">
+					<Button
+						x:Name="btnDiscreteSave"
+						Width="100"
+						Height="50"
+						Margin="5"
+						VerticalAlignment="Top"
+						Click="btnDiscreteSave_Click"
+						>Сохранить</Button>
+					<Button
+						x:Name="btnDiscreteAlarm"
+						Width="100"
+						Height="50"
+						Margin="5"
+						VerticalAlignment="Top"
+						Click="btnDiscreteAlarm_Click">Выбрать сигнал</Button>
+					<Button
+						x:Name="btnDiscreteAlarmPlay"
+						Width="100"
+						Height="50"
+						Margin="5"
+						VerticalAlignment="Top"
+						Click="btnDiscreteAlarmPlay_Click">Воспроизвести</Button>
+			</StackPanel>
 			</Grid>
 		</TabItem>
 		<TabItem
