@@ -190,6 +190,10 @@ namespace SGKService
 				eventLog.WriteEntry("Введите период опроса");
 			}
             #endregion
+            
+            #region Создаем сокет для прослушивания подключений
+            
+            #endregion
 		}
 
         #region Основной поток опроса данных через Modbus	
@@ -198,25 +202,31 @@ namespace SGKService
            while(serviceWork){
            try
            {
+           		// Заполняем структуру для дискретных сигналов
 	       		foreach(KeyValuePair<int, int> item in dbSource.GetParams("confDiscrete"))
 	       		{
+	       			// Создаем элемент Дискретного сигнала
 	       			DiscreteSignal signal = new DiscreteSignal();
-	       			signal.Modbus_address = item.Value;
-	       			signal.Timestamp = DateTime.Now;
+	       			signal.Modbus_address = item.Value;				// Адрес Modbus
+	       			signal.Timestamp = DateTime.Now;				// Время записи
+	       			// Считываем значение дискретного сигнала
 	       			signal.Value = modbusReader.ReadDiscrete(slaveId, Convert.ToUInt16(item.Value));
-	            	
+	            	// Если ключа нет в списке
 	       			if (!DiscreteSignals.ContainsKey(item.Key))
 	       			{
+	       				// Добавляем в список
 	            		DiscreteSignals.Add(item.Key, signal);
 	            	}
 	            	else 
 	            	{
+	            		// Обновляем значение
 	            		DiscreteSignals[item.Key] = signal;
 	            	}
 	            }
-	            			
+	            // Заполняем структуру для аналоговых сигналов
 	            foreach(KeyValuePair<int, int> item in dbSource.GetParams("confAnalog"))
 	            {
+	            	// Создаем элемент для Аналогового сигнала
 	            	AnalogSignal signal = new AnalogSignal();
 	            	signal.Modbus_address = item.Value;
 	            	signal.Timestamp = DateTime.Now;

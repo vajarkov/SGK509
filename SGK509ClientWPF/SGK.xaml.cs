@@ -368,6 +368,10 @@ namespace SGK509ClientWPF
 				machineName = tbServiceIP.Text;
 			// Получаем DNS из IP адреса
 			string hostName = Dns.GetHostEntry(machineName).HostName.Split('.')[0];
+			
+			EventSourceCreationData creationData = new EventSourceCreationData(serviceName,serviceName);
+			creationData.MachineName = hostName;
+				
 			// Если журнал существует
 			if (EventLog.SourceExists("SGKService", hostName))
             {
@@ -379,13 +383,13 @@ namespace SGK509ClientWPF
 					// Удаляем источник
 					EventLog.DeleteEventSource("SGKService", hostName);
 					// Создаем нужный источник
-					EventLog.CreateEventSource("SGKService", "SGKService", hostName);
+					EventLog.CreateEventSource(creationData);
 					
 				}
 				
 			} else {
 				// Создаем журнал
-                EventLog.CreateEventSource("SGKService", "SGKService", hostName); 
+                EventLog.CreateEventSource(creationData); 
                 
 			}
 			// Имя журнала 
@@ -433,7 +437,10 @@ namespace SGK509ClientWPF
 				machineName = tbServiceIP.Text;
 			// Получаем DNS из IP адреса
 			string hostName = Dns.GetHostEntry(machineName).HostName.Split('.')[0];
-			// Если журнал существует
+			
+			EventSourceCreationData creationData = new EventSourceCreationData(serviceName,serviceName);
+			creationData.MachineName = hostName;
+				
 			// Если журнал существует
 			if (EventLog.SourceExists("SGKService", hostName))
             {
@@ -445,13 +452,13 @@ namespace SGK509ClientWPF
 					// Удаляем источник
 					EventLog.DeleteEventSource("SGKService", hostName);
 					// Создаем нужный источник
-					EventLog.CreateEventSource("SGKService", "SGKService", hostName);
+					EventLog.CreateEventSource(creationData);
 					
 				}
 				
 			} else {
 				// Создаем журнал
-                EventLog.CreateEventSource("SGKService", "SGKService", hostName); 
+                EventLog.CreateEventSource(creationData); 
                 
 			}
 			// Имя журнала 
@@ -789,9 +796,12 @@ namespace SGK509ClientWPF
 		void btnAnalogAlarmPlay_Click(object sender, RoutedEventArgs e)
 		{
 			System.Media.SoundPlayer player = new System.Media.SoundPlayer();
-			player.SoundLocation = clientSettings.Settings["alarmAnalog"].Value;
-			player.Load();
-			player.Play();
+			if(!String.IsNullOrEmpty(clientSettings.Settings["alarmAnalog"].Value))
+			{
+				player.SoundLocation = clientSettings.Settings["alarmAnalog"].Value;
+				player.Load();
+				player.Play();
+			}
 		}
 		#endregion
 		
@@ -812,9 +822,12 @@ namespace SGK509ClientWPF
 		void btnDiscreteAlarmPlay_Click(object sender, RoutedEventArgs e)
 		{
 			System.Media.SoundPlayer player = new System.Media.SoundPlayer();
-			player.SoundLocation = clientSettings.Settings["alarmDiscrete"].Value;
-			player.Load();
-			player.Play();
+			if(!String.IsNullOrEmpty(clientSettings.Settings["alarmDiscrete"].Value))
+			{
+				player.SoundLocation = clientSettings.Settings["alarmDiscrete"].Value;
+				player.Load();
+				player.Play();
+			}
 		}
 		#endregion
 		

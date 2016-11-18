@@ -16,5 +16,6 @@ namespace DataTypes
 	public class AnalogSignal : Signal
 	{
 		public float Value { get; set; }
+		public int Size { get; set; }
 	}
 }

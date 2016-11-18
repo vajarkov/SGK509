@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Window
 	x:Class="SGK509ClientWPF.SGK" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:t="http://schemas.microsoft.com/wpf/2008/toolkit"
 	Title="Клиент СГК-509"
@@ -122,8 +122,7 @@
 								<Label
 									VerticalAlignment="Center"
 									FontSize="12"
-									Margin="3"
-									>IP адрес</Label>
+									Margin="3">IP адрес</Label>
 								<Label
 									VerticalAlignment="Center"
 									FontSize="12"
@@ -339,7 +338,8 @@
 							Binding="{Binding modbus_address}" />
 					</t:DataGrid.Columns>
 				</t:DataGrid>
-				<StackPanel Grid.Column="1">
+				<StackPanel
+					Grid.Column="1">
 					<Button
 						x:Name="btnAnalogSave"
 						Width="100"
@@ -361,7 +361,7 @@
 						Margin="5"
 						VerticalAlignment="Top"
 						Click="btnAnalogAlarmPlay_Click">Воспроизвести</Button>
-			</StackPanel>
+				</StackPanel>
 			</Grid>
 		</TabItem>
 		<TabItem
@@ -406,15 +406,15 @@
 							Binding="{Binding modbus_address}" />
 					</t:DataGrid.Columns>
 				</t:DataGrid>
-				<StackPanel Grid.Column="1">
+				<StackPanel
+					Grid.Column="1">
 					<Button
 						x:Name="btnDiscreteSave"
 						Width="100"
 						Height="50"
 						Margin="5"
 						VerticalAlignment="Top"
-						Click="btnDiscreteSave_Click"
-						>Сохранить</Button>
+						Click="btnDiscreteSave_Click">Сохранить</Button>
 					<Button
 						x:Name="btnDiscreteAlarm"
 						Width="100"
@@ -429,7 +429,7 @@
 						Margin="5"
 						VerticalAlignment="Top"
 						Click="btnDiscreteAlarmPlay_Click">Воспроизвести</Button>
-			</StackPanel>
+				</StackPanel>
 			</Grid>
 		</TabItem>
 		<TabItem
@@ -677,40 +677,58 @@
 						Click="btnClear_Click">
 						<TextBlock>Очистить<LineBreak />сообщения</TextBlock>
 					</Button>
-							<StackPanel
-					Grid.Column="1"
-					Grid.Row="1">
-					<Label
-						VerticalAlignment="Center"
-						FontSize="12"
-						Margin="3">IP адрес службы</Label>
-					<Label
-						VerticalAlignment="Center"
-						FontSize="12"
-						Margin="3">Порт службы</Label>
-					
-				</StackPanel>
-				<StackPanel
-					Grid.Column="2" Grid.Row="1">
-					<TextBox
-						x:Name="tbServiceIP"
-						Margin="5">127.0.0.1</TextBox>
-					
-					<TextBox
-						x:Name="tbServicePort"
-						Margin="5">8080</TextBox>
-					<Button
-						Margin="5"
-						x:Name="btnServiceSave"
-						VerticalContentAlignment="Center"
-						HorizontalAlignment="Center"
-						FontWeight="Medium"
-						FontSize="12"
-						Width="90"
-						Height="40"
-						Click="btnServiceSave_Click">
+					<StackPanel
+						Grid.Column="1"
+						Grid.Row="1">
+						<Label
+							VerticalAlignment="Center"
+							FontSize="12"
+							Margin="3">IP адрес службы</Label>
+						<Label
+							VerticalAlignment="Center"
+							FontSize="12"
+							Margin="3">Порт службы</Label>
+						<RadioButton
+							GroupName="Service"
+							x:Name="radioSync"
+							FontWeight="Normal"
+							FontSize="12"
+							Height="26"
+							Visibility="Hidden">
+					Синхронный режим
+					</RadioButton>
+						<RadioButton
+							Grid.ColumnSpan="2"
+							GroupName="Service"
+							x:Name="radioAsync"
+							FontWeight="Normal"
+							FontSize="12"
+							Height="26"
+							Visibility="Hidden">
+					Асинхронный режим
+					</RadioButton>
+					</StackPanel>
+					<StackPanel
+						Grid.Column="2"
+						Grid.Row="1">
+						<TextBox
+							x:Name="tbServiceIP"
+							Margin="5">127.0.0.1</TextBox>
+						<TextBox
+							x:Name="tbServicePort"
+							Margin="5">8080</TextBox>
+						<Button
+							Margin="5"
+							x:Name="btnServiceSave"
+							VerticalContentAlignment="Center"
+							HorizontalAlignment="Center"
+							FontWeight="Medium"
+							FontSize="12"
+							Width="90"
+							Height="40"
+							Click="btnServiceSave_Click">
 						Сохранить</Button>
-				</StackPanel>
+					</StackPanel>
 					<Button
 						Margin="5"
 						Grid.Column="1"
