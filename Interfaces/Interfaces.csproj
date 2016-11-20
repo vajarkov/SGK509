@@ -61,5 +61,11 @@
     <Compile Include="IModbusReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DataTypes\DataTypes.csproj">
+      <Project>{88a57b2f-d18a-4d29-8bac-3ffdc9715eec}</Project>
+      <Name>DataTypes</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

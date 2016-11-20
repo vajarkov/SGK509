@@ -16,6 +16,7 @@ using System.Text;
 using Microsoft.Windows.Controls;
 using System.Collections.ObjectModel;
 using Interfaces;
+using DataTypes;
 
 
 namespace MSDataBase
@@ -198,14 +199,36 @@ namespace MSDataBase
 		#endregion
 		
 		#region Запрос параметров для опроса по Modbus
-		public Dictionary<int, int> GetParams(string tblItem)
+		public Dictionary<int, DiscreteSignal> GetDiscreteParams(string tblConfig)
 		{
-			Dictionary <int, int> retValue = new Dictionary<int, int>();
+			Dictionary <int, DiscreteSignal> retValue = new Dictionary<int, DiscreteSignal>();
 			GetConnectionString();
 			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
 			{
 				connection.Open();
-				SqlCommand command = new SqlCommand("SELECT id_num, modbus_address from " + tblItem, connection);
+				SqlCommand command = new SqlCommand("SELECT id_num, modbus_address from " + tblConfig, connection);
+				
+				using (var reader = command.ExecuteReader())
+				{
+					while(reader.Read())
+					{
+						retValue[(int)reader["id_num"]] = (DiscreteSignal) reader["modbus_address"];
+					}
+				}
+			}
+			return retValue;
+		}
+		#endregion
+		
+		#region Запрос параметров для опроса по Modbus
+		public Dictionary<int, AnalogSignal> GetParams(string tblConfig, string tblDictinary)
+		{
+			Dictionary <int, AnalogSignal> retValue = new Dictionary<int, AnalogSignal>();
+			GetConnectionString();
+			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+			{
+				connection.Open();
+				SqlCommand command = new SqlCommand("SELECT ca.id_num, ca.modbus_address, dt.bytes from " + tblConfig + " ca LEFT JOIN " + tblDictinary + " dt ON ca.id_type = dt.id", connection);
 				
 				using (var reader = command.ExecuteReader())
 				{

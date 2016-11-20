@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using DataTypes;
 
 namespace Interfaces
 {
@@ -77,11 +78,19 @@ namespace Interfaces
 		void UpdateData(Microsoft.Windows.Controls.DataGrid dvgItem, DataSet ds, string tblItem);
 		
 		/// <summary>
-		/// Запрос параметров для опроса по Modbus
+		/// Запрос параметров для опроса по дискретных сигналов Modbus
 		/// </summary>
-		/// <param name="tblItems">Таблица с параметрами</param>
+		/// <param name="tblConfig">Таблица с параметрами</param>
 		/// <returns></returns>
-		Dictionary<int, int> GetParams(string tblItems);
+		Dictionary<int, DiscreteSignal> GetParams(string tblConfig);
+		
+		
+		/// <summary>
+		/// Запрос параметров для опроса по аналоговых сигналов Modbus
+		/// </summary>
+		/// <param name="tblConfig">Таблица с параметрами</param>
+		/// <returns></returns>
+		Dictionary<int, DiscreteSignal> GetParams(string tblConfig);
 		
 		/// <summary>
 		/// Запись параметров в журнал

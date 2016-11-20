@@ -20,25 +20,31 @@ namespace SGKService
 {
 	public class SGKService : ServiceBase
 	{
+		// Имя сервиса
 		public const string MyServiceName = "SGKService";
-		// Переменная для записи в журнал событий
+		// Журнал событий
 		public EventLog eventLog = new EventLog();
 		// Таймер периодичности опроса
 		private System.Timers.Timer timerSrv;
-		// Переменная для конфигурации файлов с данными
+		// Конфигурации файлов с данными
 		private AppSettingsSection modbusSettings;
-		// Переменная для конфигурации порта
+		// Конфигурации порта
 		private AppSettingsSection dbSettings;
-		// Переменная периода записи в БД
+		// Периода записи в БД
 		private int periodDBWrite;
-		// Переменная для хранения значений аналоговых сигналов
+		// Хранения значений аналоговых сигналов
 		private Dictionary<int, AnalogSignal> AnalogSignals = new Dictionary<int, AnalogSignal>();
-		// Переменная для хранения значений дискретных сигналов
+		// Хранения значений дискретных сигналов
 		private Dictionary<int, DiscreteSignal> DiscreteSignals = new Dictionary<int, DiscreteSignal>();
+		// Флаг работы сервиса
 		private bool serviceWork = true;
+		// Чтение данных по Modbus
 		private IModbusReader modbusReader;
+		// Работа с БД
 		private IDataBase dbSource;
+		// Адрес устройства Modbus
 		private byte slaveId;
+		// Поток 
 		private Thread Worker;
 		AutoResetEvent StopRequest = new AutoResetEvent(false);
 		
@@ -66,9 +72,6 @@ namespace SGKService
 			dbSettings = (AppSettingsSection)appConfig.GetSection("DBSettings");
 			// Считывание конфигурации Modbus
 			modbusSettings = (AppSettingsSection)appConfig.GetSection("ModbusSettings");
-			// Заполнение конфигурационных данных
-			//GetConfigModbus();	// Считывание параметров Modbus из файла
-			//GetConfigDB();		// Считывание параметров БД из файла        
 		}
 		#endregion
 		
@@ -203,27 +206,26 @@ namespace SGKService
            try
            {
            		// Заполняем структуру для дискретных сигналов
-	       		foreach(KeyValuePair<int, int> item in dbSource.GetParams("confDiscrete"))
-	       		{
-	       			// Создаем элемент Дискретного сигнала
-	       			DiscreteSignal signal = new DiscreteSignal();
-	       			signal.Modbus_address = item.Value;				// Адрес Modbus
-	       			signal.Timestamp = DateTime.Now;				// Время записи
-	       			// Считываем значение дискретного сигнала
-	       			signal.Value = modbusReader.ReadDiscrete(slaveId, Convert.ToUInt16(item.Value));
-	            	// Если ключа нет в списке
-	       			if (!DiscreteSignals.ContainsKey(item.Key))
-	       			{
-	       				// Добавляем в список
-	            		DiscreteSignals.Add(item.Key, signal);
-	            	}
-	            	else 
-	            	{
-	            		// Обновляем значение
-	            		DiscreteSignals[item.Key] = signal;
-	            	}
-	            }
-	            // Заполняем структуру для аналоговых сигналов
+           		DiscreteSignals = dbSource.GetParams("confDiscrete");
+           		// Перебираем все элементы дискретных сигналов
+           		for (int i = DiscreteSignals.Count - 1; i >= 0; i--)
+           		{
+           			// Записываем дату
+           			DiscreteSignals.ElementAt(i).Value.Timestamp = DateTime.Now;
+           			// Записываем значение переменной по адресу Modbus 
+           			try
+           			{
+           				DiscreteSignals.ElementAt(i).Value.Value =  	modbusReader.ReadDiscrete(
+           						slaveId, 
+           						Convert.ToUInt16(DiscreteSignals.ElementAt(i).Value.Modbus_address));
+           			}
+           			catch (Exception ex)
+           			{
+           				eventLog.WriteEntry("Не могу считать дискретное значение Modbus: " + ex.Message);
+           			}
+           		}
+           		
+           		// Заполняем структуру для аналоговых сигналов
 	            foreach(KeyValuePair<int, int> item in dbSource.GetParams("confAnalog"))
 	            {
 	            	// Создаем элемент для Аналогового сигнала
