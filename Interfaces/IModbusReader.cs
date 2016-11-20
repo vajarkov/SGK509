@@ -34,20 +34,13 @@ namespace Interfaces
 		
 		
 		/// <summary>
-		/// Метод для считывания целочисленного аналогового сигнала
-		/// </summary>
-		/// <param name="slaveId">Адрес Modbus устройства</param>
-		/// <param name="address">Адрес сигнала</param>
-		/// <returns>Значение параметра</returns>
-		ushort ReadAnalog(byte slaveId, ushort address);
-		
-		/// <summary>
 		/// Метод для считывания дробного аналогового сигнала
 		/// </summary>
 		/// <param name="slaveId">Адрес Modbus устройства</param>
 		/// <param name="address">Адрес сигнала</param>
+		/// <param name="size">Количество байт типа данных</param>
 		/// <returns>Значение параметра</returns>
-		float ReadAnalog(byte slaveId, ushort address);
+		float ReadAnalog(byte slaveId, ushort address, ushort size);
 		
 		/// <summary>
 		/// Метод для считывания аналоговых сигналов

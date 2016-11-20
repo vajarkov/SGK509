@@ -44,11 +44,22 @@ namespace ModbusReader
 		#endregion
 		
 		#region Чтение аналогового сигнала
-		public float ReadAnalog(byte slaveId, ushort address)
+		public float ReadAnalog(byte slaveId, ushort address, ushort size)
 		{
-			ushort[] registers = master.ReadInputRegisters(slaveId, address, 2);
-			return ModbusUtility.GetSingle(registers[1], registers[0]);
-				
+			float ret = 0;
+			if (size == 2)
+			{
+				ushort[] registers = master.ReadInputRegisters(slaveId, address, 1);
+				ret = Convert.ToSingle(registers);
+			}
+			else
+			
+			if(size == 4)
+			{
+				ushort[] registers = master.ReadInputRegisters(slaveId, address, 2);
+				ret = ModbusUtility.GetSingle(registers[0], registers[1]);
+			}
+			return ret;
 		}
 		#endregion
 		

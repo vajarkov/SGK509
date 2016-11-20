@@ -234,7 +234,8 @@ namespace MSDataBase
 				{
 					while(reader.Read())
 					{
-						retValue[(int)reader["id_num"]] = (int)reader["modbus_address"];
+						retValue[(int)reader["id_num"]].Modbus_address = (int)reader["modbus_address"];
+						retValue[(int)reader["id_num"]].Size = (int)reader["bytes"];
 					}
 				}
 			}

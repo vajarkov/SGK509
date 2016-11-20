@@ -230,12 +230,12 @@ namespace SGKService
            			}
            			catch (Exception ex)
            			{
-           				eventLog.WriteEntry("Не могу считать дискретное значение Modbus: " + ex.Message);
+           				eventLog.WriteEntry("Не могу считать дискретное значение Modbus: " + DiscreteSignals.ElementAt(i).Value.Modbus_address + " \n" + ex.Message);
            			}
            		}
            		
            		// Создаем массив байт для упаковки дискретных значений
-           		discreteBytes = new byte[ discreteBits.Length >> 3 + ((discreteBits & 7)==0 ? 0 : 1 ) ];
+           		discreteBytes = new byte[ discreteBits.Length >> 3 + ((discreteBits.Length & 7)==0 ? 0 : 1 ) ];
            		// Упаковываем данные в байты
            		discreteBits.CopyTo(discreteBytes, 0);
            		#endregion
@@ -243,25 +243,24 @@ namespace SGKService
            		#region Чтение дискретных сигналов
            		// Заполняем структуру для аналоговых сигналов
            		AnalogSignals = dbSource.GetParams("confAnalog", "dictTypes");
-           		
-           		foreach(KeyValuePair<int, int> item in dbSource.GetParams("confAnalog"))
-	            {
-	            	// Создаем элемент для Аналогового сигнала
-	            	AnalogSignal signal = new AnalogSignal();
-	            	signal.Modbus_address = item.Value;
-	            	signal.Timestamp = DateTime.Now;
-	            		
-	            	signal.Value = modbusReader.ReadAnalog(slaveId, Convert.ToUInt16(item.Value));
-	            	//eventLog.WriteEntry(signal.Value.ToString());
-	            	if (!AnalogSignals.ContainsKey(item.Key))
-	            	{
-	            		AnalogSignals.Add(item.Key, signal);
-	            	}
-	            	else 
-	            	{
-	            		AnalogSignals[item.Key] = signal;
-	            	}
-	        	}
+           		// Перебираем все элементы
+           		for (int i = 0; i <= AnalogSignals.Count - 1; i++ )
+           		{
+           			AnalogSignals.ElementAt(i).Value.Timestamp = DateTime.Now;
+           			try
+           			{
+           				AnalogSignals.ElementAt(i).Value.Value = 
+           					modbusReader.ReadAnalog(
+           						slaveId,
+           						Convert.ToUInt16(AnalogSignals.ElementAt(i).Value.Modbus_address),
+           						Convert.ToUInt16(AnalogSignals.ElementAt(i).Value.Size));
+           			}
+           			catch (Exception ex)
+           			{
+           				eventLog.WriteEntry("Не могу считать аналоговое значение Modbus: " + AnalogSignals.ElementAt(i).Value.Modbus_address + " \n" + ex.Message);
+           			}
+           		}
+           		#endregion
          	}
            catch(Exception ex)
            {
@@ -320,7 +319,7 @@ namespace SGKService
             eventLog.WriteEntry("Служба остановлена");
             #endregion
 		}
-		
-		//protected override 
+	
 	}
+	
 }
