@@ -49,7 +49,7 @@ namespace ModbusReader
 		}
 		#endregion
 		
-		#region Чтение аналогового сигнала
+		#region Чтение дробного аналогового сигнала
 		public float ReadAnalog(byte slaveId, ushort address)
 		{
 			ushort[] registers = master.ReadInputRegisters(slaveId, address, 2);
@@ -58,6 +58,15 @@ namespace ModbusReader
 		}
 		#endregion
 		
+		#region Чтение дробного аналогового сигнала
+		public ushort ReadAnalog(byte slaveId, ushort address)
+		{
+			ushort registers = master.ReadInputRegisters(slaveId, address, 1);
+			return registers;
+				
+		}
+		#endregion
+				
 		#region Чтение аналоговых сигналов
 		public float[] ReadAnalogs(byte slaveId, ushort address, ushort Count)
 		{

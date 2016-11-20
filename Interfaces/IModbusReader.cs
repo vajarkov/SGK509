@@ -32,8 +32,17 @@ namespace Interfaces
 		/// <returns>Массив значений параметров</returns>
 		bool[] ReadDiscretes(byte slaveId, ushort startAddress, ushort Count);
 		
+		
 		/// <summary>
-		/// Метод для считывания аналогового сигнала
+		/// Метод для считывания целочисленного аналогового сигнала
+		/// </summary>
+		/// <param name="slaveId">Адрес Modbus устройства</param>
+		/// <param name="address">Адрес сигнала</param>
+		/// <returns>Значение параметра</returns>
+		ushort ReadAnalog(byte slaveId, ushort address);
+		
+		/// <summary>
+		/// Метод для считывания дробного аналогового сигнала
 		/// </summary>
 		/// <param name="slaveId">Адрес Modbus устройства</param>
 		/// <param name="address">Адрес сигнала</param>

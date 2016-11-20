@@ -89,8 +89,9 @@ namespace Interfaces
 		/// Запрос параметров для опроса по аналоговых сигналов Modbus
 		/// </summary>
 		/// <param name="tblConfig">Таблица с параметрами</param>
+		/// <param name="tblDictinary">Таблица типов данных</param>
 		/// <returns></returns>
-		Dictionary<int, DiscreteSignal> GetParams(string tblConfig);
+		Dictionary<int, AnalogSignal> GetParams(string tblConfig, string tblDictinary);
 		
 		/// <summary>
 		/// Запись параметров в журнал

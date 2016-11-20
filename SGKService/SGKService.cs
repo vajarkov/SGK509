@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Diagnostics;
 using System.ServiceProcess;
 using System.Timers;
@@ -46,6 +47,9 @@ namespace SGKService
 		private byte slaveId;
 		// Поток 
 		private Thread Worker;
+		// Переменная для передачи данных через сокеты
+		private byte[] discreteBytes;
+		// Сброс таймера
 		AutoResetEvent StopRequest = new AutoResetEvent(false);
 		
 		#region Инициализация службы
@@ -205,10 +209,13 @@ namespace SGKService
            while(serviceWork){
            try
            {
+           		#region Чтение дискретных сигналов
            		// Заполняем структуру для дискретных сигналов
            		DiscreteSignals = dbSource.GetParams("confDiscrete");
+           		// Все значения в один массив
+           		BitArray discreteBits = new BitArray(DiscreteSignals.Count);
            		// Перебираем все элементы дискретных сигналов
-           		for (int i = DiscreteSignals.Count - 1; i >= 0; i--)
+           		for (int i = 0; i <= DiscreteSignals.Count - 1; i++)
            		{
            			// Записываем дату
            			DiscreteSignals.ElementAt(i).Value.Timestamp = DateTime.Now;
@@ -218,6 +225,8 @@ namespace SGKService
            				DiscreteSignals.ElementAt(i).Value.Value =  	modbusReader.ReadDiscrete(
            						slaveId, 
            						Convert.ToUInt16(DiscreteSignals.ElementAt(i).Value.Modbus_address));
+           				// Переписываем в массив бит
+           				discreteBits[i] = DiscreteSignals.ElementAt(i).Value.Value;
            			}
            			catch (Exception ex)
            			{
@@ -225,8 +234,17 @@ namespace SGKService
            			}
            		}
            		
+           		// Создаем массив байт для упаковки дискретных значений
+           		discreteBytes = new byte[ discreteBits.Length >> 3 + ((discreteBits & 7)==0 ? 0 : 1 ) ];
+           		// Упаковываем данные в байты
+           		discreteBits.CopyTo(discreteBytes, 0);
+           		#endregion
+           		
+           		#region Чтение дискретных сигналов
            		// Заполняем структуру для аналоговых сигналов
-	            foreach(KeyValuePair<int, int> item in dbSource.GetParams("confAnalog"))
+           		AnalogSignals = dbSource.GetParams("confAnalog", "dictTypes");
+           		
+           		foreach(KeyValuePair<int, int> item in dbSource.GetParams("confAnalog"))
 	            {
 	            	// Создаем элемент для Аналогового сигнала
 	            	AnalogSignal signal = new AnalogSignal();

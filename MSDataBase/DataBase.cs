@@ -199,7 +199,7 @@ namespace MSDataBase
 		#endregion
 		
 		#region Запрос параметров для опроса по Modbus
-		public Dictionary<int, DiscreteSignal> GetDiscreteParams(string tblConfig)
+		public Dictionary<int, DiscreteSignal> GetParams(string tblConfig)
 		{
 			Dictionary <int, DiscreteSignal> retValue = new Dictionary<int, DiscreteSignal>();
 			GetConnectionString();
