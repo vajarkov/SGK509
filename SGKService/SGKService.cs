@@ -13,6 +13,7 @@ using Interfaces;
 using ModbusReader;
 using MSDataBase;
 using System.Globalization;
+using DataTransfer;
 
 
 
@@ -27,19 +28,12 @@ namespace SGKService
 		public EventLog eventLog = new EventLog();
 		// Таймер периодичности опроса
 		private System.Timers.Timer timerSrv;
-		// Конфигурации файлов с данными
-		private AppSettingsSection modbusSettings;
-		// Конфигурации порта
-		private AppSettingsSection dbSettings;
-		// Периода записи в БД
-		private int periodDBWrite;
-		
 		// Флаг работы сервиса
 		private bool serviceWork = true;
-		
+		// Класс для работы с данными
+		DataClass dataTransfer = new DataClass();
 		// Поток 
 		private Thread Worker;
-		
 		// Сброс таймера
 		AutoResetEvent StopRequest = new AutoResetEvent(false);
 		
@@ -92,8 +86,7 @@ namespace SGKService
 			eventLog.WriteEntry("Служба запущена");
 			
 			#region Задание интервала и метода выполнения
-			Int32.TryParse(dbSettings.Settings["DBPeriod"].Value, out periodDBWrite);
-			eventLog.WriteEntry(periodDBWrite.ToString());
+			int periodDBWrite = dataTransfer.GetDBPeriod();
 			if (periodDBWrite > 0)
 			{
 				//Инициализация таймера
@@ -103,18 +96,12 @@ namespace SGKService
             	//Включение таймера
             	timerSrv.Enabled = true;
             	//Добавление обработчика на таймер
-            	timerSrv.Elapsed += new ElapsedEventHandler(WriteDBSignals);
+            	timerSrv.Elapsed += new ElapsedEventHandler(dataTransfer.WriteDBSignals);
             	//Автоматический взвод таймера 
             	timerSrv.AutoReset = true;
             	//Старт таймера
             	timerSrv.Start();
-            	// Считывание конфигурации Modbus
-            	GetConfigModbus();
-            	if (modbusReader != null)
-            	{
-            		// Считывание конфигурации БД
-            		GetConfigDB();
-            	}
+            	
             	// Запуск основого потока
             	Worker = new Thread(MainThread);
             	Worker.Start();
@@ -131,6 +118,21 @@ namespace SGKService
 		}
 
 
+		void MainThread()
+		{
+			while(serviceWork){
+           		try
+           		{
+           			
+           		}
+           		catch(Exception ex)
+           		{
+            		eventLog.WriteEntry(ex.Message);
+           		}
+			}
+           	if (StopRequest.WaitOne(1000)) 
+           	return;
+		}
 		
 		
 		/// <summary>

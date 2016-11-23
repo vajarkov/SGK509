@@ -18,6 +18,7 @@ namespace SGKSocketServer
 	/// </summary>
 	public class SocketServer
 	{
+		/*
 		// Incoming data from the client.
 		public static byte[] data = null;
 
@@ -63,6 +64,6 @@ namespace SGKSocketServer
     public static int Main(String[] args) {
         StartListening();
         return 0;
-    }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+    }*/                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
 	}
 }

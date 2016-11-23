@@ -8,8 +8,9 @@
     <OutputType>Library</OutputType>
     <RootNamespace>DataTransfer</RootNamespace>
     <AssemblyName>DataTransfer</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -31,10 +32,13 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration">
+      <HintPath>..\..\..\..\..\..\Windows\Microsoft.NET\Framework\v2.0.50727\System.configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration.Install">
+      <HintPath>..\..\..\..\..\..\Windows\Microsoft.NET\Framework\v2.0.50727\System.Configuration.Install.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -44,7 +48,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataTransfer.cs" />
+    <Compile Include="DataClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -63,10 +67,6 @@
     <ProjectReference Include="..\MSDataBase\MSDataBase.csproj">
       <Project>{b82f3731-213e-4dc0-85fd-34aaf9e13136}</Project>
       <Name>MSDataBase</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Nmodbus-master\Modbus\Modbus.csproj">
-      <Project>{ff96b252-2b24-44a1-a09c-6401b5d7ed23}</Project>
-      <Name>Modbus</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
