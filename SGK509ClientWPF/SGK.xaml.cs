@@ -373,15 +373,15 @@ namespace SGK509ClientWPF
 			creationData.MachineName = hostName;
 				
 			// Если журнал существует
-			if (EventLog.SourceExists("SGKService", hostName))
+			if (EventLog.SourceExists(serviceName, hostName))
             {
 				// Считываем источник журнала
-				string logName = EventLog.LogNameFromSourceName("SGKService", hostName);
+				string logName = EventLog.LogNameFromSourceName(serviceName, hostName);
 				// Если не совпадает с нужным
-				if (logName != "SGKService")
+				if (logName != serviceName)
 				{
 					// Удаляем источник
-					EventLog.DeleteEventSource("SGKService", hostName);
+					EventLog.DeleteEventSource(serviceName, hostName);
 					// Создаем нужный источник
 					EventLog.CreateEventSource(creationData);
 					
@@ -393,9 +393,9 @@ namespace SGK509ClientWPF
                 
 			}
 			// Имя журнала 
-            events.Log = "SGKService";
+            events.Log = serviceName;
             // Имя источника
-            events.Source = "SGKService";
+            events.Source = serviceName;
             // Имя компьютера
             events.MachineName = hostName;
            	

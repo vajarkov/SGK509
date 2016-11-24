@@ -18,6 +18,7 @@ using System.Configuration.Install;
 using System.Linq;
 using System.Diagnostics;
 using System.Globalization;
+using System.Net;
 
 namespace DataTransfer
 {
@@ -26,6 +27,8 @@ namespace DataTransfer
 	/// </summary>
 	public class DataClass
 	{
+		// Название службы
+		private const string serviceName = "SGKService";
 		// Хранения значений аналоговых сигналов
 		private Dictionary<int, AnalogSignal> AnalogSignals = new Dictionary<int, AnalogSignal>();
 		// Хранения значений дискретных сигналов
@@ -36,12 +39,16 @@ namespace DataTransfer
 		private IDataBase dbSource;
 		// Адрес устройства Modbus
 		private byte slaveId;
-		// Переменная для передачи данных через сокеты
-		private byte[] discreteBytes;
+		// Дискретные сигналы для сокетов
+		private byte[] discreteBytes = null;
+		// Аналоговые сигналы для сокетов
+		private byte[] analogBytes = null;
 		// Конфигурации файлов с данными
 		private AppSettingsSection modbusSettings;
 		// Конфигурации порта
 		private AppSettingsSection dbSettings;
+		// Конфигурация клиента
+		private AppSettingsSection serviceSettings;
 		// Периода записи в БД
 		private int periodDBWrite;
 		// Журнал событий
@@ -57,6 +64,7 @@ namespace DataTransfer
 				
 		public DataClass()
 		{
+		
 			// Путь к конфигурации 
             string exePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SGK509ClientWPF.exe");
             // Откртытие конфигурационного файла
@@ -65,10 +73,59 @@ namespace DataTransfer
 			dbSettings = (AppSettingsSection)appConfig.GetSection("DBSettings");
 			// Считывание конфигурации Modbus
 			modbusSettings = (AppSettingsSection)appConfig.GetSection("ModbusSettings");
-			// Считывание данных 
+			// Считывание конфигурации Клиента
+			serviceSettings = (AppSettingsSection)appConfig.GetSection("ServiceSettings");
+			// Считывание данных
 			GetConfigDB();
 			GetConfigModbus();
+			GetEventConfig();
 		}
+		
+		
+		#region Настройка журнала событий
+		void GetEventConfig()
+		{
+			// Имя машины
+			string machineName;
+			// Если IP не указан, то используем локальный адрес
+			if(String.IsNullOrEmpty(serviceSettings.Settings["ServiceSettings"].Value))
+				machineName = "127.0.0.1";
+			else
+				// Иначе берем тот, что указан
+				machineName = serviceSettings.Settings["ServiceSettings"].Value;
+			// Получаем DNS из IP адреса
+			string hostName = Dns.GetHostEntry(machineName).HostName.Split('.')[0];
+			
+			EventSourceCreationData creationData = new EventSourceCreationData(serviceName,serviceName);
+			creationData.MachineName = hostName;
+				
+			// Если журнал существует
+			if (EventLog.SourceExists(serviceName, hostName))
+            {
+				// Считываем источник журнала
+				string logName = EventLog.LogNameFromSourceName(serviceName, hostName);
+				// Если не совпадает с нужным
+				if (logName != serviceName)
+				{
+					// Удаляем источник
+					EventLog.DeleteEventSource(serviceName, hostName);
+					// Создаем нужный источник
+					EventLog.CreateEventSource(creationData);
+				}
+				
+			} else {
+				// Создаем журнал
+                EventLog.CreateEventSource(creationData);        
+			}
+			// Имя журнала 
+            eventLog.Log = serviceName;
+            // Имя источника
+            eventLog.Source = serviceName;
+            // Имя компьютера
+            eventLog.MachineName = hostName;
+		}
+		#endregion
+		
 		
 		#region Загрузка параметров для Modbus
 		void GetConfigModbus()
@@ -198,6 +255,7 @@ namespace DataTransfer
            	// Заполняем структуру для аналоговых сигналов
            	AnalogSignals = dbSource.GetParams("confAnalog", "dictTypes");
            	// Перебираем все элементы
+           	int bytesCounter = 0;
            	for (int i = 0; i <= AnalogSignals.Count - 1; i++ )
            	{
            		AnalogSignals.ElementAt(i).Value.Timestamp = DateTime.Now;
@@ -208,6 +266,14 @@ namespace DataTransfer
            						slaveId,
            						Convert.ToUInt16(AnalogSignals.ElementAt(i).Value.Modbus_address),
            						Convert.ToUInt16(AnalogSignals.ElementAt(i).Value.Size));
+           			
+           			byte[] floatToBytes = BitConverter.GetBytes(AnalogSignals.ElementAt(i).Value.Value);
+           			
+           			foreach (byte itemByte in floatToBytes)
+           			{
+           				analogBytes[bytesCounter] = itemByte;
+           				bytesCounter++;
+           			}
            		}
            		catch (Exception ex)
            		{
