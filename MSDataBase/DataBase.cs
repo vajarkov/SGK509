@@ -255,5 +255,40 @@ namespace MSDataBase
 			}
 		}
 		#endregion
+		
+		#region Получение размера данных в байтах
+		
+		#region Дискретные значения
+		public int GetDiscreteSize(string tblItem)
+		{
+			int res = 0;
+			GetConnectionString();
+			using(SqlConnection connection = new SqlConnection(builder.ConnectionString))
+			{
+				connection.Open();
+				SqlCommand command = new SqlCommand("SELECT COUNT(*) FROM " + tblItem);
+				res = (int)command.ExecuteScalar() >> 3 + (((int)command.ExecuteScalar() & 7)== 0 ? 0 : 1 );
+			}
+			return res;
+		}
+		#endregion
+		
+		
+		#region Аналоговые значения
+		public int GetAnalogSize(string tblItem)
+		{
+			int res = 0;
+			GetConnectionString();
+			using(SqlConnection connection = new SqlConnection(builder.ConnectionString))
+			{
+				connection.Open();
+				SqlCommand command = new SqlCommand("SELECT COUNT(*) FROM " + tblItem);
+				res = (int)command.ExecuteScalar() * 4;
+			}
+			return res;
+		}
+		#endregion
+		
+		#endregion
 	}
 }

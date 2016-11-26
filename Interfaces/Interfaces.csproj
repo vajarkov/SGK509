@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IDataBase.cs" />
+    <Compile Include="IDataClass.cs" />
     <Compile Include="IModbusReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

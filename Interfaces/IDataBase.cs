@@ -101,5 +101,17 @@ namespace Interfaces
 		/// <param name="timestamp">Время записи</param>
 		/// <param name="value">Значение</param>
 		void InsertSignal(string tblItem, string id_num, string timestamp, string value);
+		
+		/// <summary>
+		/// Размер в байтах пакета для передачи через сокет дискретных сигналов
+		/// </summary>
+		/// <param name="tblItem">Имя таблицы конфигурации дискретных сигналов</param>
+		int GetDiscreteSize(string tblItem);
+		
+		/// <summary>
+		/// Размер в байтах пакета для передачи через сокет аналоговых сигналов
+		/// </summary>
+		/// <param name="tblItem">Имя таблицы конфигурации аналоговых сигналов</param>
+		int GetAnalogSize(string tblItem);
 	}
 }

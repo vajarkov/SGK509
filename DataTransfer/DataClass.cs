@@ -25,46 +25,72 @@ namespace DataTransfer
 	/// <summary>
 	/// Класс для работы с данными
 	/// </summary>
-	public class DataClass
+	public class DataClass : IDataClass
 	{
 		// Название службы
-		private const string serviceName = "SGKService";
+		private string serviceName = "SGKService";
+		
+		#region Хранение данных
 		// Хранения значений аналоговых сигналов
 		private Dictionary<int, AnalogSignal> AnalogSignals = new Dictionary<int, AnalogSignal>();
 		// Хранения значений дискретных сигналов
 		private Dictionary<int, DiscreteSignal> DiscreteSignals = new Dictionary<int, DiscreteSignal>();
+		#endregion
+		
+		#region Объекты 
 		// Чтение данных по Modbus
 		private IModbusReader modbusReader;
 		// Работа с БД
-		private IDataBase dbSource;
+		private static IDataBase dbSource;
+		#endregion
+		
+		#region Переменные для передачи данных
 		// Адрес устройства Modbus
 		private byte slaveId;
 		// Дискретные сигналы для сокетов
 		private byte[] discreteBytes = null;
 		// Аналоговые сигналы для сокетов
 		private byte[] analogBytes = null;
+		#endregion
+		
+		#region Конфигурация
 		// Конфигурации файлов с данными
 		private AppSettingsSection modbusSettings;
 		// Конфигурации порта
 		private AppSettingsSection dbSettings;
 		// Конфигурация клиента
 		private AppSettingsSection serviceSettings;
+		#endregion
+		
 		// Периода записи в БД
 		private int periodDBWrite;
 		// Журнал событий
 		public EventLog eventLog = new EventLog();
 		
 		
-		
+		#region Получение периода записи в БД
 		public int GetDBPeriod()
 		{
 			Int32.TryParse(dbSettings.Settings["DBPeriod"].Value, out periodDBWrite);
 			return periodDBWrite;
 		}
-				
+		#endregion
+		
+		#region Конструктор класса		
 		public DataClass()
 		{
 		
+			// Считывание данных
+			GetConfigFile();
+			GetConfigDB();
+			GetConfigModbus();
+			GetEventConfig();
+		}
+		#endregion
+
+		#region Объявление структур конфингурации
+		private void GetConfigFile()
+		{
 			// Путь к конфигурации 
             string exePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SGK509ClientWPF.exe");
             // Откртытие конфигурационного файла
@@ -75,15 +101,12 @@ namespace DataTransfer
 			modbusSettings = (AppSettingsSection)appConfig.GetSection("ModbusSettings");
 			// Считывание конфигурации Клиента
 			serviceSettings = (AppSettingsSection)appConfig.GetSection("ServiceSettings");
-			// Считывание данных
-			GetConfigDB();
-			GetConfigModbus();
-			GetEventConfig();
+			
 		}
-		
+		#endregion
 		
 		#region Настройка журнала событий
-		void GetEventConfig()
+		private void GetEventConfig()
 		{
 			// Имя машины
 			string machineName;
@@ -125,10 +148,9 @@ namespace DataTransfer
             eventLog.MachineName = hostName;
 		}
 		#endregion
-		
-		
+				
 		#region Загрузка параметров для Modbus
-		void GetConfigModbus()
+		private void GetConfigModbus()
 		{
 			// Проверка есть ли данные
 			if (!String.IsNullOrEmpty(modbusSettings.Settings["MBType"].Value))
@@ -171,7 +193,7 @@ namespace DataTransfer
 		#endregion
 		
 		#region Загрузка конфигурации БД
-		void GetConfigDB()
+		private void GetConfigDB()
 		{
 			dbSource = new DataBase();
 			dbSource.SetDBConnectionParameters(
@@ -183,6 +205,56 @@ namespace DataTransfer
 		}
 		#endregion
 		
+		#region Получения размера данных для передачи через сокет из считанных значений
+		public int GetSizeBytes()
+		{
+			return discreteBytes.Length + analogBytes.Length;
+		}
+		
+		public int GetDiscreteSize()
+		{
+			return discreteBytes.Length;
+		}
+		
+		public int GetAnalogSize()
+		{
+			return analogBytes.Length;
+		}
+		#endregion
+		
+		#region Получения размера данных для передачи через сокет из Базы данных
+		public static int GetInitAnalogSize()
+		{
+			return dbSource.GetAnalogSize("confAnalog");
+		}
+		
+		public static int GetInitDiscreteSize()
+		{
+			return dbSource.GetDiscreteSize("confDiscrete");
+		}
+		
+		public static int GetInitSize()
+		{
+			return dbSource.GetDiscreteSize("confDiscrete") + dbSource.GetAnalogSize("confAnalog");
+		}
+		#endregion
+		
+		#region Получение адреса службы
+		public string GetServiceIPAddress()
+		{
+			return serviceSettings.Settings["IP"].Value;
+		}
+		#endregion
+		
+		#region Получение порта службы
+		public int GetServicePort()
+		{
+			int port;
+			Int32.TryParse(serviceSettings.Settings["Port"].Value, out port);
+			return port;
+		}
+		#endregion
+		
 		#region Запись сигналов в БД
 		public void WriteDBSignals(object sender, EventArgs e)
 		{
@@ -190,7 +262,9 @@ namespace DataTransfer
 			{
 				try
 				{
+					// Значение сигнала
 					DiscreteSignal signal = (DiscreteSignal) item.Value;
+					// Запись в БД
 					dbSource.InsertSignal("discrete_log", item.Key.ToString(), signal.Timestamp.ToString("yyyy-MM-dd HH:mm:ss"), signal.Value.ToString());
 				} 
 				catch(Exception ex)
@@ -215,8 +289,8 @@ namespace DataTransfer
 		}
 		#endregion
 		
-		        #region Основной поток опроса данных через Modbus	
-		void MainThread()
+		#region Основной поток опроса данных через Modbus	
+		public void MainThread()
 		{
           
  			#region Чтение дискретных сигналов
@@ -236,7 +310,7 @@ namespace DataTransfer
 	           			modbusReader.ReadDiscrete(
 	           						slaveId, 
 	           						Convert.ToUInt16(DiscreteSignals.ElementAt(i).Value.Modbus_address));
-	           				// Переписываем в массив бит
+	           		// Переписываем в массив бит
 	           		discreteBits[i] = DiscreteSignals.ElementAt(i).Value.Value;
 	           	}
 	           	catch (Exception ex)
@@ -283,5 +357,6 @@ namespace DataTransfer
            	#endregion
          }
 		#endregion
+		
 	}
 }
