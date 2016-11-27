@@ -258,7 +258,7 @@ namespace SGK509ClientWPF
 		{
 			// Cоздаем переменную с указателем на службу
 			controller = new ServiceController(svcName);
-			// Усли служба запущена
+			// Если служба запущена
 			if (controller.Status == ServiceControllerStatus.Running)
 			{
 				btnStop.IsEnabled = true;   // Кнокпа "Стоп" активна
@@ -336,7 +336,15 @@ namespace SGK509ClientWPF
 			// Если служба существует
 			if (ServiceIsExisted(serviceName))
 			{
-				controller.Start();
+				try
+				{
+					controller.Start();
+				}
+				catch(Exception ex)
+				{
+					System.Windows.MessageBox.Show(ex.Message);
+					return;
+				}
 				btnStop.IsEnabled = true;
 				btnStart.IsEnabled = false;
 			}
@@ -349,7 +357,15 @@ namespace SGK509ClientWPF
 			// Если служба существует
 			if (ServiceIsExisted(serviceName))
 			{
-				controller.Stop();
+				try
+				{
+					controller.Stop();
+				}
+				catch(Exception ex)
+				{
+					System.Windows.MessageBox.Show(ex.Message);
+					return;
+				}
 				btnStop.IsEnabled = false;
 				btnStart.IsEnabled = true;
 			}
@@ -640,7 +656,8 @@ namespace SGK509ClientWPF
 		#region Нажатие кнопки получения списка БД
 		void btnDBList_Click(object sender, EventArgs e)
 		{
-			cbDBName.Items.Clear();
+			if(cbDBName.Items.Count>0)
+				cbDBName.Items.Clear();
 			dbSource.SetDBConnectionParameters(cbDataSource.Text, tbUserName.Text, tbPassword.Password);
 			cbDBName.ItemsSource = dbSource.GetDBList();
 			cbDBName.IsEnabled = true;

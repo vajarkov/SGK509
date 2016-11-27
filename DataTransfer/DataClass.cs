@@ -41,7 +41,7 @@ namespace DataTransfer
 		// Чтение данных по Modbus
 		private IModbusReader modbusReader;
 		// Работа с БД
-		private static IDataBase dbSource;
+		private IDataBase dbSource;
 		#endregion
 		
 		#region Переменные для передачи данных
@@ -65,7 +65,7 @@ namespace DataTransfer
 		// Периода записи в БД
 		private int periodDBWrite;
 		// Журнал событий
-		public EventLog eventLog = new EventLog();
+		private EventLog eventLog = new EventLog();
 		
 		
 		#region Получение периода записи в БД
@@ -76,16 +76,29 @@ namespace DataTransfer
 		}
 		#endregion
 		
-		#region Конструктор класса		
+		#region Конструкторы класса		
 		public DataClass()
 		{
 		
 			// Считывание данных
 			GetConfigFile();
+			GetEventConfig();
 			GetConfigDB();
 			GetConfigModbus();
-			GetEventConfig();
+			
 		}
+		
+		/*
+		static DataClass()
+		{
+			// Считывание данных
+			DataClass dataClass = new DataClass();
+			dataClass.GetConfigFile();
+			dataClass.GetEventConfig();
+			dataClass.GetConfigDB();
+			dataClass.GetConfigModbus();
+			
+		}*/
 		#endregion
 
 		#region Объявление структур конфингурации
@@ -106,16 +119,16 @@ namespace DataTransfer
 		#endregion
 		
 		#region Настройка журнала событий
-		private void GetEventConfig()
+		public void GetEventConfig()
 		{
 			// Имя машины
 			string machineName;
 			// Если IP не указан, то используем локальный адрес
-			if(String.IsNullOrEmpty(serviceSettings.Settings["ServiceSettings"].Value))
+			if(String.IsNullOrEmpty(serviceSettings.Settings["IP"].Value))
 				machineName = "127.0.0.1";
 			else
 				// Иначе берем тот, что указан
-				machineName = serviceSettings.Settings["ServiceSettings"].Value;
+				machineName = serviceSettings.Settings["IP"].Value;
 			// Получаем DNS из IP адреса
 			string hostName = Dns.GetHostEntry(machineName).HostName.Split('.')[0];
 			
@@ -170,7 +183,7 @@ namespace DataTransfer
 					}
 					catch (Exception ex)
 					{
-						eventLog.WriteEntry("Configuratin : " + ex.Message);
+						eventLog.WriteEntry("Configuratin : " + ex.Message, EventLogEntryType.Error);
 					}
 				}
 				// Modbus TCP
@@ -223,17 +236,17 @@ namespace DataTransfer
 		#endregion
 		
 		#region Получения размера данных для передачи через сокет из Базы данных
-		public static int GetInitAnalogSize()
+		public int GetInitAnalogSize()
 		{
 			return dbSource.GetAnalogSize("confAnalog");
 		}
 		
-		public static int GetInitDiscreteSize()
+		public int GetInitDiscreteSize()
 		{
 			return dbSource.GetDiscreteSize("confDiscrete");
 		}
 		
-		public static int GetInitSize()
+		public int GetInitSize()
 		{
 			return dbSource.GetDiscreteSize("confDiscrete") + dbSource.GetAnalogSize("confAnalog");
 		}
@@ -295,14 +308,15 @@ namespace DataTransfer
           
  			#region Чтение дискретных сигналов
  			// Заполняем структуру для дискретных сигналов
-           	DiscreteSignals = dbSource.GetParams("confDiscrete");
+ 			DiscreteSignals = dbSource.GetParams("confDiscrete");
+           	
            	// Все значения в один массив
            	BitArray discreteBits = new BitArray(DiscreteSignals.Count);
            	// Перебираем все элементы дискретных сигналов
            	for (int i = 0; i <= DiscreteSignals.Count - 1; i++)
            	{
            		// Записываем дату
-           		DiscreteSignals.ElementAt(i).Value.Timestamp = DateTime.Now;
+           		// DiscreteSignals.ElementAt(i).Value.Timestamp = DateTime.Now;
            		// Записываем значение переменной по адресу Modbus 
 	           	try
 	           	{
@@ -358,5 +372,14 @@ namespace DataTransfer
          }
 		#endregion
 		
+		#region Массив данных для передачи через сокет
+		public byte[] GetSocketData()
+		{
+			byte[] ret = new byte[discreteBytes.Length + analogBytes.Length];
+			Array.Copy(discreteBytes, 0, ret, 0, discreteBytes.Length);
+			Array.Copy(analogBytes, 0, ret, discreteBytes.Length, analogBytes.Length);
+			return ret;
+		}
+		#endregion
 	}
 }

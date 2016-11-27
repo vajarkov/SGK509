@@ -82,5 +82,16 @@ namespace Interfaces
 		/// Основной поток для опроса значений по Modbus
 		/// </summary>
 		void MainThread();
+		
+		/// <summary>
+		/// Конфигурация журнала событий
+		/// </summary>
+		void GetEventConfig();
+		
+		/// <summary>
+		/// Массив байт для передачи через сокет
+		/// </summary>
+		/// <returns>Дискретные и аналоговые сигналы</returns>
+		byte[] GetSocketData();
 	}
 }

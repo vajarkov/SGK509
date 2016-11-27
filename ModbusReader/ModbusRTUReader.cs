@@ -25,13 +25,15 @@ namespace ModbusReader
 		#region Конструктор класса и создание Modbus-устройства
 		public ModbusRTUReader(string portName, int baudRate, Parity parity, int dataBits, StopBits stopBits)
 		{
-			serialPort = new SerialPort(portName, baudRate, parity, dataBits, stopBits);
-			// Открываем порт если он не открыт
-			if (!serialPort.IsOpen)
-				serialPort.Open();
+			using (serialPort = new SerialPort(portName, baudRate, parity, dataBits, stopBits))
+			{
+				// Открываем порт если он не открыт
+				if (!serialPort.IsOpen)
+					serialPort.Open();
 				
-			// Создаем Modbus-устройство
-			master = ModbusSerialMaster.CreateRtu(serialPort);
+				// Создаем Modbus-устройство
+				master = ModbusSerialMaster.CreateRtu(serialPort);
+			}
 		}
 		#endregion
 		

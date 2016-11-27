@@ -72,10 +72,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
-    <Compile Include="ProjectInstaller.cs" />
+    <Compile Include="Program.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="ProjectInstaller.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SGKService.cs" />
+    <Compile Include="SGKService.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
@@ -102,6 +108,10 @@
     <ProjectReference Include="..\MSDataBase\MSDataBase.csproj">
       <Project>{b82f3731-213e-4dc0-85fd-34aaf9e13136}</Project>
       <Name>MSDataBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SGKSocketServer\SGKSocketServer.csproj">
+      <Project>{a651c198-254b-455f-a7bd-06c306174162}</Project>
+      <Name>SGKSocketServer</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

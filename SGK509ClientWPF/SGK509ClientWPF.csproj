@@ -103,6 +103,7 @@
     <Compile Include="SGK.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>SGK.xaml</DependentUpon>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
   </ItemGroup>
   <ItemGroup>

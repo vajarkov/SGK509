@@ -14,6 +14,7 @@ using ModbusReader;
 using MSDataBase;
 using System.Globalization;
 using DataTransfer;
+using SGKSocketServer;
 
 
 
@@ -36,6 +37,7 @@ namespace SGKService
 		private Thread Worker;
 		// Сброс таймера
 		AutoResetEvent StopRequest = new AutoResetEvent(false);
+		private AsynchronousSocketListener socketServer = new AsynchronousSocketListener();
 		
 		#region Инициализация службы
 		public SGKService()
@@ -113,7 +115,7 @@ namespace SGKService
             #endregion
             
             #region Создаем сокет для прослушивания подключений
-            
+            AsynchronousSocketListener.StartListening();
             #endregion
 		}
 
@@ -123,11 +125,11 @@ namespace SGKService
 			while(serviceWork){
            		try
            		{
-           			
+           			dataTransfer.MainThread();
            		}
            		catch(Exception ex)
            		{
-            		eventLog.WriteEntry(ex.Message);
+            		eventLog.WriteEntry("MainThread : " + ex.Message);
            		}
 			}
            	if (StopRequest.WaitOne(1000)) 

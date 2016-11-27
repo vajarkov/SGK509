@@ -206,13 +206,15 @@ namespace MSDataBase
 			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
 			{
 				connection.Open();
-				SqlCommand command = new SqlCommand("SELECT id_num, modbus_address from " + tblConfig, connection);
+				SqlCommand command = new SqlCommand("SELECT id_num, GETDATE() [Timestamp], modbus_address, 0 [Value] from " + tblConfig, connection);
 				
 				using (var reader = command.ExecuteReader())
 				{
 					while(reader.Read())
 					{
-						retValue[(int)reader["id_num"]] = (DiscreteSignal) reader["modbus_address"];
+						retValue[(int)reader["id_num"]].Modbus_address = (int) reader["modbus_address"];
+						retValue[(int)reader["id_num"]].Timestamp = (DateTime) reader["Timestamp"];
+						retValue[(int)reader["id_num"]].Value = (bool) reader["Value"];
 					}
 				}
 			}
@@ -266,8 +268,9 @@ namespace MSDataBase
 			using(SqlConnection connection = new SqlConnection(builder.ConnectionString))
 			{
 				connection.Open();
-				SqlCommand command = new SqlCommand("SELECT COUNT(*) FROM " + tblItem);
-				res = (int)command.ExecuteScalar() >> 3 + (((int)command.ExecuteScalar() & 7)== 0 ? 0 : 1 );
+				SqlCommand command = new SqlCommand("SELECT COUNT(*) FROM " + tblItem, connection);
+				res = (int)command.ExecuteScalar();
+				res = res >> 3 + ((res & 7)== 0 ? 0 : 1 );
 			}
 			return res;
 		}
@@ -282,7 +285,7 @@ namespace MSDataBase
 			using(SqlConnection connection = new SqlConnection(builder.ConnectionString))
 			{
 				connection.Open();
-				SqlCommand command = new SqlCommand("SELECT COUNT(*) FROM " + tblItem);
+				SqlCommand command = new SqlCommand("SELECT COUNT(*) FROM " + tblItem, connection);
 				res = (int)command.ExecuteScalar() * 4;
 			}
 			return res;
