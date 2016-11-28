@@ -15,6 +15,6 @@ namespace DataTypes
 	/// </summary>
 	public class DiscreteSignal : Signal
 	{
-		public bool Value { get; set; }
+		public Boolean Value { get; set; }
 	}
 }

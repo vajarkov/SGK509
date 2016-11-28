@@ -17,6 +17,9 @@ using Microsoft.Windows.Controls;
 using System.Collections.ObjectModel;
 using Interfaces;
 using DataTypes;
+using System.Diagnostics;
+using System.Configuration;
+using System.Net;
 
 
 namespace MSDataBase
@@ -26,11 +29,31 @@ namespace MSDataBase
 	/// </summary>
 	public class DataBase : IDataBase
 	{
+		// Название службы
+		private const string serviceName = "SGKService";
 		private string dbDataSource;
 		private string dbName;
 		private string dbUserName;
 		private string dbPassword;
 		private SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
+		private EventLog eventLog = new EventLog();
+		
+		#region Конфигурация
+		// Конфигурации файлов с данными
+		private AppSettingsSection modbusSettings;
+		// Конфигурации порта
+		private AppSettingsSection dbSettings;
+		// Конфигурация клиента
+		private AppSettingsSection serviceSettings;
+		#endregion
+		
+		#region Конструктор
+		public DataBase()
+		{
+			GetConfigFile();
+			GetEventConfig();
+		}
+		#endregion
 		
 		#region Сохранение параметров БД
 		
@@ -47,6 +70,67 @@ namespace MSDataBase
 			this.dbName = DBName;
 			this.dbUserName = userName;
 			this.dbPassword = password;
+		}
+		#endregion
+		
+		#region Объявление структур конфингурации
+		private void GetConfigFile()
+		{
+			// Путь к конфигурации 
+            string exePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SGK509ClientWPF.exe");
+            // Откртытие конфигурационного файла
+            System.Configuration.Configuration appConfig = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).HasFile ? ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None) : ConfigurationManager.OpenExeConfiguration(exePath);
+            // Считывание конфигурации БД
+			dbSettings = (AppSettingsSection)appConfig.GetSection("DBSettings");
+			// Считывание конфигурации Modbus
+			modbusSettings = (AppSettingsSection)appConfig.GetSection("ModbusSettings");
+			// Считывание конфигурации Клиента
+			serviceSettings = (AppSettingsSection)appConfig.GetSection("ServiceSettings");
+			
+		}
+		#endregion
+		
+		#region Настройка журнала событий
+		public void GetEventConfig()
+		{
+			// Имя машины
+			string machineName;
+			// Если IP не указан, то используем локальный адрес
+			if(String.IsNullOrEmpty(serviceSettings.Settings["IP"].Value))
+				machineName = "127.0.0.1";
+			else
+				// Иначе берем тот, что указан
+				machineName = serviceSettings.Settings["IP"].Value;
+			// Получаем DNS из IP адреса
+			string hostName = Dns.GetHostEntry(machineName).HostName.Split('.')[0];
+			
+			EventSourceCreationData creationData = new EventSourceCreationData(serviceName,serviceName);
+			creationData.MachineName = hostName;
+				
+			// Если журнал существует
+			if (EventLog.SourceExists(serviceName, hostName))
+            {
+				// Считываем источник журнала
+				string logName = EventLog.LogNameFromSourceName(serviceName, hostName);
+				// Если не совпадает с нужным
+				if (logName != serviceName)
+				{
+					// Удаляем источник
+					EventLog.DeleteEventSource(serviceName, hostName);
+					// Создаем нужный источник
+					EventLog.CreateEventSource(creationData);
+				}
+				
+			} else {
+				// Создаем журнал
+                EventLog.CreateEventSource(creationData);        
+			}
+			// Имя журнала 
+            eventLog.Log = serviceName;
+            // Имя источника
+            eventLog.Source = serviceName;
+            // Имя компьютера
+            eventLog.MachineName = hostName;
 		}
 		#endregion
 		
@@ -193,7 +277,7 @@ namespace MSDataBase
 			}
 			catch (Exception e)
 			{
-				System.Windows.MessageBox.Show(e.Message);
+				eventLog.WriteEntry(e.Message, EventLogEntryType.Error);
 			}
 		}
 		#endregion
@@ -206,15 +290,23 @@ namespace MSDataBase
 			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
 			{
 				connection.Open();
-				SqlCommand command = new SqlCommand("SELECT id_num, GETDATE() [Timestamp], modbus_address, 0 [Value] from " + tblConfig, connection);
+				SqlCommand command = new SqlCommand("SELECT id_num, GETDATE() [Timestamp], modbus_address FROM " + tblConfig, connection);
 				
 				using (var reader = command.ExecuteReader())
 				{
 					while(reader.Read())
 					{
-						retValue[(int)reader["id_num"]].Modbus_address = (int) reader["modbus_address"];
-						retValue[(int)reader["id_num"]].Timestamp = (DateTime) reader["Timestamp"];
-						retValue[(int)reader["id_num"]].Value = (bool) reader["Value"];
+						try
+						{
+							retValue.Add(reader.GetInt32(0),  new DiscreteSignal(){
+							             	Timestamp = reader.GetDateTime(1),
+							             	Modbus_address = reader.GetInt32(2),
+							             	Value = false });
+						}
+						catch(Exception ex)
+						{
+							eventLog.WriteEntry(ex.Message, EventLogEntryType.Error);
+						}
 					}
 				}
 			}
@@ -230,14 +322,26 @@ namespace MSDataBase
 			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
 			{
 				connection.Open();
-				SqlCommand command = new SqlCommand("SELECT ca.id_num, ca.modbus_address, dt.bytes from " + tblConfig + " ca LEFT JOIN " + tblDictinary + " dt ON ca.id_type = dt.id", connection);
+				SqlCommand command = new SqlCommand("SELECT ca.id_num, GETDATE() [Timestamp], ca.modbus_address, dt.bytes from " + tblConfig + " ca LEFT JOIN " + tblDictinary + " dt ON ca.id_type = dt.id", connection);
 				
 				using (var reader = command.ExecuteReader())
 				{
 					while(reader.Read())
 					{
-						retValue[(int)reader["id_num"]].Modbus_address = (int)reader["modbus_address"];
-						retValue[(int)reader["id_num"]].Size = (int)reader["bytes"];
+						try
+						{
+							retValue.Add(reader.GetInt32(0), new AnalogSignal() {
+							             	Timestamp = reader.GetDateTime(1),
+							             	Modbus_address = reader.GetInt32(2),
+							             	Size = reader.GetInt32(3),
+							             	Value = 0f
+							             });
+						}
+						catch (Exception ex)
+						{
+							eventLog.WriteEntry(ex.Message, EventLogEntryType.Error);
+						}
+							
 					}
 				}
 			}

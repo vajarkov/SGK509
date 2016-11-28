@@ -32,9 +32,9 @@ namespace DataTransfer
 		
 		#region Хранение данных
 		// Хранения значений аналоговых сигналов
-		private Dictionary<int, AnalogSignal> AnalogSignals = new Dictionary<int, AnalogSignal>();
+		private Dictionary<int, AnalogSignal> AnalogSignals;
 		// Хранения значений дискретных сигналов
-		private Dictionary<int, DiscreteSignal> DiscreteSignals = new Dictionary<int, DiscreteSignal>();
+		private Dictionary<int, DiscreteSignal> DiscreteSignals;
 		#endregion
 		
 		#region Объекты 
@@ -176,10 +176,14 @@ namespace DataTransfer
 					try
 					{
 						modbusReader = new ModbusRTUReader(
-							modbusSettings.Settings["MBSerialPort"].Value, Convert.ToInt32(modbusSettings.Settings["MBBaudRate"].Value), (System.IO.Ports.Parity) Enum.Parse(typeof(System.IO.Ports.Parity), modbusSettings.Settings["MBParity"].Value),
+							modbusSettings.Settings["MBSerialPort"].Value, 
+							Convert.ToInt32(modbusSettings.Settings["MBBaudRate"].Value),
+							(System.IO.Ports.Parity) Enum.Parse(typeof(System.IO.Ports.Parity), 
+							modbusSettings.Settings["MBParity"].Value),
 							Convert.ToInt16(modbusSettings.Settings["MBDataBits"].Value),
-							(System.IO.Ports.StopBits) Enum.Parse(typeof(System.IO.Ports.StopBits), modbusSettings.Settings["MBStopBit"].Value));
-						
+							(System.IO.Ports.StopBits) Enum.Parse(typeof(System.IO.Ports.StopBits), 
+							modbusSettings.Settings["MBStopBit"].Value));
+						eventLog.WriteEntry("modbusReader инициализирован");
 					}
 					catch (Exception ex)
 					{
@@ -308,8 +312,15 @@ namespace DataTransfer
           
  			#region Чтение дискретных сигналов
  			// Заполняем структуру для дискретных сигналов
- 			DiscreteSignals = dbSource.GetParams("confDiscrete");
-           	
+ 			try
+ 			{
+ 				DiscreteSignals = new Dictionary<int, DiscreteSignal> (dbSource.GetParams("confDiscrete"));
+ 			}
+ 			catch(Exception ex)
+ 			{
+ 				eventLog.WriteEntry(ex.ToString());
+		
+ 			}
            	// Все значения в один массив
            	BitArray discreteBits = new BitArray(DiscreteSignals.Count);
            	// Перебираем все элементы дискретных сигналов
@@ -334,7 +345,15 @@ namespace DataTransfer
            	}
            		
            	// Создаем массив байт для упаковки дискретных значений
-           	discreteBytes = new byte[ discreteBits.Length >> 3 + ((discreteBits.Length & 7)==0 ? 0 : 1 ) ];
+           	try
+           	{
+           		discreteBytes = new byte[ discreteBits.Length >> 3 + ((discreteBits.Length & 7)==0 ? 0 : 1 ) ];
+           		eventLog.WriteEntry(discreteBytes.Length.ToString());
+           	}
+           	catch (Exception ex)
+           	{
+           		eventLog.WriteEntry(ex.Message);
+           	}
            	// Упаковываем данные в байты
            	discreteBits.CopyTo(discreteBytes, 0);
            	#endregion
