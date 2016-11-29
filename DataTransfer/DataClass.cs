@@ -39,7 +39,7 @@ namespace DataTransfer
 		
 		#region Объекты 
 		// Чтение данных по Modbus
-		private IModbusReader modbusReader;
+		private static IModbusReader modbusReader;
 		// Работа с БД
 		private IDataBase dbSource;
 		#endregion
@@ -183,7 +183,7 @@ namespace DataTransfer
 							Convert.ToInt16(modbusSettings.Settings["MBDataBits"].Value),
 							(System.IO.Ports.StopBits) Enum.Parse(typeof(System.IO.Ports.StopBits), 
 							modbusSettings.Settings["MBStopBit"].Value));
-						eventLog.WriteEntry("modbusReader инициализирован");
+						eventLog.WriteEntry("modbusReaderRTU инициализирован");
 					}
 					catch (Exception ex)
 					{
@@ -199,6 +199,7 @@ namespace DataTransfer
 						modbusReader = new ModbusTCPReader(
 						modbusSettings.Settings["MBIPAddress"].Value,
 						Convert.ToInt32(modbusSettings.Settings["MBTCPPort"].Value));
+						eventLog.WriteEntry("modbusReaderTCP инициализирован");
 					}
 					catch (Exception ex)
 					{
@@ -365,9 +366,9 @@ namespace DataTransfer
            	AnalogSignals = dbSource.GetParams("confAnalog", "dictTypes");
            	// Перебираем все элементы
            	int bytesCounter = 0;
+           	analogBytes = new byte[AnalogSignals.Count * 4];
            	for (int i = 0; i <= AnalogSignals.Count - 1; i++ )
            	{
-           		AnalogSignals.ElementAt(i).Value.Timestamp = DateTime.Now;
            		try
            		{
            			AnalogSignals.ElementAt(i).Value.Value = 
@@ -377,16 +378,17 @@ namespace DataTransfer
            						Convert.ToUInt16(AnalogSignals.ElementAt(i).Value.Size));
            			
            			byte[] floatToBytes = BitConverter.GetBytes(AnalogSignals.ElementAt(i).Value.Value);
-           			
+           			eventLog.WriteEntry(floatToBytes.Length.ToString());
            			foreach (byte itemByte in floatToBytes)
            			{
+           				eventLog.WriteEntry(itemByte.ToString());
            				analogBytes[bytesCounter] = itemByte;
            				bytesCounter++;
            			}
            		}
            		catch (Exception ex)
            		{
-           			eventLog.WriteEntry("Не могу считать аналоговое значение Modbus: " + AnalogSignals.ElementAt(i).Value.Modbus_address + " \n" + ex.Message);
+           			eventLog.WriteEntry("Не могу считать аналоговое значение Modbus: " + AnalogSignals.ElementAt(i).Value.Modbus_address + " \n" + ex.Message + "\n " + ex.ToString(), EventLogEntryType.Error);
            		}
            	}
            	#endregion

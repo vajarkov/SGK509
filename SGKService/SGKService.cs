@@ -4,15 +4,7 @@ using System.Diagnostics;
 using System.ServiceProcess;
 using System.Timers;
 using System.Threading;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Configuration.Install;
 using System.Linq;
-using DataTypes;
-using Interfaces;
-using ModbusReader;
-using MSDataBase;
-using System.Globalization;
 using DataTransfer;
 using SGKSocketServer;
 
@@ -32,7 +24,7 @@ namespace SGKService
 		// Флаг работы сервиса
 		private bool serviceWork = true;
 		// Класс для работы с данными
-		DataClass dataTransfer = new DataClass();
+		static DataClass dataTransfer = new DataClass();
 		// Поток 
 		private Thread Worker;
 		// Сброс таймера
@@ -116,6 +108,7 @@ namespace SGKService
             
             #region Создаем сокет для прослушивания подключений
             AsynchronousSocketListener.StartListening();
+            eventLog.WriteEntry("Сокет-сервер запущен");
             #endregion
 		}
 
@@ -125,7 +118,9 @@ namespace SGKService
 			while(serviceWork){
            		try
            		{
+           			eventLog.WriteEntry("MainThread : Запуск основного потока опроса данных");
            			dataTransfer.MainThread();
+           			
            		}
            		catch(Exception ex)
            		{
