@@ -347,8 +347,10 @@ namespace DataTransfer
            	// Создаем массив байт для упаковки дискретных значений
            	try
            	{
-           		discreteBytes = new byte[ discreteBits.Length >> 3 + ((discreteBits.Length & 7)==0 ? 0 : 1 ) ];
-           		eventLog.WriteEntry(discreteBytes.Length.ToString());
+           		if (discreteBits.Length > 8)
+           			discreteBytes = new byte[ discreteBits.Length >> 3 + ((discreteBits.Length & 7)==0 ? 0 : 1 ) ];
+           		else 
+           			discreteBytes = new byte[1];
            	}
            	catch (Exception ex)
            	{

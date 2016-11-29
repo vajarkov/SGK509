@@ -333,13 +333,13 @@ namespace MSDataBase
 							retValue.Add(reader.GetInt32(0), new AnalogSignal() {
 							             	Timestamp = reader.GetDateTime(1),
 							             	Modbus_address = reader.GetInt32(2),
-							             	Size = reader.GetInt32(3),
-							             	Value = 0f
+							             	Value = Convert.ToSingle(0),
+							             	Size = reader.GetInt16(3)
 							             });
 						}
 						catch (Exception ex)
 						{
-							eventLog.WriteEntry(ex.Message, EventLogEntryType.Error);
+							eventLog.WriteEntry("AnalogReader : " + ex.Message, EventLogEntryType.Error);
 						}
 							
 					}
