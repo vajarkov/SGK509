@@ -301,7 +301,8 @@ namespace MSDataBase
 							retValue.Add(reader.GetInt32(0),  new DiscreteSignal(){
 							             	Timestamp = reader.GetDateTime(1),
 							             	Modbus_address = reader.GetInt32(2),
-							             	Value = false });
+							             	//Value = false 
+							             });
 						}
 						catch(Exception ex)
 						{
@@ -333,7 +334,7 @@ namespace MSDataBase
 							retValue.Add(reader.GetInt32(0), new AnalogSignal() {
 							             	Timestamp = reader.GetDateTime(1),
 							             	Modbus_address = reader.GetInt32(2),
-							             	Value = Convert.ToSingle(0),
+							             	//Value = Convert.ToSingle(0),
 							             	Size = reader.GetInt16(3)
 							             });
 						}

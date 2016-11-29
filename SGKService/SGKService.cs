@@ -19,16 +19,18 @@ namespace SGKService
 		public const string MyServiceName = "SGKService";
 		// Журнал событий
 		public EventLog eventLog = new EventLog();
+		//Блокировка MainThread
+		private object lockMainThread = new object();
 		// Таймер периодичности опроса
 		private System.Timers.Timer timerSrv;
 		// Флаг работы сервиса
 		private bool serviceWork = true;
 		// Класс для работы с данными
-		static DataClass dataTransfer = new DataClass();
+		DataClass dataTransfer = new DataClass();
 		// Поток 
-		private Thread Worker;
+		private Thread Worker = null;
 		// Сброс таймера
-		AutoResetEvent StopRequest = new AutoResetEvent(false);
+		//AutoResetEvent StopRequest = new AutoResetEvent(false);
 		private AsynchronousSocketListener socketServer = new AsynchronousSocketListener();
 		
 		#region Инициализация службы
@@ -96,9 +98,21 @@ namespace SGKService
             	//Старт таймера
             	timerSrv.Start();
             	
-            	// Запуск основого потока
+            	#region Создаем сокет для прослушивания подключений
+            	eventLog.WriteEntry("Сокет-сервер запущен");
+            	try
+            	{
+            		AsynchronousSocketListener.StartListening();
+            		eventLog.WriteEntry("Сокет-сервер запущен");
+            	}
+            	catch(Exception ex)
+            	{
+            		eventLog.WriteEntry(ex.ToString());
+            	}
+            	#endregion
             	Worker = new Thread(MainThread);
             	Worker.Start();
+            	
 			}
 			else
 			{
@@ -106,10 +120,7 @@ namespace SGKService
 			}
             #endregion
             
-            #region Создаем сокет для прослушивания подключений
-            AsynchronousSocketListener.StartListening();
-            eventLog.WriteEntry("Сокет-сервер запущен");
-            #endregion
+            
 		}
 
 
@@ -118,17 +129,24 @@ namespace SGKService
 			while(serviceWork){
            		try
            		{
-           			eventLog.WriteEntry("MainThread : Запуск основного потока опроса данных");
-           			dataTransfer.MainThread();
+           			
+           			{
+	           			eventLog.WriteEntry("MainThread : Запуск основного потока опроса данных");
+	           			
+	           			#region Запуск основого потока
+            			Thread main = new Thread(dataTransfer.MainThread);
+            			//main.Join();
+            			#endregion
+	           		}
            			
            		}
            		catch(Exception ex)
            		{
-            		eventLog.WriteEntry("MainThread : " + ex.Message);
+           			eventLog.WriteEntry("MainThread : " + ex.ToString());
            		}
 			}
-           	if (StopRequest.WaitOne(1000)) 
-           	return;
+           	//if (StopRequest.WaitOne(1000)) 
+           	//return;
 		}
 		
 		
@@ -137,7 +155,7 @@ namespace SGKService
 		/// </summary>
 		protected override void OnStop()
 		{
-			StopRequest.Set();
+			//StopRequest.Set();
 			Worker.Join();
 			#region Запись в журнал
             eventLog.WriteEntry("Служба остановлена");

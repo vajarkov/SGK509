@@ -39,7 +39,7 @@ namespace DataTransfer
 		
 		#region Объекты 
 		// Чтение данных по Modbus
-		private static IModbusReader modbusReader;
+		private IModbusReader modbusReader;
 		// Работа с БД
 		private IDataBase dbSource;
 		#endregion
