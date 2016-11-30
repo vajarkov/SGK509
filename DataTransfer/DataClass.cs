@@ -29,6 +29,7 @@ namespace DataTransfer
 	{
 		// Название службы
 		private string serviceName = "SGKService";
+		private static bool flagRead = false;
 		
 		#region Хранение данных
 		// Хранения значений аналоговых сигналов
@@ -298,6 +299,12 @@ namespace DataTransfer
 		#region Запись сигналов в БД
 		public void WriteDBSignals(object sender, EventArgs e)
 		{
+			while(DataClass.flagRead)
+			{
+			
+			}
+			
+			
 			foreach(KeyValuePair <int, DiscreteSignal> item in DiscreteSignals)
 			{
 				try
@@ -332,7 +339,7 @@ namespace DataTransfer
 		#region Основной поток опроса данных через Modbus	
 		public void MainThread()
 		{
-          
+			DataClass.flagRead = true;
  			#region Чтение дискретных сигналов
  			// Заполняем структуру для дискретных сигналов
  			try
@@ -414,6 +421,7 @@ namespace DataTransfer
            		}
            	}
            	#endregion
+           	DataClass.flagRead = false;
          }
 		#endregion
 		

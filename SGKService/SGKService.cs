@@ -29,6 +29,7 @@ namespace SGKService
 		DataClass dataTransfer = new DataClass();
 		// Поток 
 		private Thread Worker = null;
+		private Thread Server = null;
 		// Сброс таймера
 		//AutoResetEvent StopRequest = new AutoResetEvent(false);
 		private AsynchronousSocketListener socketServer = new AsynchronousSocketListener();
@@ -50,8 +51,6 @@ namespace SGKService
 		}
 		#endregion
 		
-		
-				
 		private void InitializeComponent()
 		{
 			this.ServiceName = MyServiceName;
@@ -102,7 +101,8 @@ namespace SGKService
             	eventLog.WriteEntry("Сокет-сервер запущен");
             	try
             	{
-            		AsynchronousSocketListener.StartListening();
+            		Server = new Thread(AsynchronousSocketListener.StartListening);
+            		Server.Start();
             		eventLog.WriteEntry("Сокет-сервер запущен");
             	}
             	catch(Exception ex)
@@ -110,8 +110,8 @@ namespace SGKService
             		eventLog.WriteEntry(ex.ToString());
             	}
             	#endregion
-            	//Worker = new Thread(MainThread);
-            	//Worker.Start();
+            	Worker = new Thread(MainThread);
+            	Worker.Start();
             	
 			}
 			else
@@ -131,11 +131,12 @@ namespace SGKService
            		{
            			
            			{
-	           			eventLog.WriteEntry("MainThread : Запуск основного потока опроса данных");
+	           			//eventLog.WriteEntry("MainThread : Запуск основного потока опроса данных");
 	           			
 	           			#region Запуск основого потока
-            			Thread main = new Thread(dataTransfer.MainThread);
-            			//main.Join();
+	           			dataTransfer.MainThread();
+	           			Thread.Sleep(500);
+	           			//main.Join();
             			#endregion
 	           		}
            			
@@ -155,8 +156,15 @@ namespace SGKService
 		/// </summary>
 		protected override void OnStop()
 		{
-			//StopRequest.Set();
+			
+			// Останавливаем таймер
+			timerSrv.Stop();
+			timerSrv = null;
+			// Останавливаем основной поток опроса
+			serviceWork = false;
 			Worker.Join();
+			// Останавливаем сервер
+			//Server.Join();
 			#region Запись в журнал
             eventLog.WriteEntry("Служба остановлена");
             #endregion
