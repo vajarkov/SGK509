@@ -257,6 +257,28 @@ namespace DataTransfer
 		}
 		#endregion
 		
+		#region Получение имени службы
+		public string GetServiceName()
+		{
+			return serviceName;
+		}
+		#endregion
+		
+		#region Получение имени компьютера службы
+		public string GetHostName()
+		{
+			// Имя машины
+			string machineName;
+			// Если IP не указан, то используем локальный адрес
+			if(String.IsNullOrEmpty(serviceSettings.Settings["IP"].Value))
+				machineName = "127.0.0.1";
+			else
+				// Иначе берем тот, что указан
+				machineName = serviceSettings.Settings["IP"].Value;
+			return Dns.GetHostEntry(machineName).HostName.Split('.')[0];
+		}
+		#endregion
+		
 		#region Получение адреса службы
 		public string GetServiceIPAddress()
 		{

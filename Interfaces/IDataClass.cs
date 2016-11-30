@@ -93,5 +93,17 @@ namespace Interfaces
 		/// </summary>
 		/// <returns>Дискретные и аналоговые сигналы</returns>
 		byte[] GetSocketData();
+		
+		/// <summary>
+		/// Получение имени службы
+		/// </summary>
+		/// <returns>Строка с названием службы</returns>
+		string GetServiceName();
+		
+		/// <summary>
+		/// Получение имени компьютера, где установлена служба
+		/// </summary>
+		/// <returns>Строка с именем компьютера</returns>
+		string GetHostName();
 	}
 }

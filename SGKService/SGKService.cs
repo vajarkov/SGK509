@@ -110,8 +110,8 @@ namespace SGKService
             		eventLog.WriteEntry(ex.ToString());
             	}
             	#endregion
-            	Worker = new Thread(MainThread);
-            	Worker.Start();
+            	//Worker = new Thread(MainThread);
+            	//Worker.Start();
             	
 			}
 			else

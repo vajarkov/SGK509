@@ -47,23 +47,42 @@ public class AsynchronousSocketListener {
     private static EventLog eventLog = new EventLog();
     // Длина массива для передачи данных
     private static int lenghtBytes = dataObject.GetInitSize();
+   
     
     public AsynchronousSocketListener() {
     }
 
+    
     public static void StartListening() {
         
     	// Data buffer for incoming data.
     	int BufferSize = lenghtBytes;
+    	
     	dataObject.GetEventConfig();
+    	
+    	// Имя журнала
+    	eventLog.Log = dataObject.GetServiceName();
+        // Имя источника
+        eventLog.Source = dataObject.GetServiceName();
+        // Имя компьютера
+        eventLog.MachineName = dataObject.GetHostName();
+        
+        
     	byte[] bytes = new Byte[lenghtBytes];
 
         // Establish the local endpoint for the socket.
         // The DNS name of the computer
         // running the listener is "host.contoso.com".
-        IPHostEntry ipHostInfo = Dns.GetHostEntry(dataObject.GetServiceIPAddress());
-        IPAddress ipAddress = ipHostInfo.AddressList[0];
-        IPEndPoint localEndPoint = new IPEndPoint(ipAddress, dataObject.GetServicePort());
+        //IPHostEntry ipHostInfo = Dns.GetHostEntry(dataObject.GetServiceIPAddress());
+        //IPAddress ipAddress = ipHostInfo. .AddressList[0];
+        IPAddress ip;
+        eventLog.WriteEntry(dataObject.GetServiceIPAddress());
+        if(!IPAddress.TryParse(dataObject.GetServiceIPAddress(), out ip))
+        {
+        	throw new FormatException("Invalid ip-adress");
+        }
+    	
+        IPEndPoint localEndPoint = new IPEndPoint(ip, dataObject.GetServicePort());
 
         // Create a TCP/IP socket.
         Socket listener = new Socket(AddressFamily.InterNetwork,
