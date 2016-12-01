@@ -312,7 +312,7 @@ namespace DataTransfer
 					// Значение сигнала
 					DiscreteSignal signal = (DiscreteSignal) item.Value;
 					// Запись в БД
-					dbSource.InsertSignal("discrete_log", item.Key.ToString(), signal.Timestamp.ToString("yyyy-MM-dd HH:mm:ss"), signal.Value.ToString());
+					dbSource.InsertSignal("discrete_log", item.Key, signal.Timestamp, signal.Value);
 				} 
 				catch(Exception ex)
 				{
@@ -326,7 +326,7 @@ namespace DataTransfer
 				{
 					AnalogSignal signal = (AnalogSignal) item.Value;
 					//eventLog.WriteEntry(signal.Timestamp.ToString("yyyy-MM-dd HH:mm:ss"));
-					dbSource.InsertSignal("analog_log", item.Key.ToString(), signal.Timestamp.ToString("yyyy-MM-dd HH:mm:ss"), signal.Value.ToString("F", CultureInfo.InvariantCulture));
+					dbSource.InsertSignal("analog_log", item.Key, signal.Timestamp, signal.Value);
 				} 
 				catch(Exception ex)
 				{
@@ -407,10 +407,10 @@ namespace DataTransfer
            						Convert.ToUInt16(AnalogSignals.ElementAt(i).Value.Size));
            			
            			byte[] floatToBytes = BitConverter.GetBytes(AnalogSignals.ElementAt(i).Value.Value);
-           			eventLog.WriteEntry(floatToBytes.Length.ToString());
+           			//eventLog.WriteEntry(floatToBytes.Length.ToString());
            			foreach (byte itemByte in floatToBytes)
            			{
-           				eventLog.WriteEntry(itemByte.ToString());
+           				//eventLog.WriteEntry(itemByte.ToString());
            				analogBytes[bytesCounter] = itemByte;
            				bytesCounter++;
            			}

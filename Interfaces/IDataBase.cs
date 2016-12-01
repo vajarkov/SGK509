@@ -94,14 +94,23 @@ namespace Interfaces
 		Dictionary<int, AnalogSignal> GetParams(string tblConfig, string tblDictinary);
 		
 		/// <summary>
-		/// Запись параметров в журнал
+		/// Запись аналоговых параметров в журнал
 		/// </summary>
 		/// <param name="tblItem">Имя журнала</param>
 		/// <param name="id_num">Идентификатор параметра</param>
 		/// <param name="timestamp">Время записи</param>
 		/// <param name="value">Значение</param>
-		void InsertSignal(string tblItem, string id_num, string timestamp, string value);
+		void InsertSignal(string tblItem, int id_num, DateTime timestamp, float value);
 		
+		/// <summary>
+		/// Запись дискретных параметров в журнал
+		/// </summary>
+		/// <param name="tblItem">Имя журнала</param>
+		/// <param name="id_num">Идентификатор параметра</param>
+		/// <param name="timestamp">Время записи</param>
+		/// <param name="value">Значение</param>
+		void InsertSignal(string tblItem, int id_num, DateTime timestamp, Boolean value);
+				
 		/// <summary>
 		/// Размер в байтах пакета для передачи через сокет дискретных сигналов
 		/// </summary>

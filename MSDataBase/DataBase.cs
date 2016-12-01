@@ -306,7 +306,7 @@ namespace MSDataBase
 						}
 						catch(Exception ex)
 						{
-							eventLog.WriteEntry(ex.Message, EventLogEntryType.Error);
+							eventLog.WriteEntry("DiscreteReader : " + ex.Message, EventLogEntryType.Error);
 						}
 					}
 				}
@@ -323,7 +323,7 @@ namespace MSDataBase
 			using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
 			{
 				connection.Open();
-				SqlCommand command = new SqlCommand("SELECT ca.id_num, GETDATE() [Timestamp], ca.modbus_address, dt.bytes from " + tblConfig + " ca LEFT JOIN " + tblDictinary + " dt ON ca.id_type = dt.id", connection);
+				SqlCommand command = new SqlCommand("SELECT ca.id_num, GETDATE() [Timestamp], ca.modbus_address, dt.bytes FROM " + tblConfig + " ca LEFT JOIN " + tblDictinary + " dt ON ca.id_type = dt.id", connection);
 				
 				using (var reader = command.ExecuteReader())
 				{
@@ -350,18 +350,46 @@ namespace MSDataBase
 		}
 		#endregion
 		
-		#region Запись в БД значения
-		public void InsertSignal(string tblItem, string id_num, string timestamp, string value)
+		#region Запись в БД значения для аналоговых значений
+		public void InsertSignal(string tblItem, int id_num, DateTime timestamp, float value)
 		{
 			GetConnectionString();
 			using(SqlConnection connection = new SqlConnection(builder.ConnectionString))
 			{
 				connection.Open();
 				SqlCommand command = new SqlCommand("INSERT INTO " + tblItem + " VALUES ('" + timestamp + "', " + id_num  + ", " + value + ")", connection);
-				command.ExecuteNonQuery();
+				try
+				{
+					command.ExecuteNonQuery();
+				}
+				catch(Exception ex)
+				{
+					eventLog.WriteEntry("InsertSignal : " + ex.Message, EventLogEntryType.Error);
+				}
 			}
 		}
 		#endregion
+		
+		#region Запись в БД значения для дискретных значений
+		public void InsertSignal(string tblItem, int id_num, DateTime timestamp, Boolean value)
+		{
+			GetConnectionString();
+			using(SqlConnection connection = new SqlConnection(builder.ConnectionString))
+			{
+				connection.Open();
+				SqlCommand command = new SqlCommand("INSERT INTO " + tblItem + " VALUES ('" + timestamp + "', " + id_num  + ", " + value + ")", connection);
+				try
+				{
+					command.ExecuteNonQuery();
+				}
+				catch(Exception ex)
+				{
+					eventLog.WriteEntry("InsertSignal : " + ex.Message, EventLogEntryType.Error);
+				}
+			}
+		}
+		#endregion
+		
 		
 		#region Получение размера данных в байтах
 		
